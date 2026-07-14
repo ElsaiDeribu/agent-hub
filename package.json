@@ -1,7 +1,7 @@
 {
   "name": "agent-hub",
   "version": "1.0.0",
-  "description": "",
+  "description": "CLI to add agent code to your project",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/ElsaiDeribu/agent-hub/issues"
   },
-  "homepage": "https://github.com/ElsaiDeribu/agent-hub#readme"
+  "homepage": "https://github.com/ElsaiDeribu/agent-hub#readme",
+  "type": "module",
+  "bin": {
+    "agent-hub": "./dist/cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
