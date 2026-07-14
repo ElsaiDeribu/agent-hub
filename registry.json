@@ -1,0 +1,16 @@
+{
+  "name": "agent-hub",
+  "homepage": "https://github.com/ElsaiDeribu/agent-hub",
+  "items": [
+    {
+      "name": "hello",
+      "description": "Minimal hello template",
+      "files": [
+        {
+          "path": "registry/hello/README.md",
+          "target": "README.md"
+        }
+      ]
+    }
+  ]
+}

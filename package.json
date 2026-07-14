@@ -1,10 +1,13 @@
 {
-  "name": "agent-hub",
-  "version": "1.0.0",
+  "name": "@elsaid7/agent-hub",
+  "version": "1.0.1",
   "description": "CLI to add agent code to your project",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsup src/cli.ts --format esm --shims",
+    "dev": "tsup src/cli.ts --format esm --watch",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -21,6 +24,12 @@
   "bin": {
     "agent-hub": "./dist/cli.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
   "engines": {
     "node": ">=18"
   },
