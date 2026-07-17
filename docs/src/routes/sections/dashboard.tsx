@@ -1,5 +1,4 @@
 import { lazy, Suspense } from 'react';
-import { AuthGuard } from '@/auth/guard';
 import { Outlet } from 'react-router-dom';
 import { LoadingScreen } from '@/components/loading-screen';
 
