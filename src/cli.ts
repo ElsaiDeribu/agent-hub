@@ -4,6 +4,7 @@ import chalk from "chalk";
 import fs from "fs-extra";
 import path from "path";
 import ora from "ora";
+import { isSafeTarget } from "./is-safe-target.js";
 
 const OWNER = "ElsaiDeribu";
 const REPO = "agent-hub";
@@ -74,8 +75,16 @@ program
       const targetDir = path.resolve(options.dir, name);
 
       for (const file of item.files) {
+        if (!isSafeTarget(file.target, targetDir)) {
+          throw new Error(
+            `We found an unsafe file path "${file.target}" in the registry item. Installation aborted.`,
+          );
+        }
+
+        const dest = file.target.startsWith("~/")
+          ? path.join(targetDir, file.target.slice(2))
+          : path.resolve(targetDir, file.target);
         const content = await fetchFile(file.path);
-        const dest = path.join(targetDir, file.target);
         await fs.ensureDir(path.dirname(dest));
         await fs.writeFile(dest, content);
       }
