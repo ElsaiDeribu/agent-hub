@@ -2,7 +2,7 @@ import * as React from 'react';
 import { paths } from '@/routes/paths';
 import { NavLink } from 'react-router-dom';
 import { REGISTRY_ITEMS } from '@/data/registry';
-import { NavMain } from '@/sections/dashboard/nav-main';
+import { NavMain } from '@/sections/docs/nav-main';
 import {
   Bot,
   Command,
@@ -46,24 +46,24 @@ const data = {
   navMain: [
     {
       title: "Documentation",
-      url: paths.dashboard.root,
+      url: paths.docs.root,
       icon: BookOpen,
       isActive: true,
       items: [
         {
           title: "Get started",
-          url: paths.dashboard.root,
+          url: paths.docs.root,
         },
       ],
     },
     {
       title: 'Agents',
-      url: paths.dashboard.root,
+      url: paths.docs.root,
       icon: Bot,
       isActive: true,
       items: REGISTRY_ITEMS.map((agent) => ({
         title: agent.title,
-        url: paths.dashboard.agents.detail(agent.name),
+        url: paths.docs.agents.detail(agent.name),
       })),
     },
   ],

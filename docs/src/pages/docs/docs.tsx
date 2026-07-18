@@ -1,11 +1,11 @@
 import { Github } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { AppSidebar } from '@/sections/dashboard/app-sidebar';
+import { AppSidebar } from '@/sections/docs/app-sidebar';
 import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
-export default function DashboardLayout() {
+export default function DocsLayout() {
   return (
     <SidebarProvider>
       <AppSidebar />

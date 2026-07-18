@@ -1,4 +1,4 @@
-export default function DashboardIndexPage() {
+export default function DocsIndexPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
         {/* Placeholder stats */}

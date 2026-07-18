@@ -4,14 +4,14 @@ import { paths } from '@/routes/paths';
 import { Badge } from '@/components/ui/badge';
 import { ChevronDownIcon } from 'lucide-react';
 import { Navigate, useParams } from 'react-router-dom';
-import { CodeViewer } from '@/sections/dashboard/agents/code-viewer';
-import { ChatPreview } from '@/sections/dashboard/agents/chat-preview';
-import { InstallCommand } from '@/sections/dashboard/agents/install-command';
+import { CodeViewer } from '@/sections/docs/agents/code-viewer';
+import { ChatPreview } from '@/sections/docs/agents/chat-preview';
+import { InstallCommand } from '@/sections/docs/agents/install-command';
 import { Tabs, TabsList, TabsContent, TabsTrigger } from '@/components/ui/tabs';
 import { REGISTRY_ITEMS, CATEGORY_COLORS, FRAMEWORK_COLORS } from '@/data/registry';
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-export default function DashboardAgentDetailPage() {
+export default function DocsAgentDetailPage() {
   const { name } = useParams<{ name: string }>();
   const agent = REGISTRY_ITEMS.find((a) => a.name === name);
   const [framework, setFramework] = useState('');

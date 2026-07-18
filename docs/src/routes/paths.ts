@@ -2,7 +2,7 @@
 
 const ROOTS = {
   AUTH: '',
-  DASHBOARD: '/dashboard',
+  DOCS: '/docs',
 };
 
 // ----------------------------------------------------------------------
@@ -13,10 +13,10 @@ export const paths = {
   page404: '/404',
   page500: '/500',
 
-  dashboard: {
-    root: ROOTS.DASHBOARD,
+  docs: {
+    root: ROOTS.DOCS,
     agents: {
-      detail: (name: string) => `${ROOTS.DASHBOARD}/agents/${name}`,
+      detail: (name: string) => `${ROOTS.DOCS}/agents/${name}`,
     },
   },
 

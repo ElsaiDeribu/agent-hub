@@ -93,7 +93,7 @@ export function AgentCard({ agent, className }: AgentCardProps) {
             size="sm"
             className="w-full group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all"
           >
-            <Link to={paths.dashboard.agents.detail(agent.name)} className="flex items-center gap-1.5">
+            <Link to={paths.docs.agents.detail(agent.name)} className="flex items-center gap-1.5">
               Try it
               <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
             </Link>

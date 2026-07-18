@@ -5,7 +5,7 @@ import { LoadingScreen } from '@/components/loading-screen';
 // import { PATH_AFTER_LOGIN } from 'src/config-global';
 import { authRoutes } from './auth';
 import { mainRoutes } from './main';
-import { dashboardRoutes } from './dashboard';
+import { docsRoutes } from './docs';
 
 const HomePage = lazy(() => import('@/pages/home/home'));
 
@@ -36,8 +36,8 @@ export default function Router() {
     // Main routes (error pages)
     ...mainRoutes,
 
-    // Dashboard
-    ...dashboardRoutes,
+    // Docs
+    ...docsRoutes,
 
     // No match 404
     { path: '*', element: <Navigate to="/404" replace /> },

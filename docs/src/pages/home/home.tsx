@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { CATEGORIES, REGISTRY_ITEMS } from '@/data/registry';
 import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
-import { AgentCard } from '@/sections/dashboard/agents/agent-card';
+import { AgentCard } from '@/sections/docs/agents/agent-card';
 import { Zap, Search, Github, LayoutGrid, ArrowRight } from 'lucide-react';
-import { InstallCommand } from '@/sections/dashboard/agents/install-command';
+import { InstallCommand } from '@/sections/docs/agents/install-command';
 
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -49,7 +49,7 @@ export default function HomePage() {
               </a>
             </Button>
             <Button variant="ghost" size="sm" asChild>
-              <Link to={paths.dashboard.root}>Dashboard</Link>
+              <Link to={paths.docs.root}>Docs</Link>
             </Button>
             <ThemeToggleIcon />
           </nav>
@@ -181,8 +181,8 @@ export default function HomePage() {
             >
               GitHub
             </a>
-            <Link to={paths.dashboard.root} className="hover:text-foreground transition-colors">
-              Dashboard
+            <Link to={paths.docs.root} className="hover:text-foreground transition-colors">
+              Docs
             </Link>
           </div>
         </div>
