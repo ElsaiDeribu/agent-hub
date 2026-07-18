@@ -7,7 +7,7 @@ import { GoogleIcon } from '@/assets/icons';
 import { useAuthContext } from '@/auth/hooks';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useBoolean } from '@/hooks/use-boolean';
+// import { useBoolean } from '@/hooks/use-boolean';
 import { RouterLink } from '@/routes/components';
 import { PATH_AFTER_LOGIN } from '@/config-global';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,7 +29,7 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
 
   const returnTo = searchParams.get('returnTo');
 
-  const password = useBoolean();
+  // const password = useBoolean();
 
   const LoginSchema = z.object({
     email: z.string().min(1, 'Email is required').email('Email must be a valid email address'),

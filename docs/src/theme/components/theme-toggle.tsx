@@ -5,7 +5,7 @@ import { useTheme } from '@/theme/theme-provider';
 
 const CYCLE: Theme[] = ['light', 'dark'];
 
-const ICONS: Record<Theme, React.ReactNode> = {
+const ICONS: Partial<Record<Theme, React.ReactNode>> = {
   light: <Sun className="size-4" />,
   dark: <Moon className="size-4" />,
 };
