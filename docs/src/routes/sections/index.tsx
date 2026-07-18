@@ -1,9 +1,13 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
+import { LoadingScreen } from '@/components/loading-screen';
 
 // import { PATH_AFTER_LOGIN } from 'src/config-global';
 import { authRoutes } from './auth';
 import { mainRoutes } from './main';
 import { dashboardRoutes } from './dashboard';
+
+const HomePage = lazy(() => import('@/pages/home/home'));
 
 // ----------------------------------------------------------------------
 
@@ -16,20 +20,23 @@ export default function Router() {
     // },
 
     // ----------------------------------------------------------------------
-
-    // SET INDEX PAGE WITH HOME PAGE
+    // Home
     {
       path: '/',
-      element: <h1>hello world Landing page</h1>,
+      element: (
+        <Suspense fallback={<LoadingScreen />}>
+          <HomePage />
+        </Suspense>
+      ),
     },
 
     // Auth routes
     ...authRoutes,
 
-    //Main routes
+    // Main routes (error pages)
     ...mainRoutes,
 
-    //Dashboard
+    // Dashboard
     ...dashboardRoutes,
 
     // No match 404

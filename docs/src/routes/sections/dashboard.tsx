@@ -1,10 +1,11 @@
 import { lazy, Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
 import { LoadingScreen } from '@/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
-const DashboardPage = lazy(() => import('@/pages/dashboard/dashboard'));
+const DashboardLayout = lazy(() => import('@/pages/dashboard/dashboard'));
+const DashboardIndexPage = lazy(() => import('@/pages/dashboard/dashboard-index'));
+const DashboardAgentDetailPage = lazy(() => import('@/pages/dashboard/dashboard-agent-detail'));
 
 // ----------------------------------------------------------------------
 
@@ -13,11 +14,14 @@ export const dashboardRoutes = [
     path: 'dashboard',
     element: (
       // <AuthGuard>
-        <Suspense fallback={<LoadingScreen />}>
-          <Outlet />
-        </Suspense>
+      <Suspense fallback={<LoadingScreen />}>
+        <DashboardLayout />
+      </Suspense>
       // </AuthGuard>
     ),
-    children: [{ element: <DashboardPage />, index: true }],
+    children: [
+      { index: true, element: <DashboardIndexPage /> },
+      { path: 'agents/:name', element: <DashboardAgentDetailPage /> },
+    ],
   },
 ];

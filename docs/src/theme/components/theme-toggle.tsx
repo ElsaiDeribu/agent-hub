@@ -1,7 +1,36 @@
 import type { Theme } from '@/theme/types';
 
+import { Sun, Moon } from 'lucide-react';
 import { useTheme } from '@/theme/theme-provider';
 
+const CYCLE: Theme[] = ['light', 'dark'];
+
+const ICONS: Record<Theme, React.ReactNode> = {
+  light: <Sun className="size-4" />,
+  dark: <Moon className="size-4" />,
+};
+
+/** Compact icon button that cycles light → dark → light */
+export function ThemeToggleIcon() {
+  const { theme, setTheme } = useTheme();
+
+  function cycle() {
+    const next = CYCLE[(CYCLE.indexOf(theme) + 1) % CYCLE.length];
+    setTheme(next);
+  }
+
+  return (
+    <button
+      onClick={cycle}
+      aria-label={`Switch theme (current: ${theme})`}
+      className="flex size-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+    >
+      {ICONS[theme]}
+    </button>
+  );
+}
+
+/** full toggle */
 export const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
   const themes: Theme[] = ['light', 'dark', 'blue'];

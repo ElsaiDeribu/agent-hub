@@ -8,12 +8,16 @@ const ROOTS = {
 // ----------------------------------------------------------------------
 
 export const paths = {
+  home: '/',
   page403: '/403',
   page404: '/404',
   page500: '/500',
 
   dashboard: {
     root: ROOTS.DASHBOARD,
+    agents: {
+      detail: (name: string) => `${ROOTS.DASHBOARD}/agents/${name}`,
+    },
   },
 
   // AUTH

@@ -4,13 +4,152 @@
   "items": [
     {
       "name": "hello",
+      "title": "Hello World",
       "description": "Minimal hello template",
-      "files": [
-        {
-          "path": "registry/hello/README.md",
-          "target": "README.md"
-        }
-      ]
+      "category": "example",
+      "tags": ["starter"],
+      "languages": ["ts"],
+      "frameworks": ["generic"],
+      "preview": {
+        "starterMessages": ["Hello!", "What can you do?"]
+      },
+      "frameworkFiles": {
+        "generic": [
+          { "path": "registry/hello/README.md", "target": "README.md" }
+        ]
+      },
+      "dependencies": {
+        "generic": []
+      }
+    },
+    {
+      "name": "customer-support",
+      "title": "Customer Support Agent",
+      "description": "Multi-turn customer support agent with order lookup and human escalation tools.",
+      "category": "support",
+      "tags": ["multi-turn", "tools", "memory", "escalation"],
+      "languages": ["ts"],
+      "frameworks": ["langchain", "mastra", "vercel-ai"],
+      "preview": {
+        "starterMessages": [
+          "I can't log in to my account",
+          "Where is my order #12345?",
+          "I need a refund for my last purchase",
+          "My product arrived damaged"
+        ]
+      },
+      "frameworkFiles": {
+        "langchain": [
+          {
+            "path": "registry/customer-support/langchain/agent.ts",
+            "target": "agent.ts"
+          },
+          {
+            "path": "registry/customer-support/langchain/tools.ts",
+            "target": "tools.ts"
+          }
+        ],
+        "mastra": [
+          {
+            "path": "registry/customer-support/mastra/agent.ts",
+            "target": "agent.ts"
+          }
+        ],
+        "vercel-ai": [
+          {
+            "path": "registry/customer-support/vercel-ai/agent.ts",
+            "target": "agent.ts"
+          }
+        ]
+      },
+      "dependencies": {
+        "langchain": [
+          "@langchain/core",
+          "@langchain/openai",
+          "langchain",
+          "zod"
+        ],
+        "mastra": ["@mastra/core", "@ai-sdk/openai", "zod"],
+        "vercel-ai": ["ai", "@ai-sdk/openai", "zod"]
+      }
+    },
+    {
+      "name": "code-reviewer",
+      "title": "Code Reviewer Agent",
+      "description": "Reviews code snippets for bugs, security issues, and style improvements with structured output.",
+      "category": "dev-tools",
+      "tags": ["code", "review", "structured-output", "security"],
+      "languages": ["ts"],
+      "frameworks": ["langchain", "mastra"],
+      "preview": {
+        "starterMessages": [
+          "Review this function: function add(a, b) { return a + b }",
+          "Is there a bug in: for (let i = 0; i <= arr.length; i++) {}",
+          "Check this for SQL injection: `SELECT * FROM users WHERE id = ${userId}`"
+        ]
+      },
+      "frameworkFiles": {
+        "langchain": [
+          {
+            "path": "registry/code-reviewer/langchain/agent.ts",
+            "target": "agent.ts"
+          }
+        ],
+        "mastra": [
+          {
+            "path": "registry/code-reviewer/mastra/agent.ts",
+            "target": "agent.ts"
+          }
+        ]
+      },
+      "dependencies": {
+        "langchain": ["@langchain/core", "@langchain/openai", "langchain", "zod"],
+        "mastra": ["@mastra/core", "@ai-sdk/openai", "zod"]
+      }
+    },
+    {
+      "name": "research-assistant",
+      "title": "Research Assistant Agent",
+      "description": "Searches the web, reads pages, and synthesizes findings into structured research summaries.",
+      "category": "research",
+      "tags": ["web-search", "rag", "summarization", "tools"],
+      "languages": ["ts"],
+      "frameworks": ["langchain", "vercel-ai"],
+      "preview": {
+        "starterMessages": [
+          "Research the latest trends in AI agents",
+          "What are the differences between LangChain and LlamaIndex?",
+          "Summarize recent news about OpenAI"
+        ]
+      },
+      "frameworkFiles": {
+        "langchain": [
+          {
+            "path": "registry/research-assistant/langchain/agent.ts",
+            "target": "agent.ts"
+          },
+          {
+            "path": "registry/research-assistant/langchain/tools.ts",
+            "target": "tools.ts"
+          }
+        ],
+        "vercel-ai": [
+          {
+            "path": "registry/research-assistant/vercel-ai/agent.ts",
+            "target": "agent.ts"
+          }
+        ]
+      },
+      "dependencies": {
+        "langchain": [
+          "@langchain/core",
+          "@langchain/openai",
+          "@langchain/community",
+          "langchain",
+          "zod"
+        ],
+        "vercel-ai": ["ai", "@ai-sdk/openai", "zod"]
+      }
     }
   ]
 }

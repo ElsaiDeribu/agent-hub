@@ -1,45 +1,36 @@
-import { Separator } from '@/components/ui/separator';
+import { Github } from 'lucide-react';
+import { Outlet } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { AppSidebar } from '@/sections/dashboard/app-sidebar';
-import { SidebarInset, SidebarTrigger, SidebarProvider } from '@/components/ui/sidebar';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
-export default function DashboardPage() {
+export default function DashboardLayout() {
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Build Your Application</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+        <header className="flex h-16 shrink-0 items-center justify-end gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-1 pr-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-foreground"
+            >
+              <a
+                href="https://github.com/ElsaiDeribu/agent-hub"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Github className="size-4" />
+                <span className="hidden sm:inline text-xs">GitHub</span>
+              </a>
+            </Button>
+            <ThemeToggleIcon />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-        </div>
+        <Outlet />
       </SidebarInset>
     </SidebarProvider>
   );

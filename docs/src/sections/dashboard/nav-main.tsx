@@ -1,9 +1,10 @@
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { NavLink } from 'react-router-dom';
+import { ChevronRight, type LucideIcon } from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from '@/components/ui/collapsible';
 import {
   SidebarMenu,
   SidebarGroup,
@@ -13,21 +14,21 @@ import {
   SidebarMenuButton,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 
 export function NavMain({
   items,
 }: {
   items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
     items?: {
-      title: string
-      url: string
-    }[]
-  }[]
+      title: string;
+      url: string;
+    }[];
+  }[];
 }) {
   return (
     <SidebarGroup>
@@ -52,11 +53,13 @@ export function NavMain({
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
-                      </SidebarMenuSubButton>
+                      <NavLink to={subItem.url} end>
+                        {({ isActive }) => (
+                          <SidebarMenuSubButton isActive={isActive} asChild>
+                            <span>{subItem.title}</span>
+                          </SidebarMenuSubButton>
+                        )}
+                      </NavLink>
                     </SidebarMenuSubItem>
                   ))}
                 </SidebarMenuSub>
@@ -66,5 +69,5 @@ export function NavMain({
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
