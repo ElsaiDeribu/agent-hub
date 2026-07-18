@@ -22,9 +22,9 @@ export default function DashboardAgentDetailPage() {
   const currentFiles = agent.frameworkFiles[activeFramework] ?? [];
 
   return (
-    <>
+    <div className='px-[8%]'>
       {/* ── Agent meta ───────────────────────────────────────────────────── */}
-      <div className="border-b bg-muted/20">
+      <div>
         <div className="px-6 py-5">
           <div className="flex flex-col sm:flex-row sm:items-start gap-4">
             <div className="flex-1 min-w-0 space-y-2">
@@ -54,10 +54,10 @@ export default function DashboardAgentDetailPage() {
         <Tabs defaultValue="preview" className="flex flex-col h-full gap-4">
           <div className="flex items-center justify-between">
             <TabsList>
-              <TabsTrigger value="preview" className="gap-1.5 cursor-pointer">
+              <TabsTrigger value="preview" className="gap-1.5">
                 Preview
               </TabsTrigger>
-              <TabsTrigger value="code" className="gap-1.5 cursor-pointer">
+              <TabsTrigger value="code" className="gap-1.5">
                 Code
               </TabsTrigger>
             </TabsList>
@@ -101,6 +101,6 @@ export default function DashboardAgentDetailPage() {
           </TabsContent>
         </Tabs>
       </main>
-    </>
+    </div>
   );
 }

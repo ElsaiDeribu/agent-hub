@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import { paths } from '@/routes/paths';
 import { NavLink } from 'react-router-dom';
