@@ -8,6 +8,7 @@ import { CATEGORIES, REGISTRY_ITEMS } from '@/data/registry';
 import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 import { AgentCard } from '@/sections/dashboard/agents/agent-card';
 import { Zap, Search, Github, LayoutGrid, ArrowRight } from 'lucide-react';
+import { InstallCommand } from '@/sections/dashboard/agents/install-command';
 
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -76,9 +77,7 @@ export default function HomePage() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <div className="rounded-lg border bg-muted/50 px-4 py-2 font-mono text-sm text-muted-foreground">
-              npx @elsaid7/agent-hub add customer-support
-            </div>
+            <InstallCommand agentName="customer-support" showPackageManagers={false} />
             <Button asChild>
               <a
                 href="https://github.com/ElsaiDeribu/agent-hub"

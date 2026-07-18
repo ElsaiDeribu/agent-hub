@@ -6,6 +6,7 @@ import { ChevronDownIcon } from 'lucide-react';
 import { Navigate, useParams } from 'react-router-dom';
 import { CodeViewer } from '@/sections/dashboard/agents/code-viewer';
 import { ChatPreview } from '@/sections/dashboard/agents/chat-preview';
+import { InstallCommand } from '@/sections/dashboard/agents/install-command';
 import { Tabs, TabsList, TabsContent, TabsTrigger } from '@/components/ui/tabs';
 import { REGISTRY_ITEMS, CATEGORY_COLORS, FRAMEWORK_COLORS } from '@/data/registry';
 import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -52,18 +53,17 @@ export default function DashboardAgentDetailPage() {
       {/* ── Main panels ──────────────────────────────────────────────────── */}
       <main className="flex-1 overflow-auto px-6 py-6">
         <Tabs defaultValue="preview" className="flex flex-col h-full gap-4">
-          <div className="flex items-center justify-between">
-            <TabsList>
-              <TabsTrigger value="preview" className="gap-1.5">
-                Preview
-              </TabsTrigger>
-              <TabsTrigger value="code" className="gap-1.5">
-                Code
-              </TabsTrigger>
-            </TabsList>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-2">
+              <TabsList>
+                <TabsTrigger value="preview" className="gap-1.5">
+                  Preview
+                </TabsTrigger>
+                <TabsTrigger value="code" className="gap-1.5">
+                  Code
+                </TabsTrigger>
+              </TabsList>
 
-            <div className="flex items-center gap-2 shrink-0">
-              {/* Framework dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger className={cn('inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs font-medium transition-all', FRAMEWORK_COLORS[activeFramework] ?? FRAMEWORK_COLORS.generic)}>
                   {activeFramework}
@@ -81,11 +81,9 @@ export default function DashboardAgentDetailPage() {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              <code className="hidden sm:block rounded-lg border bg-muted/50 px-3 py-1.5 font-mono text-xs text-muted-foreground">
-                npx @elsaid7/agent-hub add {agent.name} --framework {activeFramework}
-              </code>
             </div>
+
+            <InstallCommand agentName={agent.name} framework={activeFramework} />
           </div>
 
           <TabsContent value="preview" className="flex-1 mt-0">
