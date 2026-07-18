@@ -1,5 +1,5 @@
 {
-  "name": "@elsaid7/agent-hub",
+  "name": "agent-hub-harness",
   "version": "1.0.2",
   "description": "CLI to add agent code to your project",
   "main": "index.js",
@@ -22,7 +22,7 @@
   "homepage": "https://github.com/ElsaiDeribu/agent-hub#readme",
   "type": "module",
   "bin": {
-    "agent-hub": "./dist/cli.js"
+    "agent-hub-harness": "./dist/cli.js"
   },
   "publishConfig": {
     "access": "public"
@@ -34,7 +34,6 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@elsaid7/agent-hub": "^1.0.2",
     "chalk": "^5.6.2",
     "commander": "^15.0.0",
     "fs-extra": "^11.3.6",

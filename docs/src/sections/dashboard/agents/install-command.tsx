@@ -35,7 +35,7 @@ interface InstallCommandProps {
 export function InstallCommand({
   agentName,
   framework,
-  packageName = '@elsaid7/agent-hub',
+  packageName = 'agent-hub-harness',
   showPackageManagers = true,
   className,
 }: InstallCommandProps) {

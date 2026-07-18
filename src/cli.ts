@@ -85,7 +85,7 @@ function fmtCategory(category: string | undefined): string {
 const program = new Command();
 
 program
-  .name("agent-hub")
+  .name("agent-hub-harness")
   .description("Add agent templates to your project from the agent-hub registry")
   .version("1.0.2");
 
@@ -264,7 +264,7 @@ program
         console.log("");
       }
 
-      console.log(chalk.dim(`Add an agent:  agent-hub add <name> [--framework <framework>]`));
+      console.log(chalk.dim(`Add an agent:  agent-hub-harness add <name> [--framework <framework>]`));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       spinner.fail(chalk.red(message));
@@ -333,7 +333,7 @@ program
 
       console.log("");
       const fw = item.frameworks?.[0] ?? "";
-      console.log(chalk.dim(`Add to project:  agent-hub add ${name}${fw ? ` --framework ${fw}` : ""}`));
+      console.log(chalk.dim(`Add to project:  agent-hub-harness add ${name}${fw ? ` --framework ${fw}` : ""}`));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       spinner.fail(chalk.red(message));
