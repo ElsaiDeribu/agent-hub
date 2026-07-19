@@ -1,41 +1,20 @@
-import { GitHub } from '@/assets/icons';
 import { Outlet } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { DocsHeader } from '@/sections/docs/docs-header';
 import { AppSidebar } from '@/sections/docs/app-sidebar';
-import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-
 
 export default function DocsLayout() {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center sticky top-0 z-10 bg-background justify-end gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-1 pr-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              asChild
-              className="h-8 gap-1.5 px-2 text-muted-foreground hover:text-foreground"
-            >
-              <a
-                href="https://github.com/ElsaiDeribu/agent-hub"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GitHub className="size-5 fill-current" />
-
-                <span className="hidden sm:inline text-xs">GitHub</span>
-              </a>
-            </Button>
-            <ThemeToggleIcon />
-          </div>
-        </header>
-        <main className="flex justify-center items-center">
-          <Outlet />
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="flex min-h-svh flex-col">
+      <DocsHeader className="h-16" />
+      <SidebarProvider>
+        <AppSidebar className="top-16! h-[calc(100svh-4rem)]!" />
+        <SidebarInset>
+          <main className="flex justify-center items-center">
+            <Outlet />
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   );
 }

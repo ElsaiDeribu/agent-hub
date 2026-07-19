@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { paths } from '@/routes/paths';
-import { NavLink } from 'react-router-dom';
 import { REGISTRY_ITEMS } from '@/data/registry';
 import { NavMain } from '@/sections/docs/nav-main';
+import {
+  Sidebar,
+  SidebarRail,
+  SidebarContent,
+} from '@/components/ui/sidebar';
 import {
   Bot,
   Command,
@@ -10,15 +14,6 @@ import {
   AudioWaveform,
   GalleryVerticalEnd,
 } from 'lucide-react';
-import {
-  Sidebar,
-  SidebarRail,
-  SidebarMenu,
-  SidebarHeader,
-  SidebarContent,
-  SidebarMenuItem,
-  SidebarMenuButton,
-} from '@/components/ui/sidebar';
 
 const data = {
   user: {
@@ -76,23 +71,6 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-      <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <NavLink to={paths.home}>
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEnd className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Agent-Hub</span>
-                  <span className="">v1.0.3</span>
-                </div>
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
