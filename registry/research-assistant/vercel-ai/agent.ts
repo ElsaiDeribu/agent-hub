@@ -32,7 +32,7 @@ const tools = {
       // });
       // return res.json();
 
-      // Placeholder — replace with real search API
+      // Placeholder: replace with real search API
       return [
         {
           title: `Search result for: ${query}`,
@@ -90,10 +90,10 @@ Output format:
 - Flag conflicting information or areas of uncertainty
 - End with "Further reading" links if relevant
 
-Always search before answering — do not rely solely on training data for factual questions.`;
+Always search before answering; do not rely solely on training data for factual questions.`;
 
 // ---------------------------------------------------------------------------
-// Run helper — call this from your API route or server
+// Run helper: call this from your API route or server
 // ---------------------------------------------------------------------------
 export type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -118,7 +118,7 @@ export async function runAgent(
 }
 
 // ---------------------------------------------------------------------------
-// Streaming variant — for real-time output in Next.js / Hono
+// Streaming variant: for real-time output in Next.js / Hono
 // ---------------------------------------------------------------------------
 export { streamText } from "ai";
 export { tools, SYSTEM_PROMPT };

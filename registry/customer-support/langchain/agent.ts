@@ -55,7 +55,7 @@ export const customerSupportAgent = new AgentExecutor({
 });
 
 // ---------------------------------------------------------------------------
-// Run helper — call this from your API route or server
+// Run helper: call this from your API route or server
 // ---------------------------------------------------------------------------
 export type ChatMessage = { role: "human" | "ai"; content: string };
 

@@ -110,7 +110,7 @@ Guidelines:
 - Keep responses concise and action-oriented`;
 
 // ---------------------------------------------------------------------------
-// Run helper — call this from your API route or server
+// Run helper: call this from your API route or server
 // ---------------------------------------------------------------------------
 export type ChatMessage = { role: "user" | "assistant"; content: string };
 
@@ -135,7 +135,7 @@ export async function runAgent(
 }
 
 // ---------------------------------------------------------------------------
-// Streaming variant — use this with Next.js App Router or Hono streaming
+// Streaming variant: use this with Next.js App Router or Hono streaming
 // ---------------------------------------------------------------------------
 export { streamText } from "ai";
 export { tools, SYSTEM_PROMPT };

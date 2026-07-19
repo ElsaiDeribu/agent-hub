@@ -64,7 +64,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-xs text-muted-foreground mb-6">
             <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            TypeScript agents — install in seconds
+            TypeScript agents you can install in seconds
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-bold tracking-tight">
@@ -76,7 +76,7 @@ export default function HomePage() {
 
           <p className="mt-4 max-w-2xl mx-auto text-muted-foreground text-lg sm:text-xl leading-relaxed">
             Browse production-ready agent templates, preview them live, and add them to your
-            project with one command — like shadcn, but for AI agents.
+            project with one command, like shadcn, but for AI agents.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -175,7 +175,7 @@ export default function HomePage() {
       {/* ── Footer ───────────────────────────────────────────────────────── */}
       <footer className="border-t mt-16">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>Built with ❤️ — agent-hub</p>
+          <p>Built with ❤️ by agent-hub</p>
           <div className="flex gap-4">
             <a
               href="https://github.com/ElsaiDeribu/agent-hub"

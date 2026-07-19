@@ -71,7 +71,7 @@ export const escalateToHumanTool = tool(
     // Replace with your ticketing system integration
     // e.g. await zendesk.tickets.create({ subject: reason, priority, requester_id: customerId });
     console.log(
-      `[ESCALATION] Customer ${customerId} — Priority: ${priority} — Reason: ${reason}`
+      `[ESCALATION] Customer ${customerId} | Priority: ${priority} | Reason: ${reason}`
     );
     return JSON.stringify({
       ticketId: `TKT-${Date.now()}`,

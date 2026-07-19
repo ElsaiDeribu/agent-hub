@@ -207,7 +207,7 @@ export function CodeViewer({ files, framework, className }: CodeViewerProps) {
         className,
       )}
     >
-      {/* Left sidebar — file tree */}
+      {/* Left sidebar: file tree */}
       <div className="w-44 shrink-0 border-r border-border flex flex-col overflow-y-auto">
         <div className="items-center bg-background border-b border-border px-3 py-[14.5px] text-muted-foreground text-xs">
           Files
@@ -225,7 +225,7 @@ export function CodeViewer({ files, framework, className }: CodeViewerProps) {
         </div>
       </div>
 
-      {/* Right panel — code editor */}
+      {/* Right panel: code editor */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {loading ? (
           <>

@@ -89,7 +89,7 @@ const steps: Step[] = [
 
         <div className="rounded-lg border bg-amber-500/5 border-amber-500/20 p-3">
           <p className="text-xs text-amber-700 dark:text-amber-400">
-            Never commit <code className="bg-muted px-1 py-0.5 rounded">.env</code> to version control — add it to{' '}
+            Never commit <code className="bg-muted px-1 py-0.5 rounded">.env</code> to version control. Add it to{' '}
             <code className="bg-muted px-1 py-0.5 rounded">.gitignore</code>.
           </p>
         </div>

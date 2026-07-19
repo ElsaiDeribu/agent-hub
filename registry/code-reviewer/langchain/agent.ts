@@ -70,7 +70,7 @@ Language: {language}
 ]);
 
 // ---------------------------------------------------------------------------
-// Run helper — call this from your API route or server
+// Run helper: call this from your API route or server
 // ---------------------------------------------------------------------------
 export async function reviewCode(
   code: string,
@@ -81,7 +81,7 @@ export async function reviewCode(
 }
 
 // ---------------------------------------------------------------------------
-// Conversational wrapper — accepts free-form input and extracts code
+// Conversational wrapper: accepts free-form input and extracts code
 // ---------------------------------------------------------------------------
 const conversationalLlm = new ChatOpenAI({
   model: "gpt-4o-mini",

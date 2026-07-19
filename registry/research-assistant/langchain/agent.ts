@@ -36,7 +36,7 @@ Output format:
 - Flag any conflicting information or areas of uncertainty
 - End with "Further reading" links if relevant
 
-Always search before answering — do not rely on your training data for factual questions.`,
+Always search before answering; do not rely on your training data for factual questions.`,
   ],
   new MessagesPlaceholder("chat_history"),
   ["human", "{input}"],
@@ -56,7 +56,7 @@ export const researchAssistant = new AgentExecutor({
 });
 
 // ---------------------------------------------------------------------------
-// Run helper — call this from your API route or server
+// Run helper: call this from your API route or server
 // ---------------------------------------------------------------------------
 export type ChatMessage = { role: "human" | "ai"; content: string };
 

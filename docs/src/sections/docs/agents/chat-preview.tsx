@@ -12,7 +12,7 @@ function getInitialMessage(agentName: string): string {
     'customer-support':
       "Hi! I'm your customer support agent 👋\nI can help with orders, account access, refunds, and more. What can I assist you with today?",
     'code-reviewer':
-      "Hello! I'm your code reviewer 🔍\nPaste a code snippet or describe what you'd like me to review — I'll check for bugs, security issues, and performance problems.",
+      "Hello! I'm your code reviewer 🔍\nPaste a code snippet or describe what you'd like me to review. I'll check for bugs, security issues, and performance problems.",
     'research-assistant':
       "Hi! I'm your research assistant 🔎\nGive me a topic and I'll search the web and synthesize findings for you. What would you like to research?",
   };
@@ -33,7 +33,7 @@ function getMockResponse(agentName: string, message: string): string {
       return "I'll help you regain access to your account. \n\nCould you provide the **email address** associated with your account? I'll look up the account and send you a secure reset link.";
     }
     if (msg.includes('damaged') || msg.includes('broken') || msg.includes('defective')) {
-      return "I'm sorry to hear your item arrived damaged! 😔\n\nI can help you with a **replacement** or **refund**. Please share your order number and I'll get this sorted for you right away — no need to return the damaged item.";
+      return "I'm sorry to hear your item arrived damaged! 😔\n\nI can help you with a **replacement** or **refund**. Please share your order number and I'll get this sorted for you right away. No need to return the damaged item.";
     }
     return "I'd be happy to help! Could you provide more details? If your question is about a specific order, sharing the **order number** would help me assist you faster.";
   }
@@ -41,20 +41,20 @@ function getMockResponse(agentName: string, message: string): string {
   if (agentName === 'code-reviewer') {
     const hasCode = msg.includes('```') || msg.includes('function') || msg.includes('const ') || msg.includes('let ') || msg.includes('for ') || msg.includes('select ') || msg.includes('eval(');
     if (hasCode || msg.length > 30) {
-      return '**Code Review** 🔍\n\n**Overall:** Minor issues found\n\n**Issues:**\n1. 🔴 **Security** — Potential injection vulnerability\n   `eval(userInput)` is dangerous — never execute user-supplied strings\n   *Fix:* Use a safe alternative or validate/sanitize the input strictly\n\n2. 🟡 **Bug** — Off-by-one error risk\n   `i <= arr.length` should be `i < arr.length` (array is 0-indexed)\n   *Fix:* Change `<=` to `<`\n\n**Positives:**\n✅ Code is readable and well-structured\n✅ Logic flow is clear\n\n*This is a simulated review — connect the backend to run real analysis.*';
+      return '**Code Review** 🔍\n\n**Overall:** Minor issues found\n\n**Issues:**\n1. 🔴 **Security:** Potential injection vulnerability\n   `eval(userInput)` is dangerous; never execute user-supplied strings\n   *Fix:* Use a safe alternative or validate/sanitize the input strictly\n\n2. 🟡 **Bug:** Off-by-one error risk\n   `i <= arr.length` should be `i < arr.length` (array is 0-indexed)\n   *Fix:* Change `<=` to `<`\n\n**Positives:**\n✅ Code is readable and well-structured\n✅ Logic flow is clear\n\n*This is a simulated review. Connect the backend to run real analysis.*';
     }
     return "Please paste the code you'd like me to review. You can use:\n```typescript\n// your code here\n```\nOr just paste it inline. I'll check for bugs, security issues, performance problems, and style.";
   }
 
   if (agentName === 'research-assistant') {
-    return `**Research: ${message}** 🔎\n\n**Summary:** This is an active area of development with significant momentum in 2024–2025.\n\n**Key Findings:**\n- Multiple competing frameworks have emerged, each with distinct trade-offs\n- TypeScript-native approaches are gaining traction for type safety\n- Streaming and multi-step agent patterns are now standard\n\n**Notable Frameworks Comparison:**\n| Framework | Strength | Best For |\n|-----------|----------|----------|\n| LangChain.js | Ecosystem | General purpose |\n| Mastra | TypeScript DX | TS-first projects |\n| Vercel AI SDK | Streaming | Next.js apps |\n\n**Further Reading:**\n- [LangChain docs](https://js.langchain.com)\n- [Mastra docs](https://mastra.ai)\n- [Vercel AI SDK](https://sdk.vercel.ai)\n\n*Simulated response — connect a real search backend for live results.*`;
+    return `**Research: ${message}** 🔎\n\n**Summary:** This is an active area of development with significant momentum in 2024-2025.\n\n**Key Findings:**\n- Multiple competing frameworks have emerged, each with distinct trade-offs\n- TypeScript-native approaches are gaining traction for type safety\n- Streaming and multi-step agent patterns are now standard\n\n**Notable Frameworks Comparison:**\n| Framework | Strength | Best For |\n|-----------|----------|----------|\n| LangChain.js | Ecosystem | General purpose |\n| Mastra | TypeScript DX | TS-first projects |\n| Vercel AI SDK | Streaming | Next.js apps |\n\n**Further Reading:**\n- [LangChain docs](https://js.langchain.com)\n- [Mastra docs](https://mastra.ai)\n- [Vercel AI SDK](https://sdk.vercel.ai)\n\n*Simulated response. Connect a real search backend for live results.*`;
   }
 
   return "This is a simulated response. Connect a backend API (Phase 3) to run live agent responses with real tool calls.";
 }
 
 // ---------------------------------------------------------------------------
-// Markdown renderer (minimal — handles **bold**, \n, and lists)
+// Markdown renderer (minimal: handles **bold**, \n, and lists)
 // ---------------------------------------------------------------------------
 function MarkdownText({ content }: { content: string }) {
   const lines = content.split('\n');
@@ -155,7 +155,7 @@ export function ChatPreview({ agentName, starterMessages, className }: ChatPrevi
       <div className="flex items-center gap-2 border-b bg-amber-500/5 px-4 py-2 text-xs text-amber-600 dark:text-amber-400">
         <Zap className="size-3 shrink-0" />
         <span>
-          Live preview — responses are <strong>simulated</strong>. Connect a backend to run real agent calls.
+          Live preview: responses are <strong>simulated</strong>. Connect a backend to run real agent calls.
         </span>
       </div>
 

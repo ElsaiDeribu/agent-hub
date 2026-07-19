@@ -14,7 +14,7 @@ const features = [
     icon: Bot,
     title: 'Ready-to-use AI Agents',
     description:
-      'A curated registry of production-ready TypeScript agents you can drop into any project in seconds — no boilerplate, no wiring from scratch.',
+      'A curated registry of production-ready TypeScript agents you can drop into any project in seconds. No boilerplate, no wiring from scratch.',
   },
   {
     icon: Layers,
@@ -48,8 +48,8 @@ export default function DocsIntroductionPage() {
         <p className="text-muted-foreground text-lg leading-relaxed mb-4">
           <strong>Agent-Hub</strong> is an open-source registry of reusable TypeScript AI agents.
           Browse, preview, and scaffold agents into your project. It works like a component library,
-          but for AI agents. Instead of writing an agent from scratch every time you need one —
-          handling prompts, tool calls, memory, and framework wiring — you pick from the registry,
+          but for AI agents. Instead of writing an agent from scratch every time you need one
+          (handling prompts, tool calls, memory, and framework wiring), you pick from the registry,
           preview it live, and install it straight into your codebase with one command.
         </p>
         <p className="text-muted-foreground text-lg leading-relaxed mb-6">

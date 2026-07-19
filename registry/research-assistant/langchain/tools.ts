@@ -10,11 +10,11 @@ import { z } from "zod";
 // ---------------------------------------------------------------------------
 export const webSearchTool = tool(
   async ({ query, maxResults }) => {
-    // Example using Tavily (recommended — uncomment and install @langchain/community)
+    // Example using Tavily (recommended: uncomment and install @langchain/community)
     // const tavily = new TavilySearchResults({ maxResults, apiKey: process.env.TAVILY_API_KEY });
     // return JSON.stringify(await tavily.invoke(query));
 
-    // Placeholder — replace with real search API
+    // Placeholder: replace with real search API
     return JSON.stringify([
       {
         title: `Search result for: ${query}`,
@@ -52,7 +52,7 @@ export const readPageTool = tool(
         headers: { "User-Agent": "research-assistant-bot/1.0" },
       });
       const html = await res.text();
-      // Strip HTML tags — for production use cheerio or @mozilla/readability
+      // Strip HTML tags; for production use cheerio or @mozilla/readability
       const text = html
         .replace(/<script[\s\S]*?<\/script>/gi, "")
         .replace(/<style[\s\S]*?<\/style>/gi, "")
