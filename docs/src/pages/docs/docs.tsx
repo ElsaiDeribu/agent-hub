@@ -10,7 +10,7 @@ export default function DocsLayout() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center justify-end gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <header className="flex h-16 shrink-0 items-center sticky top-0 z-10 bg-background justify-end gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-1 pr-3">
             <Button
               variant="ghost"
@@ -30,7 +30,9 @@ export default function DocsLayout() {
             <ThemeToggleIcon />
           </div>
         </header>
-        <Outlet />
+        <main className="flex justify-center items-center">
+          <Outlet />
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );

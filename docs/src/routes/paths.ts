@@ -15,6 +15,8 @@ export const paths = {
 
   docs: {
     root: ROOTS.DOCS,
+    introduction: `${ROOTS.DOCS}/introduction`,
+    installation: `${ROOTS.DOCS}/installation`,
     agents: {
       detail: (name: string) => `${ROOTS.DOCS}/agents/${name}`,
     },

@@ -45,14 +45,18 @@ const data = {
   ],
   navMain: [
     {
-      title: "Documentation",
-      url: paths.docs.root,
+      title: "Get Started",
+      url: paths.docs.introduction,
       icon: BookOpen,
       isActive: true,
       items: [
         {
-          title: "Get started",
-          url: paths.docs.root,
+          title: "Introduction",
+          url: paths.docs.introduction,
+        },
+        {
+          title: "Installation",
+          url: paths.docs.installation,
         },
       ],
     },

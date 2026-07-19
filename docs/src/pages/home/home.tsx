@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { CATEGORIES, REGISTRY_ITEMS } from '@/data/registry';
-import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 import { AgentCard } from '@/sections/docs/agents/agent-card';
+import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 import { Zap, Search, Github, LayoutGrid, ArrowRight } from 'lucide-react';
-import { InstallCommand } from '@/sections/docs/agents/install-command';
+import { CliCommand, buildHarnessCommands } from '@/sections/docs/agents/install-command';
 
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -77,7 +77,7 @@ export default function HomePage() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <InstallCommand agentName="customer-support" showPackageManagers={false} />
+            <CliCommand commands={buildHarnessCommands('add customer-support')} showPackageManagers={false} />
             <Button asChild>
               <a
                 href="https://github.com/ElsaiDeribu/agent-hub"
