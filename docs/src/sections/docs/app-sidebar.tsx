@@ -2,18 +2,8 @@ import * as React from 'react';
 import { paths } from '@/routes/paths';
 import { REGISTRY_ITEMS } from '@/data/registry';
 import { NavMain } from '@/sections/docs/nav-main';
-import {
-  Sidebar,
-  SidebarRail,
-  SidebarContent,
-} from '@/components/ui/sidebar';
-import {
-  Bot,
-  Command,
-  BookOpen,
-  AudioWaveform,
-  GalleryVerticalEnd,
-} from 'lucide-react';
+import { Sidebar, SidebarRail, SidebarContent } from '@/components/ui/sidebar';
+import { Bot, Command, BookOpen, AudioWaveform, GalleryVerticalEnd } from 'lucide-react';
 
 const data = {
   user: {
@@ -40,17 +30,17 @@ const data = {
   ],
   navMain: [
     {
-      title: "Get Started",
+      title: 'Get Started',
       url: paths.docs.introduction,
       icon: BookOpen,
       isActive: true,
       items: [
         {
-          title: "Introduction",
+          title: 'Introduction',
           url: paths.docs.introduction,
         },
         {
-          title: "Installation",
+          title: 'Installation',
           url: paths.docs.installation,
         },
       ],

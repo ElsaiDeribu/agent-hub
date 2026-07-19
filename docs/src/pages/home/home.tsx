@@ -11,7 +11,6 @@ import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 import { Zap, Search, LayoutGrid, ArrowRight } from 'lucide-react';
 import { CliCommand, buildHarnessCommands } from '@/sections/docs/agents/install-command';
 
-
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [search, setSearch] = useState('');
@@ -48,7 +47,6 @@ export default function HomePage() {
               >
                 <GitHub className="size-4 fill-current" />
                 GitHub
-
               </a>
             </Button>
             <Button variant="ghost" size="sm" asChild>
@@ -75,12 +73,15 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-4 max-w-2xl mx-auto text-muted-foreground text-lg sm:text-xl leading-relaxed">
-            Browse production-ready agent templates, preview them live, and add them to your
-            project with one command, like shadcn, but for AI agents.
+            Browse production-ready agent templates, preview them live, and add them to your project
+            with one command, like shadcn, but for AI agents.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <CliCommand commands={buildHarnessCommands('add customer-support')} showPackageManagers={false} />
+            <CliCommand
+              commands={buildHarnessCommands('add customer-support')}
+              showPackageManagers={false}
+            />
             <Button asChild>
               <a
                 href="https://github.com/ElsaiDeribu/agent-hub"
@@ -90,7 +91,6 @@ export default function HomePage() {
               >
                 <GitHub className="size-5 fill-current" />
                 View on GitHub
-
               </a>
             </Button>
           </div>

@@ -9,7 +9,12 @@ import { ChatPreview } from '@/sections/docs/agents/chat-preview';
 import { Tabs, TabsList, TabsContent, TabsTrigger } from '@/components/ui/tabs';
 import { REGISTRY_ITEMS, CATEGORY_COLORS, FRAMEWORK_COLORS } from '@/data/registry';
 import { CliCommand, buildHarnessCommands } from '@/sections/docs/agents/install-command';
-import { DropdownMenu, DropdownMenuItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function DocsAgentDetailPage() {
   const { name } = useParams<{ name: string }>();
@@ -23,7 +28,7 @@ export default function DocsAgentDetailPage() {
   const currentFiles = agent.frameworkFiles[activeFramework] ?? [];
 
   return (
-    <div className='max-w-4xl'>
+    <div className="max-w-4xl">
       {/* ── Agent meta ───────────────────────────────────────────────────── */}
       <div>
         <div className="px-6 py-5">
@@ -45,7 +50,6 @@ export default function DocsAgentDetailPage() {
                 {agent.description}
               </p>
             </div>
-
           </div>
         </div>
       </div>
@@ -65,7 +69,12 @@ export default function DocsAgentDetailPage() {
               </TabsList>
 
               <DropdownMenu>
-                <DropdownMenuTrigger className={cn('inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs font-medium transition-all', FRAMEWORK_COLORS[activeFramework] ?? FRAMEWORK_COLORS.generic)}>
+                <DropdownMenuTrigger
+                  className={cn(
+                    'inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs font-medium transition-all',
+                    FRAMEWORK_COLORS[activeFramework] ?? FRAMEWORK_COLORS.generic
+                  )}
+                >
                   {activeFramework}
                   <ChevronDownIcon className="size-3" />
                 </DropdownMenuTrigger>
@@ -83,7 +92,11 @@ export default function DocsAgentDetailPage() {
               </DropdownMenu>
             </div>
 
-            <CliCommand commands={buildHarnessCommands(`add ${agent.name}${activeFramework ? ` --framework ${activeFramework}` : ''}`)} />
+            <CliCommand
+              commands={buildHarnessCommands(
+                `add ${agent.name}${activeFramework ? ` --framework ${activeFramework}` : ''}`
+              )}
+            />
           </div>
 
           <TabsContent value="preview" className="flex-1 mt-0">

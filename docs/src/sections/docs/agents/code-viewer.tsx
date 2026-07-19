@@ -100,7 +100,7 @@ function TreeNodeItem({
         onClick={() => onSelect(node.file!.target)}
         className={cn(
           'flex w-full items-center gap-1.5 py-[3px] pr-2 text-xs font-mono transition-colors',
-          isActive ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground',
+          isActive ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground'
         )}
         style={{ paddingLeft: `${(depth + 1) * 12}px` }}
       >
@@ -117,11 +117,7 @@ function TreeNodeItem({
         className="flex w-full items-center gap-1.5 py-[3px] pr-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
         style={{ paddingLeft: `${depth * 12 + 4}px` }}
       >
-        {open ? (
-          <FolderOpen className="size-3 shrink-0" />
-        ) : (
-          <Folder className="size-3 shrink-0" />
-        )}
+        {open ? <FolderOpen className="size-3 shrink-0" /> : <Folder className="size-3 shrink-0" />}
         {node.name}
       </button>
       {open &&
@@ -166,7 +162,8 @@ export function CodeViewer({ files, framework, className }: CodeViewerProps) {
               ? await res.text()
               : `// This file hasn't been pushed to GitHub yet.\n// Run: git push origin main\n//\n// Expected path: ${file.path}`;
           } catch {
-            results[file.target] = `// Could not load ${file.path}\n// Push to GitHub to preview code.`;
+            results[file.target] =
+              `// Could not load ${file.path}\n// Push to GitHub to preview code.`;
           }
         })
       );
@@ -188,7 +185,7 @@ export function CodeViewer({ files, framework, className }: CodeViewerProps) {
       <div
         className={cn(
           'flex items-center justify-center h-48 text-muted-foreground text-sm',
-          className,
+          className
         )}
       >
         No files for this framework.
@@ -204,7 +201,7 @@ export function CodeViewer({ files, framework, className }: CodeViewerProps) {
     <div
       className={cn(
         'flex rounded-xl border border-border bg-background overflow-hidden',
-        className,
+        className
       )}
     >
       {/* Left sidebar: file tree */}
@@ -255,7 +252,7 @@ export function CodeViewer({ files, framework, className }: CodeViewerProps) {
                 <CodeBlockFilename>{filename}</CodeBlockFilename>
               </CodeBlockTitle>
               <CodeBlockActions>
-                <CodeBlockCopyButton/>
+                <CodeBlockCopyButton />
               </CodeBlockActions>
             </CodeBlockHeader>
           </CodeBlock>

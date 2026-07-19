@@ -1,8 +1,6 @@
 import { paths } from '@/routes/paths';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-} from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CliCommand, buildHarnessCommands } from '@/sections/docs/agents/install-command';
@@ -20,7 +18,6 @@ import {
 const ENV_EXAMPLE = `OPENAI_API_KEY=sk-...
 # or use Anthropic:
 ANTHROPIC_API_KEY=sk-ant-...`;
-
 
 interface Step {
   stepNumber: number;
@@ -42,7 +39,7 @@ const steps: Step[] = [
           page or list available agents from the CLI:
         </p>
 
-          <CliCommand commands={buildHarnessCommands('list')} className="w-full" />
+        <CliCommand commands={buildHarnessCommands('list')} className="w-full" />
       </div>
     ),
   },
@@ -56,12 +53,15 @@ const steps: Step[] = [
           your chosen agent and framework:
         </p>
 
-        <CliCommand commands={buildHarnessCommands('add customer-support --framework langchain')} className="w-full" />
+        <CliCommand
+          commands={buildHarnessCommands('add customer-support --framework langchain')}
+          className="w-full"
+        />
 
         <p className="text-muted-foreground text-sm leading-relaxed">
           The agent source files are copied into{' '}
-          <code className="bg-muted px-1 py-0.5 rounded text-xs">./customer-support/</code> and
-          the required install commands are printed.
+          <code className="bg-muted px-1 py-0.5 rounded text-xs">./customer-support/</code> and the
+          required install commands are printed.
         </p>
       </div>
     ),
@@ -72,8 +72,9 @@ const steps: Step[] = [
     content: (
       <div className="space-y-4">
         <p className="text-muted-foreground text-sm leading-relaxed">
-          Add the required API keys to a <code className="bg-muted px-1 py-0.5 rounded text-xs">.env</code> file
-          in your project root. The exact keys are printed after scaffolding and listed on each agent&apos;s page.
+          Add the required API keys to a{' '}
+          <code className="bg-muted px-1 py-0.5 rounded text-xs">.env</code> file in your project
+          root. The exact keys are printed after scaffolding and listed on each agent&apos;s page.
         </p>
 
         <CodeBlock code={ENV_EXAMPLE} language="bash">
@@ -89,8 +90,8 @@ const steps: Step[] = [
 
         <div className="rounded-lg border bg-amber-500/5 border-amber-500/20 p-3">
           <p className="text-xs text-amber-700 dark:text-amber-400">
-            Never commit <code className="bg-muted px-1 py-0.5 rounded">.env</code> to version control. Add it to{' '}
-            <code className="bg-muted px-1 py-0.5 rounded">.gitignore</code>.
+            Never commit <code className="bg-muted px-1 py-0.5 rounded">.env</code> to version
+            control. Add it to <code className="bg-muted px-1 py-0.5 rounded">.gitignore</code>.
           </p>
         </div>
       </div>
@@ -147,8 +148,8 @@ export default function DocsInstallationPage() {
         <div>
           <p className="font-medium mb-1">All set!</p>
           <p className="text-sm text-muted-foreground">
-            Your agent is scaffolded and ready. Browse the registry to discover more agents you
-            can add to your project.
+            Your agent is scaffolded and ready. Browse the registry to discover more agents you can
+            add to your project.
           </p>
         </div>
         <Button asChild size="sm" className="shrink-0">

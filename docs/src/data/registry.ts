@@ -78,9 +78,7 @@ export const REGISTRY_ITEMS: RegistryItem[] = [
         { path: 'registry/research-assistant/langchain/agent.ts', target: 'agent.ts' },
         { path: 'registry/research-assistant/langchain/tools.ts', target: 'tools.ts' },
       ],
-      'vercel-ai': [
-        { path: 'registry/research-assistant/vercel-ai/agent.ts', target: 'agent.ts' },
-      ],
+      'vercel-ai': [{ path: 'registry/research-assistant/vercel-ai/agent.ts', target: 'agent.ts' }],
     },
     dependencies: {
       langchain: [

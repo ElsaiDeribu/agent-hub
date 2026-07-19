@@ -8,7 +8,12 @@ import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 
 export function DocsHeader({ className }: { className?: string }) {
   return (
-    <header className={cn("sticky px-5 top-0 z-30 flex w-full shrink-0 items-center justify-between gap-2 border-b bg-background", className)}>
+    <header
+      className={cn(
+        'sticky px-5 top-0 z-30 flex w-full shrink-0 items-center justify-between gap-2 border-b bg-background',
+        className
+      )}
+    >
       <NavLink to={paths.home} className="flex flex-row items-center gap-3">
         <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
           <GalleryVerticalEnd className="size-4" />

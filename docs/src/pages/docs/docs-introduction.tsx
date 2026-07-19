@@ -2,12 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { REGISTRY_ITEMS } from '@/data/registry';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Bot,
-  Zap,
-  Globe,
-  Layers,
-} from 'lucide-react';
+import { Bot, Zap, Globe, Layers } from 'lucide-react';
 
 const features = [
   {
@@ -83,7 +78,7 @@ export default function DocsIntroductionPage() {
       {/* Supported frameworks */}
       <section className="mb-10">
         <h2 className="text-2xl font-semibold mb-4">Supported Frameworks</h2>
-        
+
         <div className="flex flex-wrap gap-3">
           {[
             {
@@ -117,7 +112,6 @@ export default function DocsIntroductionPage() {
       </section>
 
       <Separator className="mb-8" />
-
     </div>
   );
 }

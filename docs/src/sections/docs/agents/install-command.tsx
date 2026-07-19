@@ -59,9 +59,7 @@ export function CliCommand({
 
   const code = commands[manager] ?? commands.npm ?? Object.values(commands)[0] ?? '';
 
-  const installCode = packages?.length
-    ? INSTALL_BUILDERS[manager]?.(packages) ?? null
-    : null;
+  const installCode = packages?.length ? (INSTALL_BUILDERS[manager]?.(packages) ?? null) : null;
 
   const pmTabs = (
     <div className="flex items-center gap-0.5">

@@ -44,9 +44,7 @@ export function AgentCard({ agent, className }: AgentCardProps) {
           >
             <Icon className="size-5" />
           </div>
-          <Badge className={cn('text-xs border', categoryColor)}>
-            {agent.category}
-          </Badge>
+          <Badge className={cn('text-xs border', categoryColor)}>{agent.category}</Badge>
         </div>
 
         <div className="mt-3 space-y-1">

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 
-function Google({ ...props }: React.SVGProps<SVGSVGElement> ) {
+function Google({ ...props }: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

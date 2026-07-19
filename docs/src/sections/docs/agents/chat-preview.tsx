@@ -16,7 +16,7 @@ function getInitialMessage(agentName: string): string {
     'research-assistant':
       "Hi! I'm your research assistant 🔎\nGive me a topic and I'll search the web and synthesize findings for you. What would you like to research?",
   };
-  return map[agentName] ?? "Hello! How can I help you today?";
+  return map[agentName] ?? 'Hello! How can I help you today?';
 }
 
 function getMockResponse(agentName: string, message: string): string {
@@ -29,7 +29,12 @@ function getMockResponse(agentName: string, message: string): string {
     if (msg.includes('refund') || msg.includes('return')) {
       return "I can help you with a refund. To get started, I'll need:\n1. Your **order number**\n2. The **reason** for the refund (damaged, wrong item, etc.)\n\nOnce you provide those, I can initiate the refund process right away.";
     }
-    if (msg.includes('login') || msg.includes('account') || msg.includes('password') || msg.includes("can't log")) {
+    if (
+      msg.includes('login') ||
+      msg.includes('account') ||
+      msg.includes('password') ||
+      msg.includes("can't log")
+    ) {
       return "I'll help you regain access to your account. \n\nCould you provide the **email address** associated with your account? I'll look up the account and send you a secure reset link.";
     }
     if (msg.includes('damaged') || msg.includes('broken') || msg.includes('defective')) {
@@ -39,7 +44,14 @@ function getMockResponse(agentName: string, message: string): string {
   }
 
   if (agentName === 'code-reviewer') {
-    const hasCode = msg.includes('```') || msg.includes('function') || msg.includes('const ') || msg.includes('let ') || msg.includes('for ') || msg.includes('select ') || msg.includes('eval(');
+    const hasCode =
+      msg.includes('```') ||
+      msg.includes('function') ||
+      msg.includes('const ') ||
+      msg.includes('let ') ||
+      msg.includes('for ') ||
+      msg.includes('select ') ||
+      msg.includes('eval(');
     if (hasCode || msg.length > 30) {
       return '**Code Review** 🔍\n\n**Overall:** Minor issues found\n\n**Issues:**\n1. 🔴 **Security:** Potential injection vulnerability\n   `eval(userInput)` is dangerous; never execute user-supplied strings\n   *Fix:* Use a safe alternative or validate/sanitize the input strictly\n\n2. 🟡 **Bug:** Off-by-one error risk\n   `i <= arr.length` should be `i < arr.length` (array is 0-indexed)\n   *Fix:* Change `<=` to `<`\n\n**Positives:**\n✅ Code is readable and well-structured\n✅ Logic flow is clear\n\n*This is a simulated review. Connect the backend to run real analysis.*';
     }
@@ -50,7 +62,7 @@ function getMockResponse(agentName: string, message: string): string {
     return `**Research: ${message}** 🔎\n\n**Summary:** This is an active area of development with significant momentum in 2024-2025.\n\n**Key Findings:**\n- Multiple competing frameworks have emerged, each with distinct trade-offs\n- TypeScript-native approaches are gaining traction for type safety\n- Streaming and multi-step agent patterns are now standard\n\n**Notable Frameworks Comparison:**\n| Framework | Strength | Best For |\n|-----------|----------|----------|\n| LangChain.js | Ecosystem | General purpose |\n| Mastra | TypeScript DX | TS-first projects |\n| Vercel AI SDK | Streaming | Next.js apps |\n\n**Further Reading:**\n- [LangChain docs](https://js.langchain.com)\n- [Mastra docs](https://mastra.ai)\n- [Vercel AI SDK](https://sdk.vercel.ai)\n\n*Simulated response. Connect a real search backend for live results.*`;
   }
 
-  return "This is a simulated response. Connect a backend API (Phase 3) to run live agent responses with real tool calls.";
+  return 'This is a simulated response. Connect a backend API (Phase 3) to run live agent responses with real tool calls.';
 }
 
 // ---------------------------------------------------------------------------
@@ -70,11 +82,23 @@ function MarkdownText({ content }: { content: string }) {
           );
         }
         if (line.startsWith('**') && line.endsWith('**') && line.length > 4) {
-          return <p key={i} className="font-semibold" dangerouslySetInnerHTML={{ __html: renderInline(line) }} />;
+          return (
+            <p
+              key={i}
+              className="font-semibold"
+              dangerouslySetInnerHTML={{ __html: renderInline(line) }}
+            />
+          );
         }
         if (line.startsWith('#')) {
           const text = line.replace(/^#+\s/, '');
-          return <p key={i} className="font-semibold" dangerouslySetInnerHTML={{ __html: renderInline(text) }} />;
+          return (
+            <p
+              key={i}
+              className="font-semibold"
+              dangerouslySetInnerHTML={{ __html: renderInline(text) }}
+            />
+          );
         }
         if (line.startsWith('|') && line.endsWith('|')) {
           return null;
@@ -91,7 +115,10 @@ function renderInline(text: string): string {
   return text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/`(.+?)`/g, '<code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">$1</code>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener" class="text-primary underline-offset-2 hover:underline">$1</a>');
+    .replace(
+      /\[(.+?)\]\((.+?)\)/g,
+      '<a href="$2" target="_blank" rel="noopener" class="text-primary underline-offset-2 hover:underline">$1</a>'
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -155,7 +182,8 @@ export function ChatPreview({ agentName, starterMessages, className }: ChatPrevi
       <div className="flex items-center gap-2 border-b bg-amber-500/5 px-4 py-2 text-xs text-amber-600 dark:text-amber-400">
         <Zap className="size-3 shrink-0" />
         <span>
-          Live preview: responses are <strong>simulated</strong>. Connect a backend to run real agent calls.
+          Live preview: responses are <strong>simulated</strong>. Connect a backend to run real
+          agent calls.
         </span>
       </div>
 
@@ -164,10 +192,7 @@ export function ChatPreview({ agentName, starterMessages, className }: ChatPrevi
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={cn(
-              'flex gap-3',
-              msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-            )}
+            className={cn('flex gap-3', msg.role === 'user' ? 'flex-row-reverse' : 'flex-row')}
           >
             {/* Avatar */}
             <div
@@ -247,12 +272,7 @@ export function ChatPreview({ agentName, starterMessages, className }: ChatPrevi
           disabled={isTyping}
           className="flex-1 border-0 bg-muted/50 focus-visible:ring-0 focus-visible:ring-offset-0"
         />
-        <Button
-          type="submit"
-          size="icon"
-          disabled={!input.trim() || isTyping}
-          className="shrink-0"
-        >
+        <Button type="submit" size="icon" disabled={!input.trim() || isTyping} className="shrink-0">
           <Send className="size-4" />
         </Button>
       </form>
