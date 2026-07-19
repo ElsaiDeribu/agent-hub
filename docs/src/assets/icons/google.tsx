@@ -1,8 +1,6 @@
 import { memo } from 'react';
 
-interface GoogleIconProps extends React.SVGProps<SVGSVGElement> {}
-
-function GoogleIcon({ ...props }: GoogleIconProps) {
+function Google({ ...props }: React.SVGProps<SVGSVGElement> ) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -20,4 +18,4 @@ function GoogleIcon({ ...props }: GoogleIconProps) {
   );
 }
 
-export default memo(GoogleIcon);
+export default memo(Google);

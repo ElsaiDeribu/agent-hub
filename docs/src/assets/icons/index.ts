@@ -1,2 +1,4 @@
-export { default as AppleIcon } from './apple-icon';
-export { default as GoogleIcon } from './google-icon';
+export { default as Apple } from './apple';
+export { default as GitHub } from './github';
+export { default as Google } from './google';
+export { default as LangChain } from './langchain';

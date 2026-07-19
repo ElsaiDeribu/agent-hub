@@ -1,8 +1,6 @@
 import { memo } from 'react';
 
-interface AppleIconProps extends React.SVGProps<SVGSVGElement> {}
-
-function AppleIcon({ ...props }: AppleIconProps) {
+function Apple({ ...props }: React.SVGProps<SVGSVGElement> ) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -20,4 +18,4 @@ function AppleIcon({ ...props }: AppleIconProps) {
   );
 }
 
-export default memo(AppleIcon);
+export default memo(Apple);

@@ -1,9 +1,10 @@
-import { Github } from 'lucide-react';
+import { GitHub } from '@/assets/icons';
 import { Outlet } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { AppSidebar } from '@/sections/docs/app-sidebar';
 import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+
 
 export default function DocsLayout() {
   return (
@@ -23,7 +24,8 @@ export default function DocsLayout() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Github className="size-4" />
+                <GitHub className="size-5 fill-current" />
+
                 <span className="hidden sm:inline text-xs">GitHub</span>
               </a>
             </Button>

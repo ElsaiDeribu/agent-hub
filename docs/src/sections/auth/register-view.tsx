@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { paths } from '@/routes/paths';
+import { Google } from '@/assets/icons';
 import { useForm } from 'react-hook-form';
 import { useAuthContext } from '@/auth/hooks';
 import { Input } from '@/components/ui/input';
@@ -10,7 +11,6 @@ import { useBoolean } from '@/hooks/use-boolean';
 import { RouterLink } from '@/routes/components';
 import { ThemeToggle } from '@/theme/components';
 import { PATH_AFTER_LOGIN } from '@/config-global';
-import GoogleIcon from '@/assets/icons/google-icon';
 import { zodResolver } from '@hookform/resolvers/zod';
 import LoadingButton from '@/components/ui/loading-button';
 import { useRouter, useSearchParams } from '@/routes/hooks';
@@ -165,7 +165,7 @@ export default function RegisterView({ className, ...props }: React.ComponentPro
 
           <div className="flex flex-col gap-4">
             <Button variant="outline" className="w-full">
-              <GoogleIcon />
+              <Google />
               Sign up with Google
             </Button>
           </div>

@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 import { Link } from 'react-router-dom';
+import { GitHub } from '@/assets/icons';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { CATEGORIES, REGISTRY_ITEMS } from '@/data/registry';
 import { AgentCard } from '@/sections/docs/agents/agent-card';
 import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
-import { Zap, Search, Github, LayoutGrid, ArrowRight } from 'lucide-react';
+import { Zap, Search, LayoutGrid, ArrowRight } from 'lucide-react';
 import { CliCommand, buildHarnessCommands } from '@/sections/docs/agents/install-command';
+
 
 export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -44,8 +46,9 @@ export default function HomePage() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5"
               >
-                <Github className="size-3.5" />
+                <GitHub className="size-4 fill-current" />
                 GitHub
+
               </a>
             </Button>
             <Button variant="ghost" size="sm" asChild>
@@ -85,8 +88,9 @@ export default function HomePage() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5"
               >
-                <Github className="size-4" />
+                <GitHub className="size-5 fill-current" />
                 View on GitHub
+
               </a>
             </Button>
           </div>

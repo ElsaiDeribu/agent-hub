@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { paths } from '@/routes/paths';
+import { Google } from '@/assets/icons';
 import { useForm } from 'react-hook-form';
-import { GoogleIcon } from '@/assets/icons';
 import { useAuthContext } from '@/auth/hooks';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -116,7 +116,7 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
           </div>
           <div className="flex flex-col gap-4">
             <Button variant="outline" className="w-full">
-              <GoogleIcon />
+              <Google />
               Login with Google
             </Button>
           </div>
