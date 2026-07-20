@@ -9,6 +9,7 @@ const ROOTS = {
 
 export const paths = {
   home: '/',
+  agents: '/agents',
   page403: '/403',
   page404: '/404',
   page500: '/500',

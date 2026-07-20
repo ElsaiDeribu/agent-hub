@@ -8,6 +8,7 @@ import { mainRoutes } from './main';
 import { docsRoutes } from './docs';
 
 const HomePage = lazy(() => import('@/pages/home/home'));
+const AgentsPage = lazy(() => import('@/pages/agents/agents'));
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +27,16 @@ export default function Router() {
       element: (
         <Suspense fallback={<LoadingScreen />}>
           <HomePage />
+        </Suspense>
+      ),
+    },
+
+    // Agents
+    {
+      path: '/agents',
+      element: (
+        <Suspense fallback={<LoadingScreen />}>
+          <AgentsPage />
         </Suspense>
       ),
     },
