@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { paths } from '@/routes/paths';
 import { Link } from 'react-router-dom';
 import { GitHub } from '@/assets/icons';
@@ -9,19 +8,6 @@ import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 import { CliCommand, buildHarnessCommands } from '@/sections/docs/agents/install-command';
 
 export default function HomePage() {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [search, setSearch] = useState('');
-
-  const filtered = REGISTRY_ITEMS.filter((item) => {
-    const matchCategory = activeCategory === 'all' || item.category === activeCategory;
-    const matchSearch =
-      search.trim() === '' ||
-      item.title.toLowerCase().includes(search.toLowerCase()) ||
-      item.description.toLowerCase().includes(search.toLowerCase()) ||
-      item.tags.some((t) => t.includes(search.toLowerCase()));
-    return matchCategory && matchSearch;
-  });
-
   return (
     <div className="min-h-screen bg-background thin-scrollbar">
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
