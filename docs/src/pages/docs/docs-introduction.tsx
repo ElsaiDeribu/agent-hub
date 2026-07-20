@@ -1,8 +1,8 @@
 import { Badge } from '@/components/ui/badge';
 import { REGISTRY_ITEMS } from '@/data/registry';
 import { Separator } from '@/components/ui/separator';
-import { Card, CardContent } from '@/components/ui/card';
 import { Bot, Zap, Globe, Layers } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 const features = [
   {

@@ -26,7 +26,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background thin-scrollbar">
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
@@ -39,6 +39,9 @@ export default function HomePage() {
 
           <nav className="flex items-center gap-1">
             <Button variant="ghost" size="sm" asChild>
+              <Link to={paths.docs.root}>Docs</Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
               <a
                 href="https://github.com/ElsaiDeribu/agent-hub"
                 target="_blank"
@@ -49,9 +52,7 @@ export default function HomePage() {
                 GitHub
               </a>
             </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link to={paths.docs.root}>Docs</Link>
-            </Button>
+
             <ThemeToggleIcon />
           </nav>
         </div>
@@ -74,7 +75,7 @@ export default function HomePage() {
 
           <p className="mt-4 max-w-2xl mx-auto text-muted-foreground text-lg sm:text-xl leading-relaxed">
             Browse production-ready agent templates, preview them live, and add them to your project
-            with one command, like shadcn, but for AI agents.
+            with one command.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

@@ -74,6 +74,10 @@
   --color-sidebar-border: var(--sidebar-border);
 
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-scrollbar-thumb: var(--scrollbar-thumb);
+
+  --color-scrollbar-thumb-hover: var(--scrollbar-thumb-hover);
 }
 
 :root {
@@ -141,6 +145,10 @@
   --sidebar-border: oklch(0.922 0 0);
 
   --sidebar-ring: oklch(0.708 0 0);
+
+  --scrollbar-thumb: oklch(0.7 0 0);
+
+  --scrollbar-thumb-hover: oklch(0.6 0 0);
 }
 
 .dark {
@@ -206,6 +214,10 @@
   --sidebar-border: oklch(1 0 0 / 10%);
 
   --sidebar-ring: oklch(0.556 0 0);
+
+  --scrollbar-thumb: oklch(0.35 0 0);
+
+  --scrollbar-thumb-hover: oklch(0.5 0 0);
 }
 
 @layer base {
@@ -215,4 +227,40 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Scrollbar styling */
+  
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+  
+  /* Thin scrollbar with transparent track for specific components */
+  .thin-scrollbar,
+  .thin-scrollbar * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+  
+  .thin-scrollbar::-webkit-scrollbar,
+  .thin-scrollbar *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .thin-scrollbar::-webkit-scrollbar-track,
+  .thin-scrollbar *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .thin-scrollbar::-webkit-scrollbar-thumb,
+  .thin-scrollbar *::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 9999px;
+  }
+  
+  .thin-scrollbar::-webkit-scrollbar-thumb:hover,
+  .thin-scrollbar *::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+
 }
