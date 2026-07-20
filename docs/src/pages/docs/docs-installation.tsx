@@ -33,7 +33,7 @@ const steps: Step[] = [
       <div className="space-y-4">
         <p className="text-muted-foreground text-sm leading-relaxed">
           Browse the{' '}
-          <Link to={paths.docs.root} className="text-primary underline-offset-4 hover:underline">
+          <Link to={paths.agents} className="text-primary underline-offset-4 hover:underline">
             Agents
           </Link>{' '}
           page or list available agents from the CLI:
