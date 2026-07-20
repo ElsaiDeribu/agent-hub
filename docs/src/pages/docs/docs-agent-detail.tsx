@@ -60,10 +60,10 @@ export default function DocsAgentDetailPage() {
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
               <TabsList>
-                <TabsTrigger value="preview" className="gap-1.5">
+                <TabsTrigger value="preview" className="gap-1.5 cursor-pointer">
                   Preview
                 </TabsTrigger>
-                <TabsTrigger value="code" className="gap-1.5">
+                <TabsTrigger value="code" className="gap-1.5 cursor-pointer">
                   Code
                 </TabsTrigger>
               </TabsList>
@@ -71,7 +71,7 @@ export default function DocsAgentDetailPage() {
               <DropdownMenu>
                 <DropdownMenuTrigger
                   className={cn(
-                    'inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs font-medium transition-all',
+                    'inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs font-medium transition-all cursor-pointer',
                     FRAMEWORK_COLORS[activeFramework] ?? FRAMEWORK_COLORS.generic
                   )}
                 >
@@ -83,7 +83,10 @@ export default function DocsAgentDetailPage() {
                     <DropdownMenuItem
                       key={fw}
                       onClick={() => setFramework(fw)}
-                      className={cn('text-xs', fw === activeFramework && 'font-medium')}
+                      className={cn(
+                        'text-xs cursor-pointer',
+                        fw === activeFramework && 'font-medium'
+                      )}
                     >
                       {fw}
                     </DropdownMenuItem>

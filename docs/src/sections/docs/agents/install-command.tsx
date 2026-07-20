@@ -69,7 +69,7 @@ export function CliCommand({
           type="button"
           onClick={() => setManager(pm)}
           className={cn(
-            'rounded-md px-2 py-1 font-mono text-xs transition-colors',
+            'rounded-md px-2 py-1 font-mono text-xs transition-colors cursor-pointer',
             manager === pm
               ? 'bg-muted text-foreground'
               : 'text-muted-foreground hover:text-foreground'

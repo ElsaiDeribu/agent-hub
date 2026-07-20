@@ -99,7 +99,7 @@ function TreeNodeItem({
       <button
         onClick={() => onSelect(node.file!.target)}
         className={cn(
-          'flex w-full items-center gap-1.5 py-[3px] pr-2 text-xs font-mono transition-colors',
+          'flex w-full items-center gap-1.5 py-[3px] pr-2 text-xs font-mono transition-colors cursor-pointer',
           isActive ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground'
         )}
         style={{ paddingLeft: `${(depth + 1) * 12}px` }}
@@ -114,7 +114,7 @@ function TreeNodeItem({
     <div>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-1.5 py-[3px] pr-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        className="flex w-full items-center gap-1.5 py-[3px] pr-2 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         style={{ paddingLeft: `${depth * 12 + 4}px` }}
       >
         {open ? <FolderOpen className="size-3 shrink-0" /> : <Folder className="size-3 shrink-0" />}

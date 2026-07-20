@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { createHighlighter } from 'shiki';
 import { Button } from '@/components/ui/button';
 import { CopyIcon, CheckIcon } from 'lucide-react';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import {
   Select,
   SelectItem,
@@ -469,15 +470,25 @@ export const CodeBlockCopyButton = ({
   const Icon = isCopied ? CheckIcon : CopyIcon;
 
   return (
-    <Button
-      className={cn('shrink-0', className)}
-      onClick={copyToClipboard}
-      size="icon"
-      variant="ghost"
-      {...props}
-    >
-      {children ?? <Icon size={14} />}
-    </Button>
+    <Tooltip delayDuration={1000}>
+      <TooltipTrigger asChild>
+        <Button
+          className={cn('shrink-0 cursor-pointer', className)}
+          onClick={copyToClipboard}
+          size="icon"
+          variant="ghost"
+          {...props}
+        >
+          {children ?? <Icon size={14} />}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent
+        className="border bg-popover text-popover-foreground shadow-md"
+        sideOffset={1}
+      >
+        <p>{isCopied ? 'Copied!' : 'Copy code'}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 };
 
