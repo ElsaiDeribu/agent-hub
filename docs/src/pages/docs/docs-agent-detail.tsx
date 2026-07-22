@@ -106,6 +106,7 @@ export default function DocsAgentDetailPage() {
             <ChatPreview
               agentName={agent.name}
               starterMessages={agent.preview.starterMessages}
+              sandboxPreview={agent.sandboxPreview !== false}
               className="h-full"
             />
           </TabsContent>

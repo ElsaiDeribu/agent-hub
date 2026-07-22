@@ -27,7 +27,21 @@ def _shell_quote(value: str) -> str:
 # ---------------------------------------------------------------------------
 
 DEFAULT_IMAGE = os.environ.get("MSB_IMAGE", "node")
-REGISTRY_DIR = Path(__file__).parent / "registry"
+# Canonical registry lives at repo-root `registry/<agent-id>/preview/`.
+# Override with REGISTRY_DIR for Docker or alternate layouts.
+_DEFAULT_REGISTRY = Path(__file__).resolve().parent.parent / "registry"
+REGISTRY_DIR = Path(os.environ.get("REGISTRY_DIR", str(_DEFAULT_REGISTRY)))
+
+
+def agent_preview_dir(agent_id: str) -> Path:
+    """Resolve sandbox-runnable files for an agent (preview/ preferred)."""
+    preview = REGISTRY_DIR / agent_id / "preview"
+    if (preview / "metadata.json").is_file():
+        return preview
+    flat = REGISTRY_DIR / agent_id
+    if (flat / "metadata.json").is_file():
+        return flat
+    return preview
 
 SESSION_IDLE_TIMEOUT_S = int(os.environ.get("SESSION_IDLE_TIMEOUT", "1800"))
 SESSION_MAX_DURATION_S = int(os.environ.get("SESSION_MAX_DURATION", "3600"))
@@ -65,7 +79,7 @@ class SessionManager:
         agent_id: str,
         env: dict[str, str] | None = None,
     ) -> Session:
-        agent_dir = REGISTRY_DIR / agent_id
+        agent_dir = agent_preview_dir(agent_id)
         meta_path = agent_dir / "metadata.json"
         if not meta_path.exists():
             raise FileNotFoundError(f"Agent '{agent_id}' not found in registry")

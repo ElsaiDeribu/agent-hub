@@ -1,6 +1,8 @@
 services:
   api:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     image: microsandbox-demo:latest
     ports:
       - "8000:8000"
@@ -13,6 +15,8 @@ services:
       - /dev/kvm:/dev/kvm
     environment:
       - MSB_IMAGE=node
+      - REGISTRY_DIR=/app/registry
+      - CORS_ORIGINS=http://localhost:8081,http://127.0.0.1:8081,http://localhost:5173,http://127.0.0.1:5173
     # Persist pulled OCI images / runtime state so cold starts stay fast.
     volumes:
       - microsandbox_data:/root/.microsandbox

@@ -1,0 +1,14 @@
+{
+  "id": "hello",
+  "name": "Hello World",
+  "description": "Minimal hello template previewed in the sandbox (no API keys required).",
+  "category": "example",
+  "tags": ["starter"],
+  "languages": ["ts"],
+  "frameworks": ["generic"],
+  "entrypoint": "_preview.ts",
+  "dependencies": [],
+  "env": [],
+  "files": ["agent.ts", "_preview.ts"],
+  "starterMessages": ["Hello!", "What can you do?"]
+}

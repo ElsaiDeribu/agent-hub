@@ -20,6 +20,7 @@ from datetime import datetime, timezone
 
 import httpx
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
@@ -28,6 +29,7 @@ from microsandbox.errors import MicrosandboxError
 
 from services import (
     REGISTRY_DIR,
+    agent_preview_dir,
     manager,
     reaper_loop,
 )
@@ -36,6 +38,22 @@ app = FastAPI(
     title="microsandbox-demo",
     version="0.2.0",
     summary="Preview AI agents inside microsandbox microVMs.",
+)
+
+_cors_origins = [
+    o.strip()
+    for o in os.environ.get(
+        "CORS_ORIGINS",
+        "http://localhost:8081,http://127.0.0.1:8081,http://localhost:5173,http://127.0.0.1:5173",
+    ).split(",")
+    if o.strip()
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ---------------------------------------------------------------------------
@@ -105,13 +123,15 @@ async def health() -> dict:
 
 @app.get("/registry")
 async def list_registry() -> list[dict]:
-    """List all agents available in the local registry."""
+    """List all agents with a sandbox-ready preview/ package."""
     agents = []
     if not REGISTRY_DIR.exists():
         return agents
     for entry in sorted(REGISTRY_DIR.iterdir()):
-        meta_path = entry / "metadata.json"
-        if entry.is_dir() and meta_path.exists():
+        if not entry.is_dir():
+            continue
+        meta_path = agent_preview_dir(entry.name) / "metadata.json"
+        if meta_path.exists():
             agents.append(json.loads(meta_path.read_text()))
     return agents
 
@@ -119,7 +139,7 @@ async def list_registry() -> list[dict]:
 @app.get("/registry/{agent_id}")
 async def get_registry_agent(agent_id: str) -> dict:
     """Get metadata for a specific registry agent."""
-    meta_path = REGISTRY_DIR / agent_id / "metadata.json"
+    meta_path = agent_preview_dir(agent_id) / "metadata.json"
     if not meta_path.exists():
         raise HTTPException(404, f"Agent '{agent_id}' not found in registry")
     return json.loads(meta_path.read_text())

@@ -1,0 +1,18 @@
+{
+  "id": "code-reviewer",
+  "name": "Code Reviewer Agent",
+  "description": "Reviews code snippets for bugs, security issues, and style improvements. Sandbox preview uses deterministic mock replies (no API keys).",
+  "category": "dev-tools",
+  "tags": ["code", "review", "structured-output", "security"],
+  "languages": ["ts"],
+  "frameworks": ["langchain", "mastra"],
+  "entrypoint": "_preview.ts",
+  "dependencies": [],
+  "env": [],
+  "files": ["agent.ts", "_preview.ts"],
+  "starterMessages": [
+    "Review this function: function add(a, b) { return a + b }",
+    "Is there a bug in: for (let i = 0; i <= arr.length; i++) {}",
+    "Check this for SQL injection: `SELECT * FROM users WHERE id = ${userId}`"
+  ]
+}

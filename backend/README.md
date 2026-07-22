@@ -14,13 +14,16 @@ Deploy a registry agent into its own isolated sandbox, start it as a
 long-running HTTP server, and proxy chat messages to it with SSE streaming.
 
 ```
-Frontend  ──POST /sessions/simple-qa──►  FastAPI
-          ◄─── { session_id: "abc123" } ────────────
+Docs UI  ──POST /sessions/customer-support──►  FastAPI
+         ◄─── { session_id: "abc123" } ────────────
 
-Frontend  ──POST /sessions/abc123/chat──────────────►  FastAPI  ──► microVM :3000
-          ◄─── SSE: data: {"type":"token","content":"The"} ◄──── Agent server
-          ◄─── SSE: data: {"type":"done"}
+Docs UI  ──POST /sessions/abc123/chat──────────────►  FastAPI  ──► microVM :3000
+         ◄─── SSE: data: {"type":"token","content":"The"} ◄──── Agent server
+         ◄─── SSE: data: {"type":"done"}
 ```
+
+Sandbox previews use **deterministic mock agents** under
+`registry/<agent-id>/preview/`. No model API keys are required.
 
 ## Endpoints
 
@@ -30,13 +33,13 @@ Frontend  ──POST /sessions/abc123/chat────────────�
 
 ### Registry
 
-- `GET /registry` — list all agents in the local registry.
+- `GET /registry` — list agents that have a sandbox-ready `preview/` package.
 - `GET /registry/{agent_id}` — get metadata for one agent.
 
 ### Sessions (agent preview)
 
-- `POST /sessions/{agent_id}` — deploy an agent from the local registry.
-  Body: `{ "env": {"OPENAI_API_KEY": "sk-..."} }` (optional).
+- `POST /sessions/{agent_id}` — deploy an agent from the registry.
+  Body: `{ "env": {} }` (optional; leave empty — previews need no API keys).
 - `GET /sessions` — list all active sessions.
 - `GET /sessions/{id}/status` — health-check a running agent.
 - `POST /sessions/{id}/chat` — send a message; returns SSE stream.
@@ -60,66 +63,70 @@ microsandbox runs **real microVMs**, so it needs hardware virtualization:
 
 ## Run with Docker (Linux + KVM host)
 
+From the **repo root**:
+
 ```bash
-docker compose up --build
+docker compose -f backend/docker-compose.yml up --build
 ```
 
 Then, from another shell:
 
 ```bash
-# ── Agent preview: start a session from the registry ──
+# List sandbox-ready agents
+curl http://localhost:8000/registry
 
-curl -X POST http://localhost:8000/sessions/simple-qa \
+# Start a session (no API keys)
+curl -X POST http://localhost:8000/sessions/customer-support \
   -H "Content-Type: application/json" \
-  -d '{"env": {"OPENAI_API_KEY": "sk-your-key-here"}}'
+  -d '{"env": {}}'
 # {"session_id":"a1b2c3d4e5f6","status":"ready"}
 
-# ── Chat with the running agent (SSE streaming) ──
-
+# Chat (SSE streaming)
 curl -N -X POST http://localhost:8000/sessions/a1b2c3d4e5f6/chat \
   -H "Content-Type: application/json" \
-  -d '{"message": "What is the capital of France?"}'
-# data: {"type":"token","content":"The"}
-# data: {"type":"token","content":" capital"}
-# ...
-# data: {"type":"done"}
+  -d '{"message": "Where is my order #12345?"}'
 
-# ── Tear down the session ──
-
+# Tear down
 curl -X DELETE http://localhost:8000/sessions/a1b2c3d4e5f6
-# {"session_id":"a1b2c3d4e5f6","status":"destroyed"}
 ```
 
 ## Run locally (no Docker)
 
 ```bash
+cd backend
 uv sync
 uv run uvicorn main:app --host 0.0.0.0 --port 8000
 ```
+
+By default the service reads agents from `../registry/<id>/preview/`.
+Override with `REGISTRY_DIR` if needed.
 
 The first session creation pulls the sandbox OCI image (`node` by default), so
 it is slower than subsequent calls. Override the default image with the
 `MSB_IMAGE` environment variable.
 
-## Registry
+## Registry layout
 
-Agents live in `registry/<agent-id>/`. Each agent has:
+Canonical catalog: repo-root `registry.json` + `registry/`.
 
-- `metadata.json` — name, description, dependencies, entrypoint, required env vars.
-- `agent.ts` — the agent logic (exports a `stream()` async generator).
-- `_preview.ts` — HTTP server harness that wraps the agent for sandbox execution.
+Each sandbox-previewable agent has:
 
-Currently included:
-
-| Agent | Description |
-|-------|-------------|
-| `simple-qa` | Minimal LangChain agent using GPT-4o-mini with streaming |
+```
+registry/<agent-id>/
+  langchain|mastra|vercel-ai/...   # install templates (CLI)
+  preview/
+    metadata.json                  # sandbox metadata
+    agent.ts                       # exports agent.stream() (mock for now)
+    _preview.ts                    # HTTP harness on :3000
+```
 
 ## Environment variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `MSB_IMAGE` | `node` | OCI image for sandboxes |
+| `REGISTRY_DIR` | `../registry` (relative to backend) | Path to root registry |
+| `CORS_ORIGINS` | docs/vite origins | Comma-separated allowed origins |
 | `HOST` | `0.0.0.0` | Bind address |
 | `PORT` | `8000` | Bind port |
 | `SESSION_IDLE_TIMEOUT` | `1800` | Seconds before idle session is reaped |

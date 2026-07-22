@@ -1,0 +1,18 @@
+{
+  "id": "research-assistant",
+  "name": "Research Assistant Agent",
+  "description": "Searches the web, reads pages, and synthesizes findings. Sandbox preview uses deterministic mock replies (no API keys).",
+  "category": "research",
+  "tags": ["web-search", "rag", "summarization", "tools"],
+  "languages": ["ts"],
+  "frameworks": ["langchain", "vercel-ai"],
+  "entrypoint": "_preview.ts",
+  "dependencies": [],
+  "env": [],
+  "files": ["agent.ts", "_preview.ts"],
+  "starterMessages": [
+    "Research the latest trends in AI agents",
+    "What are the differences between LangChain and LlamaIndex?",
+    "Summarize recent news about OpenAI"
+  ]
+}

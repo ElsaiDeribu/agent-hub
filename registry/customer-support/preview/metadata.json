@@ -1,0 +1,19 @@
+{
+  "id": "customer-support",
+  "name": "Customer Support Agent",
+  "description": "Multi-turn customer support agent with order lookup and human escalation tools. Sandbox preview uses deterministic mock replies (no API keys).",
+  "category": "support",
+  "tags": ["multi-turn", "tools", "memory", "escalation"],
+  "languages": ["ts"],
+  "frameworks": ["langchain", "mastra", "vercel-ai"],
+  "entrypoint": "_preview.ts",
+  "dependencies": [],
+  "env": [],
+  "files": ["agent.ts", "_preview.ts"],
+  "starterMessages": [
+    "I can't log in to my account",
+    "Where is my order #12345?",
+    "I need a refund for my last purchase",
+    "My product arrived damaged"
+  ]
+}

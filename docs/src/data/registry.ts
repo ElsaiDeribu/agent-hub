@@ -1,103 +1,29 @@
-import type { RegistryItem } from '@/types/registry';
+import type { RegistryCatalog, RegistryItem } from '@/types/registry';
 
-export const REGISTRY_ITEMS: RegistryItem[] = [
-  {
-    name: 'customer-support',
-    title: 'Customer Support Agent',
-    description:
-      'Multi-turn customer support agent with order lookup, account lookup, refund initiation, and human escalation tools.',
-    category: 'support',
-    tags: ['multi-turn', 'tools', 'memory', 'escalation'],
-    languages: ['ts'],
-    frameworks: ['langchain', 'mastra', 'vercel-ai'],
-    preview: {
-      starterMessages: [
-        "I can't log in to my account",
-        'Where is my order #12345?',
-        'I need a refund for my last purchase',
-        'My product arrived damaged',
-      ],
-    },
-    frameworkFiles: {
-      langchain: [
-        { path: 'registry/customer-support/langchain/agent.ts', target: 'agent.ts' },
-        { path: 'registry/customer-support/langchain/tools.ts', target: 'tools.ts' },
-      ],
-      mastra: [{ path: 'registry/customer-support/mastra/agent.ts', target: 'agent.ts' }],
-      'vercel-ai': [{ path: 'registry/customer-support/vercel-ai/agent.ts', target: 'agent.ts' }],
-    },
-    dependencies: {
-      langchain: ['@langchain/core', '@langchain/openai', 'langchain', 'zod'],
-      mastra: ['@mastra/core', '@ai-sdk/openai', 'zod'],
-      'vercel-ai': ['ai', '@ai-sdk/openai', 'zod'],
-    },
-  },
-  {
-    name: 'code-reviewer',
-    title: 'Code Reviewer Agent',
-    description:
-      'Reviews code snippets for bugs, security vulnerabilities, performance issues, and style improvements with structured output.',
-    category: 'dev-tools',
-    tags: ['code', 'review', 'structured-output', 'security'],
-    languages: ['ts'],
-    frameworks: ['langchain', 'mastra'],
-    preview: {
-      starterMessages: [
-        'Review this: for (let i = 0; i <= arr.length; i++) {}',
-        'Check for SQL injection: `SELECT * FROM users WHERE id = ${userId}`',
-        'Is this safe? eval(userInput)',
-      ],
-    },
-    frameworkFiles: {
-      langchain: [{ path: 'registry/code-reviewer/langchain/agent.ts', target: 'agent.ts' }],
-      mastra: [{ path: 'registry/code-reviewer/mastra/agent.ts', target: 'agent.ts' }],
-    },
-    dependencies: {
-      langchain: ['@langchain/core', '@langchain/openai', 'langchain', 'zod'],
-      mastra: ['@mastra/core', '@ai-sdk/openai', 'zod'],
-    },
-  },
-  {
-    name: 'research-assistant',
-    title: 'Research Assistant Agent',
-    description:
-      'Searches the web, reads pages, and synthesizes findings into structured research summaries with cited sources.',
-    category: 'research',
-    tags: ['web-search', 'rag', 'summarization', 'tools'],
-    languages: ['ts'],
-    frameworks: ['langchain', 'vercel-ai'],
-    preview: {
-      starterMessages: [
-        'Research the latest trends in AI agents',
-        'Compare LangChain vs LlamaIndex vs Mastra',
-        'Summarize recent news about OpenAI',
-      ],
-    },
-    frameworkFiles: {
-      langchain: [
-        { path: 'registry/research-assistant/langchain/agent.ts', target: 'agent.ts' },
-        { path: 'registry/research-assistant/langchain/tools.ts', target: 'tools.ts' },
-      ],
-      'vercel-ai': [{ path: 'registry/research-assistant/vercel-ai/agent.ts', target: 'agent.ts' }],
-    },
-    dependencies: {
-      langchain: [
-        '@langchain/core',
-        '@langchain/openai',
-        '@langchain/community',
-        'langchain',
-        'zod',
-      ],
-      'vercel-ai': ['ai', '@ai-sdk/openai', 'zod'],
-    },
-  },
-];
+import catalog from '@repo-registry';
+
+const registry = catalog as RegistryCatalog;
+
+export const REGISTRY_ITEMS: RegistryItem[] = registry.items.map((item) => ({
+  ...item,
+  title: item.title ?? item.name,
+  description: item.description ?? '',
+  category: item.category ?? 'example',
+  tags: item.tags ?? [],
+  languages: item.languages ?? ['ts'],
+  frameworks: item.frameworks ?? ['generic'],
+  sandboxPreview: item.sandboxPreview ?? false,
+  preview: item.preview ?? { starterMessages: [] },
+  frameworkFiles: item.frameworkFiles ?? {},
+  dependencies: item.dependencies ?? {},
+}));
 
 export const CATEGORIES = [
   { value: 'all', label: 'All Agents' },
   { value: 'support', label: 'Support' },
   { value: 'dev-tools', label: 'Dev Tools' },
   { value: 'research', label: 'Research' },
+  { value: 'example', label: 'Examples' },
 ] as const;
 
 export const FRAMEWORK_COLORS: Record<string, string> = {
@@ -122,4 +48,8 @@ export function getFileUrl(filePath: string): string {
 
 export function getGitHubUrl(agentName: string): string {
   return `https://github.com/ElsaiDeribu/agent-hub/tree/main/registry/${agentName}`;
+}
+
+export function getRegistryItem(name: string): RegistryItem | undefined {
+  return REGISTRY_ITEMS.find((item) => item.name === name);
 }

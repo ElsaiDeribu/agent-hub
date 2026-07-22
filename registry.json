@@ -10,12 +10,41 @@
       "tags": ["starter"],
       "languages": ["ts"],
       "frameworks": ["generic"],
+      "sandboxPreview": true,
       "preview": {
         "starterMessages": ["Hello!", "What can you do?"]
       },
       "frameworkFiles": {
         "generic": [
           { "path": "registry/hello/README.md", "target": "README.md" }
+        ]
+      },
+      "dependencies": {
+        "generic": []
+      }
+    },
+    {
+      "name": "simple-qa",
+      "title": "Simple Q&A Agent",
+      "description": "Demo agent that streams fake tokens from inside the sandbox (no API keys required).",
+      "category": "example",
+      "tags": ["starter", "sandbox"],
+      "languages": ["ts"],
+      "frameworks": ["generic"],
+      "sandboxPreview": true,
+      "preview": {
+        "starterMessages": [
+          "Hello!",
+          "What is the capital of France?",
+          "Is the sandbox preview working?"
+        ]
+      },
+      "frameworkFiles": {
+        "generic": [
+          {
+            "path": "registry/simple-qa/preview/agent.ts",
+            "target": "agent.ts"
+          }
         ]
       },
       "dependencies": {
@@ -30,6 +59,7 @@
       "tags": ["multi-turn", "tools", "memory", "escalation"],
       "languages": ["ts"],
       "frameworks": ["langchain", "mastra", "vercel-ai"],
+      "sandboxPreview": true,
       "preview": {
         "starterMessages": [
           "I can't log in to my account",
@@ -81,6 +111,7 @@
       "tags": ["code", "review", "structured-output", "security"],
       "languages": ["ts"],
       "frameworks": ["langchain", "mastra"],
+      "sandboxPreview": true,
       "preview": {
         "starterMessages": [
           "Review this function: function add(a, b) { return a + b }",
@@ -115,6 +146,7 @@
       "tags": ["web-search", "rag", "summarization", "tools"],
       "languages": ["ts"],
       "frameworks": ["langchain", "vercel-ai"],
+      "sandboxPreview": true,
       "preview": {
         "starterMessages": [
           "Research the latest trends in AI agents",
