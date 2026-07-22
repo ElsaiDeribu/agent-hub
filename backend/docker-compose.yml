@@ -1,0 +1,22 @@
+services:
+  api:
+    build: .
+    image: microsandbox-demo:latest
+    ports:
+      - "8000:8000"
+    # microsandbox launches hardware-isolated microVMs, which requires KVM.
+    # This works only on a Linux host that exposes /dev/kvm (bare metal or a
+    # VM with nested virtualization enabled). It will NOT work under Docker
+    # Desktop on Windows/macOS, where /dev/kvm is not available.
+    privileged: true
+    devices:
+      - /dev/kvm:/dev/kvm
+    environment:
+      - MSB_IMAGE=node
+    # Persist pulled OCI images / runtime state so cold starts stay fast.
+    volumes:
+      - microsandbox_data:/root/.microsandbox
+    restart: unless-stopped
+
+volumes:
+  microsandbox_data:
