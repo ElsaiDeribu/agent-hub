@@ -52,6 +52,41 @@
       }
     },
     {
+      "name": "langgraph-qa",
+      "title": "LangGraph Q&A Agent",
+      "description": "Live LangGraph ReAct agent that calls OpenAI from the sandbox. Enter your API key in the preview to try it.",
+      "category": "example",
+      "tags": ["starter", "langgraph", "langchain", "live"],
+      "languages": ["ts"],
+      "frameworks": ["langchain"],
+      "sandboxPreview": true,
+      "preview": {
+        "starterMessages": [
+          "Hello! What can you do?",
+          "What is LangGraph in one sentence?",
+          "What time is it right now?"
+        ],
+        "requiredEnv": ["OPENAI_API_KEY"]
+      },
+      "frameworkFiles": {
+        "langchain": [
+          {
+            "path": "registry/langgraph-qa/langchain/agent.ts",
+            "target": "agent.ts"
+          }
+        ]
+      },
+      "dependencies": {
+        "langchain": [
+          "@langchain/core",
+          "@langchain/openai",
+          "@langchain/langgraph",
+          "langchain",
+          "zod"
+        ]
+      }
+    },
+    {
       "name": "customer-support",
       "title": "Customer Support Agent",
       "description": "Multi-turn customer support agent with order lookup and human escalation tools.",
