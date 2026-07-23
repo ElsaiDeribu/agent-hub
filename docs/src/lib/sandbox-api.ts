@@ -36,7 +36,9 @@ export async function listSandboxAgents(): Promise<SandboxAgentMeta[]> {
   return res.json();
 }
 
-export async function createSession(agentId: string): Promise<{ session_id: string; status: string }> {
+export async function createSession(
+  agentId: string
+): Promise<{ session_id: string; status: string }> {
   const res = await fetch(`${apiBase()}/sessions/${encodeURIComponent(agentId)}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

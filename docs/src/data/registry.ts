@@ -1,4 +1,4 @@
-import type { RegistryCatalog, RegistryItem } from '@/types/registry';
+import type { RegistryItem, RegistryCatalog } from '@/types/registry';
 
 import catalog from '@repo-registry';
 

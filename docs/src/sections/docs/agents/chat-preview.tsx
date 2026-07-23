@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils';
-import { Zap, Send, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useRef, useState, useEffect } from 'react';
-import { createSession, deleteSession, streamChat } from '@/lib/sandbox-api';
+import { Zap, Send, AlertCircle } from 'lucide-react';
+import { streamChat, createSession, deleteSession } from '@/lib/sandbox-api';
 
 // ---------------------------------------------------------------------------
 // Markdown renderer (minimal: handles **bold**, \n, and lists)

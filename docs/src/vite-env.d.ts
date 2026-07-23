@@ -2,6 +2,7 @@
 
 declare module '@repo-registry' {
   import type { RegistryCatalog } from '@/types/registry';
+
   const catalog: RegistryCatalog;
   export default catalog;
 }
