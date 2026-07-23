@@ -1,0 +1,24 @@
+{
+  "id": "langgraph-qa",
+  "name": "LangGraph Q&A Agent",
+  "description": "Live LangGraph ReAct agent that calls OpenAI. Provide OPENAI_API_KEY when starting the preview.",
+  "category": "example",
+  "tags": ["starter", "langgraph", "langchain", "live"],
+  "languages": ["ts"],
+  "frameworks": ["langchain"],
+  "entrypoint": "_preview.ts",
+  "dependencies": [
+    "@langchain/core",
+    "@langchain/openai",
+    "@langchain/langgraph",
+    "langchain",
+    "zod"
+  ],
+  "env": ["OPENAI_API_KEY"],
+  "files": ["agent.ts", "_preview.ts"],
+  "starterMessages": [
+    "Hello! What can you do?",
+    "What is LangGraph in one sentence?",
+    "What time is it right now?"
+  ]
+}
