@@ -11,7 +11,6 @@ export type RegistryItem = {
   tags: string[];
   languages: string[];
   frameworks: string[];
-  /** When true, docs can start a sandbox preview session (no API keys). */
   sandboxPreview?: boolean;
   preview: {
     starterMessages: string[];

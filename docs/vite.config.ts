@@ -33,7 +33,7 @@ export default defineConfig({
   server: {
     port: 8081,
     fs: {
-      allow: [path.resolve(__dirname, '..')],
+      allow: [path.resolve(__dirname, '../registry.json')],
     },
   },
   preview: {
