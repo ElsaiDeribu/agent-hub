@@ -2,65 +2,10 @@ import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Markdown } from '@/components/markdown';
 import { useRef, useState, useEffect } from 'react';
 import { streamChat, createSession, deleteSession } from '@/lib/sandbox-api';
 import { Zap, Eye, Send, Play, EyeOff, Shield, KeyRound, AlertCircle } from 'lucide-react';
-
-// ---------------------------------------------------------------------------
-// Markdown renderer (minimal: handles **bold**, \n, and lists)
-// ---------------------------------------------------------------------------
-function MarkdownText({ content }: { content: string }) {
-  const lines = content.split('\n');
-  return (
-    <div className="space-y-1 text-sm leading-relaxed">
-      {lines.map((line, i) => {
-        if (line.startsWith('- ') || line.startsWith('* ')) {
-          return (
-            <div key={i} className="flex gap-2">
-              <span className="text-muted-foreground mt-0.5">•</span>
-              <span dangerouslySetInnerHTML={{ __html: renderInline(line.slice(2)) }} />
-            </div>
-          );
-        }
-        if (line.startsWith('**') && line.endsWith('**') && line.length > 4) {
-          return (
-            <p
-              key={i}
-              className="font-semibold"
-              dangerouslySetInnerHTML={{ __html: renderInline(line) }}
-            />
-          );
-        }
-        if (line.startsWith('#')) {
-          const text = line.replace(/^#+\s/, '');
-          return (
-            <p
-              key={i}
-              className="font-semibold"
-              dangerouslySetInnerHTML={{ __html: renderInline(text) }}
-            />
-          );
-        }
-        if (line.startsWith('|') && line.endsWith('|')) {
-          return null;
-        }
-        if (line.match(/^\|-+/)) return null;
-        if (line === '') return <div key={i} className="h-1" />;
-        return <p key={i} dangerouslySetInnerHTML={{ __html: renderInline(line) }} />;
-      })}
-    </div>
-  );
-}
-
-function renderInline(text: string): string {
-  return text
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/`(.+?)`/g, '<code class="rounded bg-muted px-1 py-0.5 font-mono text-xs">$1</code>')
-    .replace(
-      /\[(.+?)\]\((.+?)\)/g,
-      '<a href="$2" target="_blank" rel="noopener" class="text-primary underline-offset-2 hover:underline">$1</a>'
-    );
-}
 
 function envLabel(key: string): string {
   if (key === 'OPENAI_API_KEY') return 'OpenAI API key';
@@ -450,7 +395,7 @@ export function ChatPreview({
                 >
                   {msg.role === 'assistant' ? (
                     msg.content ? (
-                      <MarkdownText content={msg.content} />
+                      <Markdown>{msg.content}</Markdown>
                     ) : (
                       <span className="text-muted-foreground text-sm">…</span>
                     )
