@@ -16,6 +16,7 @@
   ],
   "env": ["OPENAI_API_KEY"],
   "files": ["agent.ts", "_preview.ts"],
+  "welcomeMessage": "Hi! I'm a live LangGraph agent. Ask me anything — replies come from OpenAI inside the sandbox.",
   "starterMessages": [
     "Hello! What can you do?",
     "What is LangGraph in one sentence?",

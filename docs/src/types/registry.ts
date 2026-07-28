@@ -13,6 +13,7 @@ export type RegistryItem = {
   frameworks: string[];
   sandboxPreview?: boolean;
   preview: {
+    welcomeMessage?: string;
     starterMessages: string[];
     requiredEnv?: string[];
   };

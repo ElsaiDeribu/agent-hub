@@ -14,6 +14,7 @@ export const REGISTRY_ITEMS: RegistryItem[] = registry.items.map((item) => ({
   frameworks: item.frameworks ?? ['generic'],
   sandboxPreview: item.sandboxPreview ?? false,
   preview: {
+    welcomeMessage: item.preview?.welcomeMessage,
     starterMessages: item.preview?.starterMessages ?? [],
     requiredEnv: item.preview?.requiredEnv ?? [],
   },

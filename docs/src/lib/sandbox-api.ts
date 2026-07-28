@@ -7,6 +7,7 @@ export type SandboxAgentMeta = {
   name: string;
   description?: string;
   category?: string;
+  welcomeMessage?: string;
   starterMessages?: string[];
   tags?: string[];
   frameworks?: string[];

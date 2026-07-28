@@ -10,6 +10,7 @@
   "dependencies": [],
   "env": [],
   "files": ["agent.ts", "_preview.ts"],
+  "welcomeMessage": "Hello! I'm your code reviewer.\nPaste a code snippet or describe what you'd like me to review.",
   "starterMessages": [
     "Review this function: function add(a, b) { return a + b }",
     "Is there a bug in: for (let i = 0; i <= arr.length; i++) {}",

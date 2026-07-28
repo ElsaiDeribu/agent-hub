@@ -10,5 +10,6 @@
   "dependencies": [],
   "env": [],
   "files": ["agent.ts", "_preview.ts"],
+  "welcomeMessage": "Hello! I'm the hello-world sandbox agent. Send a message to verify streaming.",
   "starterMessages": ["Hello!", "What can you do?"]
 }

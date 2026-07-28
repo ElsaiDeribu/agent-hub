@@ -10,6 +10,7 @@
   "dependencies": [],
   "env": [],
   "files": ["agent.ts", "_preview.ts"],
+  "welcomeMessage": "Hi! I'm your research assistant.\nGive me a topic and I'll synthesize findings for you.",
   "starterMessages": [
     "Research the latest trends in AI agents",
     "What are the differences between LangChain and LlamaIndex?",

@@ -12,6 +12,7 @@
       "frameworks": ["generic"],
       "sandboxPreview": true,
       "preview": {
+        "welcomeMessage": "Hello! I'm the hello-world sandbox agent. Send a message to verify streaming.",
         "starterMessages": ["Hello!", "What can you do?"]
       },
       "frameworkFiles": {
@@ -33,6 +34,7 @@
       "frameworks": ["generic"],
       "sandboxPreview": true,
       "preview": {
+        "welcomeMessage": "Hi! I'm a sandbox demo agent. Ask me something — replies are generated locally (no API keys).",
         "starterMessages": [
           "Hello!",
           "What is the capital of France?",
@@ -61,6 +63,7 @@
       "frameworks": ["langchain"],
       "sandboxPreview": true,
       "preview": {
+        "welcomeMessage": "Hi! I'm a live LangGraph agent. Ask me anything — replies come from OpenAI inside the sandbox.",
         "starterMessages": [
           "Hello! What can you do?",
           "What is LangGraph in one sentence?",
@@ -96,6 +99,7 @@
       "frameworks": ["langchain", "mastra", "vercel-ai"],
       "sandboxPreview": true,
       "preview": {
+        "welcomeMessage": "Hi! I'm your customer support agent.\nI can help with orders, account access, refunds, and more. What can I assist you with today?",
         "starterMessages": [
           "I can't log in to my account",
           "Where is my order #12345?",
@@ -148,6 +152,7 @@
       "frameworks": ["langchain", "mastra"],
       "sandboxPreview": true,
       "preview": {
+        "welcomeMessage": "Hello! I'm your code reviewer.\nPaste a code snippet or describe what you'd like me to review.",
         "starterMessages": [
           "Review this function: function add(a, b) { return a + b }",
           "Is there a bug in: for (let i = 0; i <= arr.length; i++) {}",
@@ -183,6 +188,7 @@
       "frameworks": ["langchain", "vercel-ai"],
       "sandboxPreview": true,
       "preview": {
+        "welcomeMessage": "Hi! I'm your research assistant.\nGive me a topic and I'll synthesize findings for you.",
         "starterMessages": [
           "Research the latest trends in AI agents",
           "What are the differences between LangChain and LlamaIndex?",

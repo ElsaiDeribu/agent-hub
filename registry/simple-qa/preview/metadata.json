@@ -10,5 +10,6 @@
   "dependencies": [],
   "env": [],
   "files": ["agent.ts", "_preview.ts"],
+  "welcomeMessage": "Hi! I'm a sandbox demo agent. Ask me something — replies are generated locally (no API keys).",
   "starterMessages": ["Hello!", "What is the capital of France?", "Is the sandbox preview working?"]
 }

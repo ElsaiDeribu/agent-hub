@@ -10,6 +10,7 @@
   "dependencies": [],
   "env": [],
   "files": ["agent.ts", "_preview.ts"],
+  "welcomeMessage": "Hi! I'm your customer support agent.\nI can help with orders, account access, refunds, and more. What can I assist you with today?",
   "starterMessages": [
     "I can't log in to my account",
     "Where is my order #12345?",
