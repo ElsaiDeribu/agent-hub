@@ -184,6 +184,7 @@ export const highlightCode = (
   // Return cached result if available
   const cached = tokensCache.get(tokensCacheKey);
   if (cached) {
+    callback?.(cached);
     return cached;
   }
 
@@ -384,11 +385,17 @@ export const CodeBlockContent = ({
   useEffect(() => {
     let cancelled = false;
 
-    highlightCode(code, language, (result) => {
+    const result = highlightCode(code, language, (next) => {
       if (!cancelled) {
-        setAsyncTokens(result);
+        setAsyncTokens(next);
       }
     });
+
+    // Highlighting can finish (and populate the cache) before this effect
+    // subscribes — apply the sync result so we don't stay on raw tokens.
+    if (result && !cancelled) {
+      setAsyncTokens(result);
+    }
 
     return () => {
       cancelled = true;
