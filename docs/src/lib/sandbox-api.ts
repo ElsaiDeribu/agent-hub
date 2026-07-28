@@ -37,13 +37,13 @@ export async function listSandboxAgents(): Promise<SandboxAgentMeta[]> {
 }
 
 export async function createSession(
-  agentId: string
+  agentId: string,
+  env: Record<string, string> = {}
 ): Promise<{ session_id: string; status: string }> {
   const res = await fetch(`${apiBase()}/sessions/${encodeURIComponent(agentId)}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    // No model API keys — preview agents are mock/deterministic.
-    body: JSON.stringify({ env: {} }),
+    body: JSON.stringify({ env }),
   });
   if (!res.ok) throw new Error(await readError(res));
   return res.json();

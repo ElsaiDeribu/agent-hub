@@ -14,6 +14,7 @@ export type RegistryItem = {
   sandboxPreview?: boolean;
   preview: {
     starterMessages: string[];
+    requiredEnv?: string[];
   };
   frameworkFiles: Record<string, RegistryFile[]>;
   dependencies: Record<string, string[]>;

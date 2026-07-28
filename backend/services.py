@@ -91,6 +91,14 @@ class SessionManager:
         if not relative_files:
             raise RuntimeError(f"Registry agent '{agent_id}' lists no files")
 
+        required_env = metadata.get("env") or []
+        provided = env or {}
+        missing = [key for key in required_env if not str(provided.get(key, "")).strip()]
+        if missing:
+            raise ValueError(
+                "Missing required environment variables: " + ", ".join(missing)
+            )
+
         session_id = uuid4().hex[:12]
 
         async with self._lock:

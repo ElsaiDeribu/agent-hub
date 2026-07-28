@@ -13,7 +13,10 @@ export const REGISTRY_ITEMS: RegistryItem[] = registry.items.map((item) => ({
   languages: item.languages ?? ['ts'],
   frameworks: item.frameworks ?? ['generic'],
   sandboxPreview: item.sandboxPreview ?? false,
-  preview: item.preview ?? { starterMessages: [] },
+  preview: {
+    starterMessages: item.preview?.starterMessages ?? [],
+    requiredEnv: item.preview?.requiredEnv ?? [],
+  },
   frameworkFiles: item.frameworkFiles ?? {},
   dependencies: item.dependencies ?? {},
 }));
