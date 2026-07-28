@@ -1,0 +1,15 @@
+{
+  "id": "simple-qa",
+  "name": "Simple Q&A Agent",
+  "description": "Demo agent that streams fake tokens from inside the sandbox (no API keys required).",
+  "category": "example",
+  "tags": ["starter", "sandbox"],
+  "languages": ["ts"],
+  "frameworks": ["generic"],
+  "entrypoint": "_preview.ts",
+  "dependencies": [],
+  "env": [],
+  "files": ["agent.ts", "_preview.ts"],
+  "welcomeMessage": "Hi! I'm a sandbox demo agent. Ask me something — replies are generated locally (no API keys).",
+  "starterMessages": ["Hello!", "What is the capital of France?", "Is the sandbox preview working?"]
+}

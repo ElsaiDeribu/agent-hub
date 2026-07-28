@@ -60,8 +60,8 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-4 max-w-2xl mx-auto text-muted-foreground text-lg sm:text-xl leading-relaxed">
-            Browse production-ready, open source AI agents, preview them live, and add them to your project
-            with one command.
+            Browse production-ready, open source AI agents, preview them live, and add them to your
+            project with one command.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

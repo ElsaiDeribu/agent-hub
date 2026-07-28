@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { ChevronDownIcon } from 'lucide-react';
 import { Navigate, useParams } from 'react-router-dom';
 import { CodeViewer } from '@/sections/docs/agents/code-viewer';
-import { ChatPreview } from '@/sections/docs/agents/chat-preview';
+import { ChatPreview } from '@/sections/docs/agents/chat-preview/index';
 import { Tabs, TabsList, TabsContent, TabsTrigger } from '@/components/ui/tabs';
 import { REGISTRY_ITEMS, CATEGORY_COLORS, FRAMEWORK_COLORS } from '@/data/registry';
 import { CliCommand, buildHarnessCommands } from '@/sections/docs/agents/install-command';
@@ -105,7 +105,10 @@ export default function DocsAgentDetailPage() {
           <TabsContent value="preview" className="flex-1 mt-0">
             <ChatPreview
               agentName={agent.name}
+              welcomeMessage={agent.preview.welcomeMessage}
               starterMessages={agent.preview.starterMessages}
+              requiredEnv={agent.preview.requiredEnv ?? []}
+              sandboxPreview={agent.sandboxPreview !== false}
               className="h-full"
             />
           </TabsContent>

@@ -26,10 +26,18 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // Canonical catalog — same registry.json the CLI and backend use.
+      '@repo-registry': path.resolve(__dirname, '../registry.json'),
     },
   },
   server: {
     port: 8081,
+    fs: {
+      allow: [
+        path.resolve(__dirname),
+        path.resolve(__dirname, '../registry.json'),
+      ],
+    },
   },
   preview: {
     port: 8081,

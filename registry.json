@@ -10,7 +10,9 @@
       "tags": ["starter"],
       "languages": ["ts"],
       "frameworks": ["generic"],
+      "sandboxPreview": true,
       "preview": {
+        "welcomeMessage": "Hello! I'm the hello-world sandbox agent. Send a message to verify streaming.",
         "starterMessages": ["Hello!", "What can you do?"]
       },
       "frameworkFiles": {
@@ -23,6 +25,71 @@
       }
     },
     {
+      "name": "simple-qa",
+      "title": "Simple Q&A Agent",
+      "description": "Demo agent that streams fake tokens from inside the sandbox (no API keys required).",
+      "category": "example",
+      "tags": ["starter", "sandbox"],
+      "languages": ["ts"],
+      "frameworks": ["generic"],
+      "sandboxPreview": true,
+      "preview": {
+        "welcomeMessage": "Hi! I'm a sandbox demo agent. Ask me something — replies are generated locally (no API keys).",
+        "starterMessages": [
+          "Hello!",
+          "What is the capital of France?",
+          "Is the sandbox preview working?"
+        ]
+      },
+      "frameworkFiles": {
+        "generic": [
+          {
+            "path": "registry/simple-qa/preview/agent.ts",
+            "target": "agent.ts"
+          }
+        ]
+      },
+      "dependencies": {
+        "generic": []
+      }
+    },
+    {
+      "name": "langgraph-qa",
+      "title": "LangGraph Q&A Agent",
+      "description": "Live LangGraph ReAct agent that calls OpenAI from the sandbox. Enter your API key in the preview to try it.",
+      "category": "example",
+      "tags": ["starter", "langgraph", "langchain", "live"],
+      "languages": ["ts"],
+      "frameworks": ["langchain"],
+      "sandboxPreview": true,
+      "preview": {
+        "welcomeMessage": "Hi! I'm a live LangGraph agent. Ask me anything — replies come from OpenAI inside the sandbox.",
+        "starterMessages": [
+          "Hello! What can you do?",
+          "What is LangGraph in one sentence?",
+          "What time is it right now?"
+        ],
+        "requiredEnv": ["OPENAI_API_KEY"]
+      },
+      "frameworkFiles": {
+        "langchain": [
+          {
+            "path": "registry/langgraph-qa/langchain/agent.ts",
+            "target": "agent.ts"
+          }
+        ]
+      },
+      "dependencies": {
+        "langchain": [
+          "@langchain/core",
+          "@langchain/openai",
+          "@langchain/langgraph",
+          "langchain",
+          "zod"
+        ]
+      }
+    },
+    {
       "name": "customer-support",
       "title": "Customer Support Agent",
       "description": "Multi-turn customer support agent with order lookup and human escalation tools.",
@@ -30,7 +97,9 @@
       "tags": ["multi-turn", "tools", "memory", "escalation"],
       "languages": ["ts"],
       "frameworks": ["langchain", "mastra", "vercel-ai"],
+      "sandboxPreview": true,
       "preview": {
+        "welcomeMessage": "Hi! I'm your customer support agent.\nI can help with orders, account access, refunds, and more. What can I assist you with today?",
         "starterMessages": [
           "I can't log in to my account",
           "Where is my order #12345?",
@@ -81,7 +150,9 @@
       "tags": ["code", "review", "structured-output", "security"],
       "languages": ["ts"],
       "frameworks": ["langchain", "mastra"],
+      "sandboxPreview": true,
       "preview": {
+        "welcomeMessage": "Hello! I'm your code reviewer.\nPaste a code snippet or describe what you'd like me to review.",
         "starterMessages": [
           "Review this function: function add(a, b) { return a + b }",
           "Is there a bug in: for (let i = 0; i <= arr.length; i++) {}",
@@ -115,7 +186,9 @@
       "tags": ["web-search", "rag", "summarization", "tools"],
       "languages": ["ts"],
       "frameworks": ["langchain", "vercel-ai"],
+      "sandboxPreview": true,
       "preview": {
+        "welcomeMessage": "Hi! I'm your research assistant.\nGive me a topic and I'll synthesize findings for you.",
         "starterMessages": [
           "Research the latest trends in AI agents",
           "What are the differences between LangChain and LlamaIndex?",

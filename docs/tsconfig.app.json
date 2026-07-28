@@ -23,13 +23,14 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
+    "resolveJsonModule": true,
+
     /* Paths */
     "baseUrl": ".",
-      "paths": {
-        "@/*": [
-          "./src/*"
-        ]
-      }
+    "paths": {
+      "@/*": ["./src/*"],
+      "@repo-registry": ["../registry.json"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "../registry.json"]
 }
