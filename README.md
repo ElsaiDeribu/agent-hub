@@ -1,4 +1,6 @@
-# agent-hub
+<h1 align="center">
+  <img src="./assets/github-logo.svg" alt="agenthub" width="250" height="250" />
+</h1>
 
 Open-source registry of reusable TypeScript AI agents, with a docs UI and a
 sandbox preview backend.
