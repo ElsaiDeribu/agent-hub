@@ -41,7 +41,7 @@ export default function DocsIntroductionPage() {
         </span>
         <h1 className="text-4xl font-bold tracking-tight mb-4">Introduction</h1>
         <p className="text-muted-foreground text-lg leading-relaxed mb-4">
-          <strong>Agent-Hub</strong> is an open-source registry of reusable TypeScript AI agents.
+          <strong>AgentHub</strong> is an open-source registry of reusable TypeScript AI agents.
           Browse, preview, and scaffold agents into your project. It works like a component library,
           but for AI agents. Instead of writing an agent from scratch every time you need one
           (handling prompts, tool calls, memory, and framework wiring), you pick from the registry,
