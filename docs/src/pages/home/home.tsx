@@ -1,9 +1,10 @@
 import { paths } from '@/routes/paths';
-import { Link } from 'react-router-dom';
 import { GitHub } from '@/assets/icons';
+import { Link } from 'react-router-dom';
+import { Logo } from '@/assets/logo/logo';
 import { Button } from '@/components/ui/button';
 import { REGISTRY_ITEMS } from '@/data/registry';
-import { Zap, LayoutGrid, ArrowRight } from 'lucide-react';
+import { Zap, ArrowRight, LayoutGrid } from 'lucide-react';
 import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 import { CliCommand, buildHarnessCommands } from '@/sections/docs/agents/install-command';
 
@@ -12,12 +13,9 @@ export default function HomePage() {
     <div className="min-h-screen bg-background thin-scrollbar">
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-sm">
-            <div className="flex size-6 items-center justify-center rounded bg-primary">
-              <Zap className="size-3.5 text-primary-foreground" />
-            </div>
-            agent-hub
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+          <Link to="/" className="flex items-center">
+            <Logo variant="full" className="h-10" />
           </Link>
 
           <nav className="flex items-center gap-1">

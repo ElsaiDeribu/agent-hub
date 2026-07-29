@@ -1,11 +1,12 @@
-import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { useState } from 'react';
 import { paths } from '@/routes/paths';
-import { Link } from 'react-router-dom';
 import { GitHub } from '@/assets/icons';
+import { Link } from 'react-router-dom';
+import { Logo } from '@/assets/logo/logo';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Zap, Search, LayoutGrid } from 'lucide-react';
+import { Search, LayoutGrid } from 'lucide-react';
 import { CATEGORIES, REGISTRY_ITEMS } from '@/data/registry';
 import { AgentCard } from '@/sections/docs/agents/agent-card';
 import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
@@ -29,11 +30,8 @@ export default function AgentsPage() {
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <Link to="/" className="flex items-center gap-2 font-semibold text-sm">
-            <div className="flex size-6 items-center justify-center rounded bg-primary">
-              <Zap className="size-3.5 text-primary-foreground" />
-            </div>
-            agent-hub
+          <Link to="/" className="flex items-center">
+            <Logo variant="full" className="h-7" />
           </Link>
 
           <nav className="flex items-center gap-1">

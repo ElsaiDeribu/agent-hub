@@ -1,9 +1,9 @@
 import { cn } from '@/lib/utils';
 import { paths } from '@/routes/paths';
 import { GitHub } from '@/assets/icons';
+import { Logo } from '@/assets/logo/logo';
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { GalleryVerticalEnd } from 'lucide-react';
 import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 
 export function DocsHeader({ className }: { className?: string }) {
@@ -15,13 +15,8 @@ export function DocsHeader({ className }: { className?: string }) {
       )}
     >
       <NavLink to={paths.home} className="flex flex-row items-center gap-3">
-        <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-          <GalleryVerticalEnd className="size-4" />
-        </div>
-        <div className="flex flex-col gap-0.5 leading-none">
-          <span className="font-medium">Agent-Hub</span>
-          <span className="">v1.0.3</span>
-        </div>
+        <Logo variant="full" className="h-8" />
+        {/* <span className="text-sm text-muted-foreground">v1.0.3</span> */}
       </NavLink>
 
       <div className="flex items-center gap-1">
