@@ -5,7 +5,8 @@ import { cn } from '@/lib/utils';
 import { getFileUrl } from '@/data/registry';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import { Folder, Loader2, FileCode2, FolderOpen } from 'lucide-react';
+import { File, Folder, Loader2, FileCode2, ChevronRight } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   CodeBlock,
   CodeBlockTitle,
@@ -14,6 +15,14 @@ import {
   CodeBlockFilename,
   CodeBlockCopyButton,
 } from '@/components/ui/code-block';
+import {
+  SidebarMenu,
+  SidebarMenuSub,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+} from '@/components/ui/sidebar';
 
 function getLanguage(filename: string): BundledLanguage {
   const ext = filename.split('.').pop()?.toLowerCase() ?? '';
@@ -80,57 +89,51 @@ function buildFileTree(files: RegistryFile[]): TreeNode[] {
 
 const SKELETON_WIDTHS = [72, 55, 88, 61, 45, 79, 53, 92, 66, 48, 83, 57, 70, 41];
 
-function TreeNodeItem({
+function Tree({
   node,
-  depth,
   activeFile,
   onSelect,
 }: {
   node: TreeNode;
-  depth: number;
   activeFile: string;
   onSelect: (target: string) => void;
 }) {
-  const [open, setOpen] = useState(true);
-
   if (node.isFile) {
-    const isActive = activeFile === node.file!.target;
     return (
-      <button
+      <SidebarMenuButton
+        isActive={activeFile === node.file!.target}
         onClick={() => onSelect(node.file!.target)}
-        className={cn(
-          'flex w-full items-center gap-1.5 py-[3px] pr-2 text-xs font-mono transition-colors cursor-pointer',
-          isActive ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground'
-        )}
-        style={{ paddingLeft: `${(depth + 1) * 12}px` }}
+        size="sm"
+        className="font-mono"
       >
-        <FileCode2 className="size-3 shrink-0 text-sky-400" />
+        <File />
         {node.name}
-      </button>
+      </SidebarMenuButton>
     );
   }
 
   return (
-    <div>
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-1.5 py-[3px] pr-2 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-        style={{ paddingLeft: `${depth * 12 + 4}px` }}
+    <SidebarMenuItem>
+      <Collapsible
+        className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
+        defaultOpen
       >
-        {open ? <FolderOpen className="size-3 shrink-0" /> : <Folder className="size-3 shrink-0" />}
-        {node.name}
-      </button>
-      {open &&
-        node.children.map((child) => (
-          <TreeNodeItem
-            key={child.path}
-            node={child}
-            depth={depth + 1}
-            activeFile={activeFile}
-            onSelect={onSelect}
-          />
-        ))}
-    </div>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton size="sm" className="font-mono">
+            <ChevronRight className="transition-transform" />
+            <Folder />
+            {node.name}
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {node.children.map((child) => (
+              <Tree key={child.path} node={child} activeFile={activeFile} onSelect={onSelect} />
+            ))}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </Collapsible>
+    </SidebarMenuItem>
   );
 }
 
@@ -205,21 +208,17 @@ export function CodeViewer({ files, framework, className }: CodeViewerProps) {
       )}
     >
       {/* Left sidebar: file tree */}
-      <div className="w-44 shrink-0 border-r border-border flex flex-col overflow-y-auto">
-        <div className="items-center bg-background border-b border-border px-3 py-[14.5px] text-muted-foreground text-xs">
+      <div className="w-52 shrink-0 border-r border-border flex flex-col overflow-y-auto">
+        <SidebarGroupLabel className="h-auto rounded-none border-b border-border px-3 py-[14.5px]">
           Files
-        </div>
-        <div className="py-1 flex-1 overflow-y-auto">
-          {tree.map((node) => (
-            <TreeNodeItem
-              key={node.path}
-              node={node}
-              depth={0}
-              activeFile={activeFile}
-              onSelect={handleSelect}
-            />
-          ))}
-        </div>
+        </SidebarGroupLabel>
+        <SidebarGroupContent className="flex-1 overflow-y-auto py-1">
+          <SidebarMenu>
+            {tree.map((node) => (
+              <Tree key={node.path} node={node} activeFile={activeFile} onSelect={handleSelect} />
+            ))}
+          </SidebarMenu>
+        </SidebarGroupContent>
       </div>
 
       {/* Right panel: code editor */}

@@ -110,12 +110,28 @@
       "frameworkFiles": {
         "langchain": [
           {
-            "path": "registry/customer-support/langchain/agent.ts",
-            "target": "agent.ts"
+            "path": "registry/customer-support/langchain/src/agent.ts",
+            "target": "src/agent.ts"
           },
           {
-            "path": "registry/customer-support/langchain/tools.ts",
-            "target": "tools.ts"
+            "path": "registry/customer-support/langchain/src/prompts/system.ts",
+            "target": "src/prompts/system.ts"
+          },
+          {
+            "path": "registry/customer-support/langchain/src/tools/index.ts",
+            "target": "src/tools/index.ts"
+          },
+          {
+            "path": "registry/customer-support/langchain/src/tools/orders.ts",
+            "target": "src/tools/orders.ts"
+          },
+          {
+            "path": "registry/customer-support/langchain/src/tools/account.ts",
+            "target": "src/tools/account.ts"
+          },
+          {
+            "path": "registry/customer-support/langchain/src/tools/escalation.ts",
+            "target": "src/tools/escalation.ts"
           }
         ],
         "mastra": [
@@ -198,12 +214,20 @@
       "frameworkFiles": {
         "langchain": [
           {
-            "path": "registry/research-assistant/langchain/agent.ts",
-            "target": "agent.ts"
+            "path": "registry/research-assistant/langchain/src/agent.ts",
+            "target": "src/agent.ts"
           },
           {
-            "path": "registry/research-assistant/langchain/tools.ts",
-            "target": "tools.ts"
+            "path": "registry/research-assistant/langchain/src/prompts/system.ts",
+            "target": "src/prompts/system.ts"
+          },
+          {
+            "path": "registry/research-assistant/langchain/src/tools/index.ts",
+            "target": "src/tools/index.ts"
+          },
+          {
+            "path": "registry/research-assistant/langchain/src/tools/search.ts",
+            "target": "src/tools/search.ts"
           }
         ],
         "vercel-ai": [

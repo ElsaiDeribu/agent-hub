@@ -74,5 +74,3 @@ export const readPageTool = tool(
     }),
   }
 );
-
-export const tools = [webSearchTool, readPageTool];

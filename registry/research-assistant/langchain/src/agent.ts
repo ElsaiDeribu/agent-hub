@@ -5,7 +5,8 @@ import {
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
-import { tools } from "./tools.js";
+import { SYSTEM_PROMPT } from "./prompts/system.js";
+import { tools } from "./tools/index.js";
 
 // ---------------------------------------------------------------------------
 // Model
@@ -20,24 +21,7 @@ const llm = new ChatOpenAI({
 // Prompt
 // ---------------------------------------------------------------------------
 const prompt = ChatPromptTemplate.fromMessages([
-  [
-    "system",
-    `You are a rigorous research assistant. Your job is to investigate topics thoroughly and present findings clearly.
-
-Process:
-1. Search the web for the most relevant and recent information
-2. Read key pages for more depth when needed
-3. Synthesize findings into a well-structured response
-
-Output format:
-- Start with a brief executive summary (2-3 sentences)
-- Use headers and bullet points for clarity
-- Cite sources with URLs where possible
-- Flag any conflicting information or areas of uncertainty
-- End with "Further reading" links if relevant
-
-Always search before answering; do not rely on your training data for factual questions.`,
-  ],
+  ["system", SYSTEM_PROMPT],
   new MessagesPlaceholder("chat_history"),
   ["human", "{input}"],
   new MessagesPlaceholder("agent_scratchpad"),
