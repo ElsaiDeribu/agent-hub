@@ -6,7 +6,7 @@ const GITHUB_URL = 'https://github.com/ElsaiDeribu/agent-hub';
 
 export function Footer({ className }: { className?: string }) {
   return (
-    <footer className={cn('border-t mt-16', className)}>
+    <footer className={cn('mt-auto border-t', className)}>
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
         <p>Built with ❤️ by agent-hub</p>
         <div className="flex gap-4">
