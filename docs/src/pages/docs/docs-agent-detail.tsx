@@ -120,7 +120,7 @@ export default function DocsAgentDetailPage() {
           </TabsContent>
 
           <TabsContent value="code" className="flex-1 mt-0">
-            <CodeViewer files={currentFiles} framework={activeFramework} className="h-full" />
+            <CodeViewer files={currentFiles} framework={activeFramework} className="h-[70vh]" />
           </TabsContent>
         </Tabs>
       </main>

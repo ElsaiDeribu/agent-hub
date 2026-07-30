@@ -19,11 +19,11 @@ import {
   Sidebar,
   SidebarMenu,
   SidebarGroup,
+  SidebarContent,
   SidebarMenuSub,
   SidebarProvider,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarGroupLabel,
   SidebarGroupContent,
 } from '@/components/ui/sidebar';
 
@@ -177,26 +177,29 @@ function FileTreeSidebar({
   onSelect: (path: string) => void;
 }) {
   return (
-    <SidebarProvider className="flex min-h-full! flex-col border-r">
-      <Sidebar collapsible="none" className="w-full flex-1">
-        <SidebarGroupLabel className="h-12 rounded-none border-b px-4 text-sm">
-          Files
-        </SidebarGroupLabel>
-        <SidebarGroup className="p-0">
-          <SidebarGroupContent>
-            <SidebarMenu className="translate-x-0 gap-1.5">
-              {tree.map((file) => (
-                <Tree
-                  key={file.path ?? file.name}
-                  item={file}
-                  index={1}
-                  activeFile={activeFile}
-                  onSelect={onSelect}
-                />
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+    <SidebarProvider className="flex h-full min-h-0! flex-col border-r">
+      <Sidebar collapsible="none" className="w-full flex-1 bg-background">
+        <div className="flex h-12 shrink-0 items-center gap-2 border-b border-border bg-background px-4 text-muted-foreground text-xs">
+          <Folder className="size-4 opacity-70" />
+          <span className="font-mono">Files</span>
+        </div>
+        <SidebarContent className="min-h-0 overflow-y-auto">
+          <SidebarGroup className="p-0">
+            <SidebarGroupContent>
+              <SidebarMenu className="translate-x-0 gap-1.5">
+                {tree.map((file) => (
+                  <Tree
+                    key={file.path ?? file.name}
+                    item={file}
+                    index={1}
+                    activeFile={activeFile}
+                    onSelect={onSelect}
+                  />
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
       </Sidebar>
     </SidebarProvider>
   );
@@ -271,19 +274,19 @@ export function CodeViewer({ files, framework, className }: CodeViewerProps) {
         className
       )}
     >
-      <div className="w-72 shrink-0">
+      <div className="flex h-full w-72 shrink-0 flex-col overflow-hidden">
         <FileTreeSidebar tree={tree} activeFile={activeFile} onSelect={handleSelect} />
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         {loading ? (
           <>
-            <div className="flex h-12 shrink-0 items-center gap-2 border-b px-4 py-2">
+            <div className="flex h-12 shrink-0 items-center gap-2 border-b border-border bg-background px-4 text-muted-foreground text-xs">
               <FileCode2 className="size-4 opacity-70" />
-              <span className="text-sm text-muted-foreground">{activeFile}</span>
-              <Loader2 className="ml-auto size-3.5 animate-spin text-muted-foreground" />
+              <span className="font-mono">{activeFile}</span>
+              <Loader2 className="ml-auto size-3.5 animate-spin" />
             </div>
-            <div className="space-y-2 p-4">
+            <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-4">
               {SKELETON_WIDTHS.map((w, i) => (
                 <Skeleton key={i} className="h-4 bg-muted" style={{ width: `${w}%` }} />
               ))}
@@ -294,9 +297,9 @@ export function CodeViewer({ files, framework, className }: CodeViewerProps) {
             code={activeContent}
             language={language}
             showLineNumbers
-            className="rounded-none border-0 flex-1 overflow-hidden [&_pre]:max-h-[480px] [&_pre]:overflow-auto"
+            className="flex h-full flex-col rounded-none border-0 overflow-hidden"
           >
-            <CodeBlockHeader className="h-12 border-border bg-background px-4">
+            <CodeBlockHeader className="h-12 shrink-0 border-border bg-background px-4">
               <CodeBlockTitle>
                 <FileCode2 className="size-4 opacity-70" />
                 <CodeBlockFilename>{activeFile}</CodeBlockFilename>
