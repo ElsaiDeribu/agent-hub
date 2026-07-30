@@ -26,7 +26,6 @@
     "resolveJsonModule": true,
 
     /* Paths */
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@repo-registry": ["../registry.json"]
