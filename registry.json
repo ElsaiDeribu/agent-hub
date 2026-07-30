@@ -74,8 +74,32 @@
       "frameworkFiles": {
         "langchain": [
           {
-            "path": "registry/langgraph-qa/langchain/agent.ts",
-            "target": "agent.ts"
+            "path": "registry/langgraph-qa/langchain/src/agents/index.ts",
+            "target": "src/agents/index.ts"
+          },
+          {
+            "path": "registry/langgraph-qa/langchain/src/agents/qa.ts",
+            "target": "src/agents/qa.ts"
+          },
+          {
+            "path": "registry/langgraph-qa/langchain/src/prompts/system.ts",
+            "target": "src/prompts/system.ts"
+          },
+          {
+            "path": "registry/langgraph-qa/langchain/src/tools/index.ts",
+            "target": "src/tools/index.ts"
+          },
+          {
+            "path": "registry/langgraph-qa/langchain/src/tools/time.ts",
+            "target": "src/tools/time.ts"
+          },
+          {
+            "path": "registry/langgraph-qa/langchain/src/tools/calculator.ts",
+            "target": "src/tools/calculator.ts"
+          },
+          {
+            "path": "registry/langgraph-qa/langchain/src/tools/echo.ts",
+            "target": "src/tools/echo.ts"
           }
         ]
       },
