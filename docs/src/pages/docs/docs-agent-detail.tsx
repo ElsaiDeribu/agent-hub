@@ -19,11 +19,13 @@ import {
 export default function DocsAgentDetailPage() {
   const { name } = useParams<{ name: string }>();
   const agent = REGISTRY_ITEMS.find((a) => a.name === name);
-  const [framework, setFramework] = useState('');
+  const [tabByAgent, setTabByAgent] = useState<Record<string, string>>({});
+  const [frameworkByAgent, setFrameworkByAgent] = useState<Record<string, string>>({});
 
   if (!agent) return <Navigate to={paths.page404} replace />;
 
-  const activeFramework = framework || agent.frameworks[0];
+  const activeTab = tabByAgent[agent.name] ?? 'preview';
+  const activeFramework = frameworkByAgent[agent.name] ?? agent.frameworks[0];
   const categoryColor = CATEGORY_COLORS[agent.category] ?? '';
   const currentFiles = agent.frameworkFiles[activeFramework] ?? [];
 
@@ -56,7 +58,11 @@ export default function DocsAgentDetailPage() {
 
       {/* ── Main panels ──────────────────────────────────────────────────── */}
       <main className="flex-1 overflow-auto px-6 py-6">
-        <Tabs defaultValue="preview" className="flex flex-col h-full gap-4">
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setTabByAgent((prev) => ({ ...prev, [agent.name]: value }))}
+          className="flex flex-col h-full gap-4"
+        >
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
               <TabsList>
@@ -82,7 +88,7 @@ export default function DocsAgentDetailPage() {
                   {agent.frameworks.map((fw) => (
                     <DropdownMenuItem
                       key={fw}
-                      onClick={() => setFramework(fw)}
+                      onClick={() => setFrameworkByAgent((prev) => ({ ...prev, [agent.name]: fw }))}
                       className={cn(
                         'text-xs cursor-pointer',
                         fw === activeFramework && 'font-medium'
