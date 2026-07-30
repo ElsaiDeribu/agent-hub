@@ -1,46 +1,15 @@
 import { paths } from '@/routes/paths';
-import { GitHub } from '@/assets/icons';
 import { Link } from 'react-router-dom';
-import { Logo } from '@/assets/logo/logo';
+import { Navbar } from '@/sections/layout';
 import { Button } from '@/components/ui/button';
 import { REGISTRY_ITEMS } from '@/data/registry';
 import { Zap, ArrowRight, LayoutGrid } from 'lucide-react';
-import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 import { CliCommand, buildHarnessCommands } from '@/sections/docs/agents/install-command';
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background thin-scrollbar">
-      {/* ── Nav ──────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <Link to="/" className="flex items-center">
-            <Logo variant="full" className="h-10" />
-          </Link>
-
-          <nav className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to={paths.agents}>Agents</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link to={paths.docs.root}>Docs</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <a
-                href="https://github.com/ElsaiDeribu/agent-hub"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5"
-              >
-                <GitHub className="size-4 fill-current" />
-                GitHub
-              </a>
-            </Button>
-
-            <ThemeToggleIcon />
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-b from-muted/30 to-background">

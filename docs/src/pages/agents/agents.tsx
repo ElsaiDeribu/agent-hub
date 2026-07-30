@@ -1,15 +1,13 @@
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { paths } from '@/routes/paths';
-import { GitHub } from '@/assets/icons';
 import { Link } from 'react-router-dom';
-import { Logo } from '@/assets/logo/logo';
+import { Navbar } from '@/sections/layout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, LayoutGrid } from 'lucide-react';
 import { CATEGORIES, REGISTRY_ITEMS } from '@/data/registry';
 import { AgentCard } from '@/sections/docs/agents/agent-card';
-import { ThemeToggleIcon } from '@/theme/components/theme-toggle';
 
 export default function AgentsPage() {
   const [activeCategory, setActiveCategory] = useState('all');
@@ -27,36 +25,7 @@ export default function AgentsPage() {
 
   return (
     <div className="min-h-screen bg-background thin-scrollbar">
-      {/* ── Nav ──────────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <Link to="/" className="flex items-center">
-            <Logo variant="full" className="h-7" />
-          </Link>
-
-          <nav className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to={paths.home}>Home</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <Link to={paths.docs.root}>Docs</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild>
-              <a
-                href="https://github.com/ElsaiDeribu/agent-hub"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5"
-              >
-                <GitHub className="size-4 fill-current" />
-                GitHub
-              </a>
-            </Button>
-
-            <ThemeToggleIcon />
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       {/* ── Page Header ──────────────────────────────────────────────────── */}
       <section className="border-b bg-gradient-to-b from-muted/30 to-background">
