@@ -103,7 +103,7 @@ const steps: Step[] = [
 
 export default function DocsInstallationPage() {
   return (
-    <div className="py-10 max-w-4xl">
+    <>
       {/* Hero */}
       <div className="mb-10">
         <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-4">
@@ -159,6 +159,6 @@ export default function DocsInstallationPage() {
           </Link>
         </Button>
       </div>
-    </div>
+    </>
   );
 }

@@ -30,10 +30,10 @@ export default function DocsAgentDetailPage() {
   const currentFiles = agent.frameworkFiles[activeFramework] ?? [];
 
   return (
-    <div className="max-w-4xl">
+    <>
       {/* ── Agent meta ───────────────────────────────────────────────────── */}
       <div>
-        <div className="px-6 py-5">
+        <div className="pb-5">
           <div className="flex flex-col sm:flex-row sm:items-start gap-4">
             <div className="flex-1 min-w-0 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
@@ -57,7 +57,7 @@ export default function DocsAgentDetailPage() {
       </div>
 
       {/* ── Main panels ──────────────────────────────────────────────────── */}
-      <main className="flex-1 overflow-auto px-6 py-6">
+      <main className="flex-1 overflow-auto py-6">
         <Tabs
           value={activeTab}
           onValueChange={(value) => setTabByAgent((prev) => ({ ...prev, [agent.name]: value }))}
@@ -124,6 +124,6 @@ export default function DocsAgentDetailPage() {
           </TabsContent>
         </Tabs>
       </main>
-    </div>
+    </>
   );
 }

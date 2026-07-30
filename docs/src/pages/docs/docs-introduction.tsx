@@ -1,6 +1,5 @@
 import { Badge } from '@/components/ui/badge';
 import { REGISTRY_ITEMS } from '@/data/registry';
-import { Separator } from '@/components/ui/separator';
 import { Bot, Zap, Globe, Layers } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -33,7 +32,7 @@ const features = [
 
 export default function DocsIntroductionPage() {
   return (
-    <div className="py-10 max-w-4xl">
+    <>
       {/* Hero */}
       <div className="mb-10">
         <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary mb-4">
@@ -110,8 +109,6 @@ export default function DocsIntroductionPage() {
           ))}
         </div>
       </section>
-
-      <Separator className="mb-8" />
-    </div>
+    </>
   );
 }

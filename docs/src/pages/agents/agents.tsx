@@ -1,11 +1,9 @@
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import { paths } from '@/routes/paths';
-import { Link } from 'react-router-dom';
-import { Navbar } from '@/sections/layout';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, LayoutGrid } from 'lucide-react';
+import { Navbar, Footer } from '@/sections/layout';
 import { CATEGORIES, REGISTRY_ITEMS } from '@/data/registry';
 import { AgentCard } from '@/sections/docs/agents/agent-card';
 
@@ -106,25 +104,7 @@ export default function AgentsPage() {
         )}
       </section>
 
-      {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <footer className="border-t mt-16">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>Built with ❤️ by agent-hub</p>
-          <div className="flex gap-4">
-            <a
-              href="https://github.com/ElsaiDeribu/agent-hub"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-foreground transition-colors"
-            >
-              GitHub
-            </a>
-            <Link to={paths.docs.root} className="hover:text-foreground transition-colors">
-              Docs
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

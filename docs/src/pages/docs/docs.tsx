@@ -9,8 +9,8 @@ export default function DocsLayout() {
       <Navbar />
       <SidebarProvider>
         <AppSidebar className="top-16! h-[calc(100svh-4rem)]!" />
-        <SidebarInset>
-          <main className="flex justify-center items-center">
+        <SidebarInset className="min-w-0">
+          <main className="w-full px-[10%] py-10">
             <Outlet />
           </main>
         </SidebarInset>
