@@ -3,6 +3,7 @@ export type Phase = 'idle' | 'awaitingKeys' | 'starting' | 'ready';
 
 export interface ChatPreviewProps {
   agentName: string;
+  framework: string;
   welcomeMessage?: string;
   starterMessages: string[];
   requiredEnv?: string[];

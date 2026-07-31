@@ -61,3 +61,33 @@ export async function runAgent(
 
   return result.output as string;
 }
+
+function historyToChat(
+  history: { role: string; content: string }[] = [],
+): ChatMessage[] {
+  const out: ChatMessage[] = [];
+  for (const m of history) {
+    if (m.role === "assistant" && out.length === 0) continue;
+    if (m.role === "user" || m.role === "human") {
+      out.push({ role: "human", content: m.content });
+    } else if (m.role === "assistant" || m.role === "ai") {
+      out.push({ role: "ai", content: m.content });
+    }
+  }
+  return out;
+}
+
+/** Sandbox / docs preview surface — same module the code viewer shows. */
+export const agent = {
+  async *stream(
+    message: string,
+    opts: { history?: { role: string; content: string }[] } = {},
+  ) {
+    const text = await runAgent(message, historyToChat(opts.history));
+    for (const word of text.split(/(\s+)/)) {
+      if (!word) continue;
+      yield { type: "token" as const, content: word };
+    }
+    yield { type: "done" as const };
+  },
+};

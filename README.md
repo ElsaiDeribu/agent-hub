@@ -10,8 +10,7 @@ sandbox preview backend.
 | Path | Role |
 |------|------|
 | `registry.json` | Canonical catalog (CLI + docs) |
-| `registry/<agent>/` | Install templates per framework |
-| `registry/<agent>/preview/` | Sandbox-runnable mock agents (**no API keys**) |
+| `registry/<agent>/<framework>/` | Single source of truth: install files, code viewer, and sandbox package (`metadata.json`) |
 | `backend/` | FastAPI + microsandbox session runner |
 | `docs/` | Browse / preview UI |
 | `src/` | `agent-hub-harness` CLI |

@@ -29,7 +29,8 @@ from microsandbox.errors import MicrosandboxError
 
 from services import (
     REGISTRY_DIR,
-    agent_preview_dir,
+    agent_impl_dir,
+    list_frameworks,
     manager,
     reaper_loop,
 )
@@ -72,6 +73,10 @@ class ChatRequest(BaseModel):
 
 
 class RegistryPreviewRequest(BaseModel):
+    framework: str = Field(
+        ...,
+        description="Framework package under registry/<agent>/<framework>/.",
+    )
     env: dict[str, str] = Field(default_factory=dict, description="Environment variables (e.g. API keys).")
 
 
@@ -123,26 +128,54 @@ async def health() -> dict:
 
 @app.get("/registry")
 async def list_registry() -> list[dict]:
-    """List all agents with a sandbox-ready preview/ package."""
-    agents = []
+    """List sandbox-ready agent/framework packages (`registry/<agent>/<framework>/`)."""
+    packages: list[dict] = []
     if not REGISTRY_DIR.exists():
-        return agents
+        return packages
     for entry in sorted(REGISTRY_DIR.iterdir()):
-        if not entry.is_dir():
+        if not entry.is_dir() or entry.name.startswith("_"):
             continue
-        meta_path = agent_preview_dir(entry.name) / "metadata.json"
-        if meta_path.exists():
-            agents.append(json.loads(meta_path.read_text()))
-    return agents
+        for framework in list_frameworks(entry.name):
+            meta_path = agent_impl_dir(entry.name, framework) / "metadata.json"
+            meta = json.loads(meta_path.read_text())
+            meta.setdefault("id", entry.name)
+            meta["framework"] = framework
+            packages.append(meta)
+    return packages
 
 
 @app.get("/registry/{agent_id}")
-async def get_registry_agent(agent_id: str) -> dict:
-    """Get metadata for a specific registry agent."""
-    meta_path = agent_preview_dir(agent_id) / "metadata.json"
-    if not meta_path.exists():
+async def get_registry_agent(agent_id: str, framework: str | None = None) -> dict:
+    """Get metadata for a registry agent. Pass `framework` for one package."""
+    frameworks = list_frameworks(agent_id)
+    if not frameworks:
         raise HTTPException(404, f"Agent '{agent_id}' not found in registry")
-    return json.loads(meta_path.read_text())
+
+    if framework is None:
+        return {
+            "id": agent_id,
+            "frameworks": frameworks,
+            "packages": [
+                {
+                    **json.loads(
+                        (agent_impl_dir(agent_id, fw) / "metadata.json").read_text()
+                    ),
+                    "framework": fw,
+                }
+                for fw in frameworks
+            ],
+        }
+
+    try:
+        meta_path = agent_impl_dir(agent_id, framework) / "metadata.json"
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+
+    meta = json.loads(meta_path.read_text())
+    meta.setdefault("id", agent_id)
+    meta["framework"] = framework
+    meta["frameworks"] = frameworks
+    return meta
 
 
 # ---------------------------------------------------------------------------
@@ -153,13 +186,13 @@ async def get_registry_agent(agent_id: str) -> dict:
 @app.post("/sessions/{agent_id}", response_model=CreateSessionResponse)
 async def create_session(
     agent_id: str,
-    req: RegistryPreviewRequest | None = None,
+    req: RegistryPreviewRequest,
 ) -> CreateSessionResponse:
-    """Load an agent from the local registry and start a preview session."""
-    env = req.env if req else {}
-
+    """Load an agent framework package from the registry and start a preview session."""
     try:
-        session = await manager.create_session(agent_id, env=env)
+        session = await manager.create_session(
+            agent_id, framework=req.framework, env=req.env
+        )
     except FileNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
@@ -223,6 +256,7 @@ async def session_status(session_id: str) -> dict:
     return {
         "session_id": session_id,
         "agent_id": session.agent_id,
+        "framework": session.framework,
         "status": "healthy" if healthy else "unhealthy",
         "created_at": session.created_at.isoformat(),
         "last_activity": session.last_activity.isoformat(),
@@ -236,6 +270,7 @@ async def list_sessions() -> list[dict]:
         {
             "session_id": s.session_id,
             "agent_id": s.agent_id,
+            "framework": s.framework,
             "host_port": s.host_port,
             "created_at": s.created_at.isoformat(),
             "last_activity": s.last_activity.isoformat(),

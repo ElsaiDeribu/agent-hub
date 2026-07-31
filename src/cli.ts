@@ -30,8 +30,6 @@ type RegistryItem = {
   frameworks?: string[];
   frameworkFiles?: Record<string, RegistryFile[]>;
   dependencies?: Record<string, string[]>;
-  /** Legacy: single-framework items */
-  files?: RegistryFile[];
 };
 
 type Registry = {
@@ -115,10 +113,9 @@ program
       spinner.stop();
 
       // ── Resolve framework ──────────────────────────────────────────────
-      const frameworkFiles = item.frameworkFiles ?? (item.files ? { generic: item.files } : null);
-
-      if (!frameworkFiles) {
-        console.error(chalk.red(`No files defined for "${name}".`));
+      const frameworkFiles = item.frameworkFiles;
+      if (!frameworkFiles || Object.keys(frameworkFiles).length === 0) {
+        console.error(chalk.red(`No frameworkFiles defined for "${name}".`));
         process.exit(1);
       }
 

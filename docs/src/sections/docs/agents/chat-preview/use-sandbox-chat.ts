@@ -7,6 +7,7 @@ import type { Phase, Message } from './types';
 
 interface UseSandboxChatOptions {
   agentName: string;
+  framework: string;
   welcomeMessage?: string;
   requiredEnv: string[];
   sandboxPreview: boolean;
@@ -14,6 +15,7 @@ interface UseSandboxChatOptions {
 
 export function useSandboxChat({
   agentName,
+  framework,
   welcomeMessage,
   requiredEnv,
   sandboxPreview,
@@ -72,7 +74,7 @@ export function useSandboxChat({
       }
       sessionIdRef.current = null;
     };
-  }, [agentName, initialMessage, sandboxPreview, requiredEnvKey]);
+  }, [agentName, framework, initialMessage, sandboxPreview, requiredEnvKey]);
 
   const startSandbox = async (env: Record<string, string> = {}) => {
     const generation = ++startGenerationRef.current;
@@ -80,7 +82,7 @@ export function useSandboxChat({
     setSessionError(null);
 
     try {
-      const created = await createSession(agentName, env);
+      const created = await createSession(agentName, framework, env);
       if (generation !== startGenerationRef.current) {
         await deleteSession(created.session_id).catch(() => undefined);
         return;

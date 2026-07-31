@@ -1,15 +1,28 @@
 {
   "id": "research-assistant",
   "name": "Research Assistant Agent",
-  "description": "Searches the web, reads pages, and synthesizes findings. Sandbox preview uses deterministic mock replies (no API keys).",
+  "description": "Searches the web, reads pages, and synthesizes findings into structured research summaries.",
   "category": "research",
   "tags": ["web-search", "rag", "summarization", "tools"],
   "languages": ["ts"],
-  "frameworks": ["langchain", "vercel-ai"],
+  "frameworks": ["langchain"],
   "entrypoint": "_preview.ts",
-  "dependencies": [],
-  "env": [],
-  "files": ["agent.ts", "_preview.ts"],
+  "dependencies": [
+    "@langchain/core",
+    "@langchain/openai",
+    "@langchain/community",
+    "langchain",
+    "zod"
+  ],
+  "env": ["OPENAI_API_KEY"],
+  "files": [
+    "agent.ts",
+    "_preview.ts",
+    "src/agent.ts",
+    "src/prompts/system.ts",
+    "src/tools/index.ts",
+    "src/tools/search.ts"
+  ],
   "welcomeMessage": "Hi! I'm your research assistant.\nGive me a topic and I'll synthesize findings for you.",
   "starterMessages": [
     "Research the latest trends in AI agents",

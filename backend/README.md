@@ -22,8 +22,9 @@ Docs UI  ──POST /sessions/abc123/chat─────────────
          ◄─── SSE: data: {"type":"done"}
 ```
 
-Sandbox previews use **deterministic mock agents** under
-`registry/<agent-id>/preview/`. No model API keys are required.
+Sandbox previews run the same files under
+`registry/<agent-id>/<framework>/` that the docs code viewer shows. Each
+framework package has its own `metadata.json` (`files`, `dependencies`, `env`).
 
 ## Endpoints
 
@@ -33,13 +34,13 @@ Sandbox previews use **deterministic mock agents** under
 
 ### Registry
 
-- `GET /registry` — list agents that have a sandbox-ready `preview/` package.
-- `GET /registry/{agent_id}` — get metadata for one agent.
+- `GET /registry` — list sandbox-ready agent/framework packages.
+- `GET /registry/{agent_id}` — list packages for an agent; pass `?framework=` for one package.
 
 ### Sessions (agent preview)
 
-- `POST /sessions/{agent_id}` — deploy an agent from the registry.
-  Body: `{ "env": {} }` (optional; leave empty — previews need no API keys).
+- `POST /sessions/{agent_id}` — deploy a framework package from the registry.
+  Body (required): `{ "framework": "langchain", "env": { "OPENAI_API_KEY": "..." } }`.
 - `GET /sessions` — list all active sessions.
 - `GET /sessions/{id}/status` — health-check a running agent.
 - `POST /sessions/{id}/chat` — send a message; returns SSE stream.
@@ -98,7 +99,7 @@ uv sync
 uv run uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-By default the service reads agents from `../registry/<id>/preview/`.
+By default the service reads agents from `../registry/<id>/<framework>/`.
 Override with `REGISTRY_DIR` if needed.
 
 The first session creation pulls the sandbox OCI image (`node` by default), so
@@ -109,15 +110,14 @@ it is slower than subsequent calls. Override the default image with the
 
 Canonical catalog: repo-root `registry.json` + `registry/`.
 
-Each sandbox-previewable agent has:
+Each agent/framework package is the single source of truth:
 
 ```
-registry/<agent-id>/
-  langchain|mastra|vercel-ai/...   # install templates (CLI)
-  preview/
-    metadata.json                  # sandbox metadata
-    agent.ts                       # exports agent.stream() (mock for now)
-    _preview.ts                    # HTTP harness on :3000
+registry/<agent-id>/<framework>/
+  metadata.json     # files, dependencies, env, entrypoint, welcome copy
+  agent.ts          # exports agent.stream() (sandbox + install surface)
+  _preview.ts       # HTTP harness on :3000
+  src/...           # optional modular implementation (also copied into sandbox)
 ```
 
 ## Environment variables

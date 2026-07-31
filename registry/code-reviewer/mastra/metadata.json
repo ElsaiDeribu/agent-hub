@@ -1,0 +1,19 @@
+{
+  "id": "code-reviewer",
+  "name": "Code Reviewer Agent",
+  "description": "Reviews code snippets for bugs, security issues, and style improvements with structured output.",
+  "category": "dev-tools",
+  "tags": ["code", "review", "structured-output", "security"],
+  "languages": ["ts"],
+  "frameworks": ["mastra"],
+  "entrypoint": "_preview.ts",
+  "dependencies": ["@mastra/core", "@ai-sdk/openai", "zod"],
+  "env": ["OPENAI_API_KEY"],
+  "files": ["agent.ts", "_preview.ts"],
+  "welcomeMessage": "Hello! I'm your code reviewer.\nPaste a code snippet or describe what you'd like me to review.",
+  "starterMessages": [
+    "Review this function: function add(a, b) { return a + b }",
+    "Is there a bug in: for (let i = 0; i <= arr.length; i++) {}",
+    "Check this for SQL injection: `SELECT * FROM users WHERE id = ${userId}`"
+  ]
+}

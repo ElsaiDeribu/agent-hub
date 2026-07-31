@@ -105,3 +105,18 @@ export async function runAgent(input: string): Promise<string> {
   const result = await chain.invoke({ input });
   return result.content as string;
 }
+
+/** Sandbox / docs preview surface — same module the code viewer shows. */
+export const agent = {
+  async *stream(
+    message: string,
+    _opts: { history?: { role: string; content: string }[] } = {},
+  ) {
+    const text = await runAgent(message);
+    for (const word of text.split(/(\s+)/)) {
+      if (!word) continue;
+      yield { type: "token" as const, content: word };
+    }
+    yield { type: "done" as const };
+  },
+};

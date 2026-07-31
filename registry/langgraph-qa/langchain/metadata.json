@@ -15,7 +15,17 @@
     "zod"
   ],
   "env": ["OPENAI_API_KEY"],
-  "files": ["agent.ts", "_preview.ts"],
+  "files": [
+    "agent.ts",
+    "_preview.ts",
+    "src/agents/index.ts",
+    "src/agents/qa.ts",
+    "src/prompts/system.ts",
+    "src/tools/index.ts",
+    "src/tools/time.ts",
+    "src/tools/calculator.ts",
+    "src/tools/echo.ts"
+  ],
   "welcomeMessage": "Hi! I'm a live LangGraph agent. Ask me anything — replies come from OpenAI inside the sandbox.",
   "starterMessages": [
     "Hello! What can you do?",

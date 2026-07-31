@@ -17,7 +17,8 @@
       },
       "frameworkFiles": {
         "generic": [
-          { "path": "registry/hello/README.md", "target": "README.md" }
+          { "path": "registry/hello/generic/agent.ts", "target": "agent.ts" },
+          { "path": "registry/hello/generic/_preview.ts", "target": "_preview.ts" }
         ]
       },
       "dependencies": {
@@ -44,8 +45,12 @@
       "frameworkFiles": {
         "generic": [
           {
-            "path": "registry/simple-qa/preview/agent.ts",
+            "path": "registry/simple-qa/generic/agent.ts",
             "target": "agent.ts"
+          },
+          {
+            "path": "registry/simple-qa/generic/_preview.ts",
+            "target": "_preview.ts"
           }
         ]
       },
@@ -73,6 +78,14 @@
       },
       "frameworkFiles": {
         "langchain": [
+          {
+            "path": "registry/langgraph-qa/langchain/agent.ts",
+            "target": "agent.ts"
+          },
+          {
+            "path": "registry/langgraph-qa/langchain/_preview.ts",
+            "target": "_preview.ts"
+          },
           {
             "path": "registry/langgraph-qa/langchain/src/agents/index.ts",
             "target": "src/agents/index.ts"
@@ -129,10 +142,19 @@
           "Where is my order #12345?",
           "I need a refund for my last purchase",
           "My product arrived damaged"
-        ]
+        ],
+        "requiredEnv": ["OPENAI_API_KEY"]
       },
       "frameworkFiles": {
         "langchain": [
+          {
+            "path": "registry/customer-support/langchain/agent.ts",
+            "target": "agent.ts"
+          },
+          {
+            "path": "registry/customer-support/langchain/_preview.ts",
+            "target": "_preview.ts"
+          },
           {
             "path": "registry/customer-support/langchain/src/agent.ts",
             "target": "src/agent.ts"
@@ -162,12 +184,20 @@
           {
             "path": "registry/customer-support/mastra/agent.ts",
             "target": "agent.ts"
+          },
+          {
+            "path": "registry/customer-support/mastra/_preview.ts",
+            "target": "_preview.ts"
           }
         ],
         "vercel-ai": [
           {
             "path": "registry/customer-support/vercel-ai/agent.ts",
             "target": "agent.ts"
+          },
+          {
+            "path": "registry/customer-support/vercel-ai/_preview.ts",
+            "target": "_preview.ts"
           }
         ]
       },
@@ -197,19 +227,28 @@
           "Review this function: function add(a, b) { return a + b }",
           "Is there a bug in: for (let i = 0; i <= arr.length; i++) {}",
           "Check this for SQL injection: `SELECT * FROM users WHERE id = ${userId}`"
-        ]
+        ],
+        "requiredEnv": ["OPENAI_API_KEY"]
       },
       "frameworkFiles": {
         "langchain": [
           {
             "path": "registry/code-reviewer/langchain/agent.ts",
             "target": "agent.ts"
+          },
+          {
+            "path": "registry/code-reviewer/langchain/_preview.ts",
+            "target": "_preview.ts"
           }
         ],
         "mastra": [
           {
             "path": "registry/code-reviewer/mastra/agent.ts",
             "target": "agent.ts"
+          },
+          {
+            "path": "registry/code-reviewer/mastra/_preview.ts",
+            "target": "_preview.ts"
           }
         ]
       },
@@ -233,10 +272,19 @@
           "Research the latest trends in AI agents",
           "What are the differences between LangChain and LlamaIndex?",
           "Summarize recent news about OpenAI"
-        ]
+        ],
+        "requiredEnv": ["OPENAI_API_KEY"]
       },
       "frameworkFiles": {
         "langchain": [
+          {
+            "path": "registry/research-assistant/langchain/agent.ts",
+            "target": "agent.ts"
+          },
+          {
+            "path": "registry/research-assistant/langchain/_preview.ts",
+            "target": "_preview.ts"
+          },
           {
             "path": "registry/research-assistant/langchain/src/agent.ts",
             "target": "src/agent.ts"
@@ -258,6 +306,10 @@
           {
             "path": "registry/research-assistant/vercel-ai/agent.ts",
             "target": "agent.ts"
+          },
+          {
+            "path": "registry/research-assistant/vercel-ai/_preview.ts",
+            "target": "_preview.ts"
           }
         ]
       },

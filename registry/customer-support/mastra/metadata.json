@@ -1,14 +1,14 @@
 {
   "id": "customer-support",
   "name": "Customer Support Agent",
-  "description": "Multi-turn customer support agent with order lookup and human escalation tools. Sandbox preview uses deterministic mock replies (no API keys).",
+  "description": "Multi-turn customer support agent with order lookup and human escalation tools.",
   "category": "support",
   "tags": ["multi-turn", "tools", "memory", "escalation"],
   "languages": ["ts"],
-  "frameworks": ["langchain", "mastra", "vercel-ai"],
+  "frameworks": ["mastra"],
   "entrypoint": "_preview.ts",
-  "dependencies": [],
-  "env": [],
+  "dependencies": ["@mastra/core", "@ai-sdk/openai", "zod"],
+  "env": ["OPENAI_API_KEY"],
   "files": ["agent.ts", "_preview.ts"],
   "welcomeMessage": "Hi! I'm your customer support agent.\nI can help with orders, account access, refunds, and more. What can I assist you with today?",
   "starterMessages": [

@@ -1,0 +1,34 @@
+{
+  "id": "customer-support",
+  "name": "Customer Support Agent",
+  "description": "Multi-turn customer support agent with order lookup and human escalation tools.",
+  "category": "support",
+  "tags": ["multi-turn", "tools", "memory", "escalation"],
+  "languages": ["ts"],
+  "frameworks": ["langchain"],
+  "entrypoint": "_preview.ts",
+  "dependencies": [
+    "@langchain/core",
+    "@langchain/openai",
+    "langchain",
+    "zod"
+  ],
+  "env": ["OPENAI_API_KEY"],
+  "files": [
+    "agent.ts",
+    "_preview.ts",
+    "src/agent.ts",
+    "src/prompts/system.ts",
+    "src/tools/index.ts",
+    "src/tools/orders.ts",
+    "src/tools/account.ts",
+    "src/tools/escalation.ts"
+  ],
+  "welcomeMessage": "Hi! I'm your customer support agent.\nI can help with orders, account access, refunds, and more. What can I assist you with today?",
+  "starterMessages": [
+    "I can't log in to my account",
+    "Where is my order #12345?",
+    "I need a refund for my last purchase",
+    "My product arrived damaged"
+  ]
+}

@@ -27,21 +27,38 @@ def _shell_quote(value: str) -> str:
 # ---------------------------------------------------------------------------
 
 DEFAULT_IMAGE = os.environ.get("MSB_IMAGE", "node")
-# Canonical registry lives at repo-root `registry/<agent-id>/preview/`.
+# Canonical registry: `registry/<agent-id>/<framework>/` with metadata.json.
 # Override with REGISTRY_DIR for Docker or alternate layouts.
 _DEFAULT_REGISTRY = Path(__file__).resolve().parent.parent / "registry"
 REGISTRY_DIR = Path(os.environ.get("REGISTRY_DIR", str(_DEFAULT_REGISTRY)))
 
 
-def agent_preview_dir(agent_id: str) -> Path:
-    """Resolve sandbox-runnable files for an agent (preview/ preferred)."""
-    preview = REGISTRY_DIR / agent_id / "preview"
-    if (preview / "metadata.json").is_file():
-        return preview
-    flat = REGISTRY_DIR / agent_id
-    if (flat / "metadata.json").is_file():
-        return flat
-    return preview
+def list_frameworks(agent_id: str) -> list[str]:
+    """Return framework package names under an agent that have metadata.json."""
+    agent_root = REGISTRY_DIR / agent_id
+    if not agent_root.is_dir():
+        return []
+    frameworks: list[str] = []
+    for entry in sorted(agent_root.iterdir()):
+        if entry.name.startswith("_"):
+            continue
+        if entry.is_dir() and (entry / "metadata.json").is_file():
+            frameworks.append(entry.name)
+    return frameworks
+
+
+def agent_impl_dir(agent_id: str, framework: str) -> Path:
+    """Resolve `registry/<agent>/<framework>/` (must contain metadata.json)."""
+    frameworks = list_frameworks(agent_id)
+    if not frameworks:
+        raise FileNotFoundError(f"Agent '{agent_id}' not found in registry")
+    if framework not in frameworks:
+        raise FileNotFoundError(
+            f"Framework '{framework}' not found for agent '{agent_id}'. "
+            f"Available: {', '.join(frameworks)}"
+        )
+    return REGISTRY_DIR / agent_id / framework
+
 
 SESSION_IDLE_TIMEOUT_S = int(os.environ.get("SESSION_IDLE_TIMEOUT", "1800"))
 SESSION_MAX_DURATION_S = int(os.environ.get("SESSION_MAX_DURATION", "3600"))
@@ -57,6 +74,7 @@ SESSION_BASE_PORT = int(os.environ.get("SESSION_BASE_PORT", "10000"))
 class Session:
     session_id: str
     agent_id: str
+    framework: str
     sandbox: Sandbox
     host_port: int
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
@@ -77,19 +95,19 @@ class SessionManager:
     async def create_session(
         self,
         agent_id: str,
+        framework: str,
         env: dict[str, str] | None = None,
     ) -> Session:
-        agent_dir = agent_preview_dir(agent_id)
+        agent_dir = agent_impl_dir(agent_id, framework)
         meta_path = agent_dir / "metadata.json"
-        if not meta_path.exists():
-            raise FileNotFoundError(f"Agent '{agent_id}' not found in registry")
-
         metadata = json.loads(meta_path.read_text())
         entrypoint = metadata.get("entrypoint", "_preview.ts")
         dependencies = metadata.get("dependencies", [])
         relative_files = metadata.get("files", [])
         if not relative_files:
-            raise RuntimeError(f"Registry agent '{agent_id}' lists no files")
+            raise RuntimeError(
+                f"Registry agent '{agent_id}/{framework}' lists no files"
+            )
 
         required_env = metadata.get("env") or []
         provided = env or {}
@@ -124,8 +142,9 @@ class SessionManager:
                     raise FileNotFoundError(f"Registry file missing: {rel_path}")
 
                 parts = Path(rel_path).parts
-                if len(parts) > 1:
-                    parent = "/app/agent/" + "/".join(parts[:-1])
+                # Create each intermediate directory (sandbox mkdir may not be recursive).
+                for i in range(1, len(parts)):
+                    parent = "/app/agent/" + "/".join(parts[:i])
                     await sb.fs.mkdir(parent)
                 await sb.fs.write(f"/app/agent/{rel_path}", host_path.read_bytes())
 
@@ -188,11 +207,15 @@ class SessionManager:
         session = Session(
             session_id=session_id,
             agent_id=agent_id,
+            framework=framework,
             sandbox=sb,
             host_port=host_port,
         )
         self.sessions[session_id] = session
-        print(f"Session '{session_id}' created for agent '{agent_id}' on port {host_port}")
+        print(
+            f"Session '{session_id}' created for agent '{agent_id}/{framework}' "
+            f"on port {host_port}"
+        )
         return session
 
     async def _read_agent_log(self, sb: Sandbox) -> str:

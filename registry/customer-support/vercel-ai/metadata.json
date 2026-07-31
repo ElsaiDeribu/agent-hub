@@ -1,0 +1,20 @@
+{
+  "id": "customer-support",
+  "name": "Customer Support Agent",
+  "description": "Multi-turn customer support agent with order lookup and human escalation tools.",
+  "category": "support",
+  "tags": ["multi-turn", "tools", "memory", "escalation"],
+  "languages": ["ts"],
+  "frameworks": ["vercel-ai"],
+  "entrypoint": "_preview.ts",
+  "dependencies": ["ai", "@ai-sdk/openai", "zod"],
+  "env": ["OPENAI_API_KEY"],
+  "files": ["agent.ts", "_preview.ts"],
+  "welcomeMessage": "Hi! I'm your customer support agent.\nI can help with orders, account access, refunds, and more. What can I assist you with today?",
+  "starterMessages": [
+    "I can't log in to my account",
+    "Where is my order #12345?",
+    "I need a refund for my last purchase",
+    "My product arrived damaged"
+  ]
+}

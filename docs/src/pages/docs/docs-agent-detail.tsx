@@ -123,6 +123,7 @@ export default function DocsAgentDetailPage() {
           >
             <ChatPreview
               agentName={agent.name}
+              framework={activeFramework}
               welcomeMessage={agent.preview.welcomeMessage}
               starterMessages={agent.preview.starterMessages}
               requiredEnv={agent.preview.requiredEnv ?? []}

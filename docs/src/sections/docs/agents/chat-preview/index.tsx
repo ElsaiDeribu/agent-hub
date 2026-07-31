@@ -14,13 +14,20 @@ export type { ChatPreviewProps } from './types';
 
 export function ChatPreview({
   agentName,
+  framework,
   welcomeMessage,
   starterMessages,
   requiredEnv = [],
   sandboxPreview = true,
   className,
 }: ChatPreviewProps) {
-  const chat = useSandboxChat({ agentName, welcomeMessage, requiredEnv, sandboxPreview });
+  const chat = useSandboxChat({
+    agentName,
+    framework,
+    welcomeMessage,
+    requiredEnv,
+    sandboxPreview,
+  });
 
   return (
     <div className={cn('flex flex-col rounded-xl border overflow-hidden', className)}>
