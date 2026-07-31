@@ -21,8 +21,8 @@ import {
   SidebarGroup,
   SidebarContent,
   SidebarMenuSub,
-  SidebarProvider,
   SidebarMenuItem,
+  SidebarProvider,
   SidebarMenuButton,
   SidebarGroupContent,
 } from '@/components/ui/sidebar';
@@ -208,19 +208,25 @@ function FileTreeSidebar({
 interface CodeViewerProps {
   files: RegistryFile[];
   framework: string;
+  activeFile: string;
+  onActiveFileChange: (path: string) => void;
   className?: string;
 }
 
-export function CodeViewer({ files, framework, className }: CodeViewerProps) {
+export function CodeViewer({
+  files,
+  framework,
+  activeFile,
+  onActiveFileChange,
+  className,
+}: CodeViewerProps) {
   const [fileContents, setFileContents] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
-  const [activeFile, setActiveFile] = useState(files[0]?.target ?? '');
 
   useEffect(() => {
     if (files.length === 0) return;
 
     setLoading(true);
-    setActiveFile(files[0].target);
     setFileContents({});
 
     const fetchAll = async () => {
@@ -245,9 +251,12 @@ export function CodeViewer({ files, framework, className }: CodeViewerProps) {
     fetchAll();
   }, [files, framework]);
 
-  const handleSelect = useCallback((path: string) => {
-    setActiveFile(path);
-  }, []);
+  const handleSelect = useCallback(
+    (path: string) => {
+      onActiveFileChange(path);
+    },
+    [onActiveFileChange]
+  );
 
   const tree = useMemo(() => createFileTree(files), [files]);
 

@@ -21,6 +21,7 @@ export default function DocsAgentDetailPage() {
   const agent = REGISTRY_ITEMS.find((a) => a.name === name);
   const [tabByAgent, setTabByAgent] = useState<Record<string, string>>({});
   const [frameworkByAgent, setFrameworkByAgent] = useState<Record<string, string>>({});
+  const [activeFileByKey, setActiveFileByKey] = useState<Record<string, string>>({});
 
   if (!agent) return <Navigate to={paths.page404} replace />;
 
@@ -28,6 +29,12 @@ export default function DocsAgentDetailPage() {
   const activeFramework = frameworkByAgent[agent.name] ?? agent.frameworks[0];
   const categoryColor = CATEGORY_COLORS[agent.category] ?? '';
   const currentFiles = agent.frameworkFiles[activeFramework] ?? [];
+  const fileSelectionKey = `${agent.name}:${activeFramework}`;
+  const savedFile = activeFileByKey[fileSelectionKey];
+  const activeFile =
+    (savedFile && currentFiles.some((f) => f.target === savedFile) ? savedFile : undefined) ??
+    currentFiles[0]?.target ??
+    '';
 
   return (
     <>
@@ -108,7 +115,12 @@ export default function DocsAgentDetailPage() {
             />
           </div>
 
-          <TabsContent value="preview" className="flex-1 mt-0">
+          {/* forceMount + hide inactive: keep Preview/Code state (file selection, chat) */}
+          <TabsContent
+            value="preview"
+            forceMount
+            className="flex-1 mt-0 data-[state=inactive]:hidden"
+          >
             <ChatPreview
               agentName={agent.name}
               welcomeMessage={agent.preview.welcomeMessage}
@@ -119,8 +131,16 @@ export default function DocsAgentDetailPage() {
             />
           </TabsContent>
 
-          <TabsContent value="code" className="flex-1 mt-0">
-            <CodeViewer files={currentFiles} framework={activeFramework} className="h-[70vh]" />
+          <TabsContent value="code" forceMount className="flex-1 mt-0 data-[state=inactive]:hidden">
+            <CodeViewer
+              files={currentFiles}
+              framework={activeFramework}
+              activeFile={activeFile}
+              onActiveFileChange={(path) =>
+                setActiveFileByKey((prev) => ({ ...prev, [fileSelectionKey]: path }))
+              }
+              className="h-[70vh]"
+            />
           </TabsContent>
         </Tabs>
       </main>
