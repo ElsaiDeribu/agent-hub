@@ -1,7 +1,9 @@
+import { Fragment } from 'react';
 import { paths } from '@/routes/paths';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Step, Steps } from '@/components/ui/steps';
 import { Separator } from '@/components/ui/separator';
 import { CliCommand, buildHarnessCommands } from '@/sections/docs/agents/install-command';
 import {
@@ -19,15 +21,13 @@ const ENV_EXAMPLE = `OPENAI_API_KEY=sk-...
 # or use Anthropic:
 ANTHROPIC_API_KEY=sk-ant-...`;
 
-interface Step {
-  stepNumber: number;
+interface StepItem {
   title: string;
   content: React.ReactNode;
 }
 
-const steps: Step[] = [
+const steps: StepItem[] = [
   {
-    stepNumber: 1,
     title: 'Find an agent',
     content: (
       <div className="space-y-4">
@@ -44,7 +44,6 @@ const steps: Step[] = [
     ),
   },
   {
-    stepNumber: 2,
     title: 'Scaffold it',
     content: (
       <div className="space-y-4">
@@ -67,7 +66,6 @@ const steps: Step[] = [
     ),
   },
   {
-    stepNumber: 3,
     title: 'Set environment variables',
     content: (
       <div className="space-y-4">
@@ -120,28 +118,14 @@ export default function DocsInstallationPage() {
 
       <Separator className="mb-10" />
 
-      {/* Numbered steps */}
-      <div className="space-y-10">
-        {steps.map(({ stepNumber, title, content }) => (
-          <div key={stepNumber} className="flex gap-6">
-            {/* Step indicator + connector */}
-            <div className="flex flex-col items-center">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-primary text-primary font-bold text-sm">
-                {stepNumber}
-              </div>
-              <div className="mt-2 w-px flex-1 bg-border" />
-            </div>
-
-            {/* Content */}
-            <div className="pb-10 flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-4">
-                <h2 className="text-xl font-semibold">{title}</h2>
-              </div>
-              {content}
-            </div>
-          </div>
+      <Steps>
+        {steps.map(({ title, content }) => (
+          <Fragment key={title}>
+            <Step>{title}</Step>
+            {content}
+          </Fragment>
         ))}
-      </div>
+      </Steps>
 
       {/* Done banner */}
       <div className="rounded-xl border bg-primary/5 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4">
