@@ -72,12 +72,15 @@ const TokenSpan = ({ token }: { token: ThemedToken }) => (
 
 // Line number styles using CSS counters
 const LINE_NUMBER_CLASSES = cn(
-  'block',
+  'inline-block w-full',
   'before:content-[counter(line)]',
+  'before:sticky',
+  'before:left-0',
+  'before:bg-background',
   'before:inline-block',
   'before:[counter-increment:line]',
-  'before:w-8',
-  'before:mr-4',
+  'before:w-14',
+  'before:pr-5',
   'before:text-right',
   'before:text-muted-foreground/50',
   'before:font-mono',
@@ -261,7 +264,8 @@ const CodeBlockBody = memo(
     return (
       <pre
         className={cn(
-          'dark:!bg-[var(--shiki-dark-bg)] dark:!text-[var(--shiki-dark)] m-0 p-4 text-sm',
+          'dark:!bg-[var(--shiki-dark-bg)] dark:!text-[var(--shiki-dark)] m-0 text-sm',
+          !showLineNumbers && 'p-4',
           className
         )}
         style={preStyle}
@@ -269,7 +273,7 @@ const CodeBlockBody = memo(
         <code
           className={cn(
             'font-mono text-sm',
-            showLineNumbers && '[counter-increment:line_0] [counter-reset:line]'
+            showLineNumbers && 'grid min-w-full [counter-increment:line_0] [counter-reset:line]'
           )}
         >
           {keyedLines.map((keyedLine) => (
@@ -405,8 +409,12 @@ export const CodeBlockContent = ({
   const tokenized = asyncTokens ?? syncTokens;
 
   return (
-    <div className="relative min-h-0 flex-1 overflow-auto">
-      <CodeBlockBody showLineNumbers={showLineNumbers} tokenized={tokenized} />
+    <div className="relative min-h-0 flex-1 overflow-hidden">
+      <CodeBlockBody
+        className="h-full overflow-auto"
+        showLineNumbers={showLineNumbers}
+        tokenized={tokenized}
+      />
     </div>
   );
 };
