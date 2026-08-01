@@ -2,7 +2,7 @@ services:
   api:
     build:
       context: ..
-      dockerfile: backend/Dockerfile
+      dockerfile: api/Dockerfile
     image: microsandbox-demo:latest
     ports:
       - "8000:8000"

@@ -11,8 +11,8 @@ sandbox preview backend.
 |------|------|
 | `registry.json` | Canonical catalog (CLI + docs) |
 | `registry/<agent>/<framework>/` | Single source of truth: install files, code viewer, and sandbox package (`metadata.json`) |
-| `backend/` | FastAPI + microsandbox session runner |
-| `docs/` | Browse / preview UI |
+| `api/` | FastAPI + microsandbox session runner |
+| `web/` | Browse / preview UI |
 | `src/` | `agent-hub-harness` CLI |
 
 ## Quick start (local)
@@ -20,7 +20,7 @@ sandbox preview backend.
 ### 1. Backend (sandbox)
 
 ```bash
-cd backend
+cd api
 uv sync
 uv run uvicorn main:app --host 0.0.0.0 --port 8000
 ```
@@ -31,7 +31,7 @@ runs). Docker+KVM only works on Linux hosts that expose `/dev/kvm`.
 ### 2. Docs UI
 
 ```bash
-cd docs
+cd web
 cp .env.example .env   # VITE_HOST_API=http://localhost:8000
 npm install
 npm run dev

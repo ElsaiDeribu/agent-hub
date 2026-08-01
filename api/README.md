@@ -67,7 +67,7 @@ microsandbox runs **real microVMs**, so it needs hardware virtualization:
 From the **repo root**:
 
 ```bash
-docker compose -f backend/docker-compose.yml up --build
+docker compose -f api/docker-compose.yml up --build
 ```
 
 Then, from another shell:
@@ -94,7 +94,7 @@ curl -X DELETE http://localhost:8000/sessions/a1b2c3d4e5f6
 ## Run locally (no Docker)
 
 ```bash
-cd backend
+cd api
 uv sync
 uv run uvicorn main:app --host 0.0.0.0 --port 8000
 ```
@@ -125,8 +125,8 @@ registry/<agent-id>/<framework>/
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `MSB_IMAGE` | `node` | OCI image for sandboxes |
-| `REGISTRY_DIR` | `../registry` (relative to backend) | Path to root registry |
-| `CORS_ORIGINS` | docs/vite origins | Comma-separated allowed origins |
+| `REGISTRY_DIR` | `../registry` (relative to api) | Path to root registry |
+| `CORS_ORIGINS` | web/vite origins | Comma-separated allowed origins |
 | `HOST` | `0.0.0.0` | Bind address |
 | `PORT` | `8000` | Bind port |
 | `SESSION_IDLE_TIMEOUT` | `1800` | Seconds before idle session is reaped |

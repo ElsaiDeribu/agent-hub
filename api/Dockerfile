@@ -3,7 +3,7 @@
 # The container itself needs /dev/kvm at runtime -- see docker-compose.yml.
 #
 # Build from the repo root:
-#   docker compose -f backend/docker-compose.yml up --build
+#   docker compose -f api/docker-compose.yml up --build
 FROM python:3.13-slim-trixie
 
 ENV PYTHONUNBUFFERED=1 \
@@ -20,11 +20,11 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /app
 
 # Install dependencies first (cached) using only the lockfiles.
-COPY backend/pyproject.toml backend/uv.lock ./
+COPY api/pyproject.toml api/uv.lock ./
 RUN uv sync --frozen --no-install-project --no-dev
 
 # Application code + canonical root registry (agents live under registry/*/preview).
-COPY backend/main.py backend/services.py backend/README.md ./
+COPY api/main.py api/services.py api/README.md ./
 COPY registry/ ./registry/
 
 EXPOSE 8000
