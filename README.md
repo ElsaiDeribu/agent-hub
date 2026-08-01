@@ -13,7 +13,7 @@ sandbox preview backend.
 | `registry/<agent>/<framework>/` | Single source of truth: install files, code viewer, and sandbox package (`metadata.json`) |
 | `api/` | FastAPI + microsandbox session runner |
 | `web/` | Browse / preview UI |
-| `src/` | `agent-hub-harness` CLI |
+| `cli/` | `agent-hub-harness` CLI |
 
 ## Quick start (local)
 
@@ -45,6 +45,14 @@ API keys are collected or required.
 
 ```bash
 npx agent-hub-harness add customer-support --framework langchain
+```
+
+To develop the CLI locally:
+
+```bash
+cd cli
+npm install
+npm run build
 ```
 
 Install templates may document LLM keys for use in *your* project; the hub
