@@ -12,7 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // fumadocs-mdx generated output
+    ".source/**",
   ]),
 ]);
+
 
 export default eslintConfig;
