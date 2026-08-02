@@ -1,0 +1,27 @@
+---
+title: Installation
+description: No global install needed. Use npx agent-hub-harness (or the equivalent for your package manager) to scaffold any agent directly into your project in seconds.
+---
+
+<Steps>
+
+### Find an agent
+
+Browse the Agents page or list available agents from the CLI:
+
+<CliCommand args="list" />
+
+### Scaffold it
+
+Run the `add` command with your chosen agent and framework:
+
+<CliCommand args="add customer-support --framework langchain" />
+
+The agent source files are copied into `./customer-support/` and the required install commands are printed.
+
+### Set environment variables
+
+Add the required API keys to a `.env` file in your project root. The exact keys are printed after scaffolding and listed on each agent's page.
+
+</Steps>
+

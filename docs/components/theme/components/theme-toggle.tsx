@@ -2,18 +2,30 @@
 
 import type { Theme } from "@/components/theme/types";
 
-import { useTheme } from "@/components/theme/theme-provider";
+import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/theme/theme-provider";
 
 const CYCLE: Theme[] = ["light", "dark"];
 
 const ICONS: Partial<Record<Theme, React.ReactNode>> = {
   light: <Sun className="size-4" />,
-  dark: <Moon className="size-4" />
+  dark: <Moon className="size-4" />,
 };
+
+const toggleClassName =
+  "flex size-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer";
+
+const emptySubscribe = () => () => {};
+
+/** false during SSR + hydration; true only after client commit. */
+function useIsClient() {
+  return useSyncExternalStore(emptySubscribe, () => true, () => false);
+}
 
 /** Compact icon button that cycles light → dark → light */
 export function ThemeToggleIcon() {
+  const isClient = useIsClient();
   const { theme, setTheme } = useTheme();
 
   function cycle() {
@@ -21,11 +33,19 @@ export function ThemeToggleIcon() {
     setTheme(next);
   }
 
+  // Same markup on server and first client paint — theme is only known on client.
+  if (!isClient) {
+    return (
+      <button type="button" aria-label="Switch theme" className={toggleClassName} disabled />
+    );
+  }
+
   return (
     <button
+      type="button"
       onClick={cycle}
       aria-label={`Switch theme (current: ${theme})`}
-      className="flex size-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+      className={toggleClassName}
     >
       {ICONS[theme]}
     </button>
@@ -34,14 +54,20 @@ export function ThemeToggleIcon() {
 
 /** full toggle */
 export const ThemeToggle = () => {
+  const isClient = useIsClient();
   const { theme, setTheme } = useTheme();
   const themes: Theme[] = ["light", "dark", "blue"];
+
+  if (!isClient) {
+    return <div className="flex gap-2" />;
+  }
 
   return (
     <div className="flex gap-2">
       {themes.map((t) => (
         <button
           key={t}
+          type="button"
           onClick={() => setTheme(t)}
           className={`px-4 py-2 rounded-md ${
             theme === t

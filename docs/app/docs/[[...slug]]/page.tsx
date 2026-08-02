@@ -1,3 +1,4 @@
+import { getMDXComponents } from "@/components/mdx";
 import { source } from "@/lib/source";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -17,10 +18,12 @@ export default async function Page(props: {
         {page.data.title}
       </h1>
       {page.data.description ? (
-        <p className="mb-8 text-muted-foreground">{page.data.description}</p>
+        <p className="mb-8 text-lg text-muted-foreground">
+          {page.data.description}
+        </p>
       ) : null}
-      <article className="prose dark:prose-invert max-w-none">
-        <MDX />
+      <article className="max-w-none">
+        <MDX components={getMDXComponents()} />
       </article>
     </>
   );
