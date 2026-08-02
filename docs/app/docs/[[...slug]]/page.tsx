@@ -12,22 +12,21 @@ export default async function Page(props: {
   const MDX = page.data.body;
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
+    <>
       <h1 className="mb-2 text-3xl font-semibold tracking-tight">
         {page.data.title}
       </h1>
       {page.data.description ? (
-        <p className="mb-8 text-zinc-600 dark:text-zinc-400">
-          {page.data.description}
-        </p>
+        <p className="mb-8 text-muted-foreground">{page.data.description}</p>
       ) : null}
-      <article className="prose dark:prose-invert">
+      <article className="prose dark:prose-invert max-w-none">
         <MDX />
       </article>
-    </main>
+    </>
   );
 }
 
+// Returns each MDX doc slug so Next can prebuild those static pages at build time.
 export async function generateStaticParams() {
   return source.generateParams();
 }
