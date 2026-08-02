@@ -27,11 +27,11 @@ import {
 } from 'react';
 
 // Shiki uses bitflags for font styles: 1=italic, 2=bold, 4=underline
-// eslint-disable-next-line no-bitwise
+ 
 const isItalic = (fontStyle: number | undefined) => fontStyle && fontStyle & 1;
-// eslint-disable-next-line no-bitwise
+ 
 const isBold = (fontStyle: number | undefined) => fontStyle && fontStyle & 2;
-// eslint-disable-next-line no-bitwise
+ 
 const isUnderline = (fontStyle: number | undefined) => fontStyle && fontStyle & 4;
 
 // Transform tokens to include pre-computed keys to avoid noArrayIndexKey lint
@@ -372,36 +372,38 @@ export const CodeBlockContent = ({
   // Memoized raw tokens for immediate display
   const rawTokens = useMemo(() => createRawTokens(code), [code]);
 
-  // Synchronous cache lookup; avoids setState in effect for cached results
-  const syncTokens = useMemo(
-    () => highlightCode(code, language) ?? rawTokens,
-    [code, language, rawTokens]
-  );
+  // Peek cache every render so we pick up tokens filled by other subscribers
+  const syncTokens = tokensCache.get(getTokensCacheKey(code, language)) ?? rawTokens;
 
-  // Async highlighting result (populated after shiki loads)
-  const [asyncTokens, setAsyncTokens] = useState<TokenizedCode | null>(null);
-  const asyncKeyRef = useRef({ code, language });
+  // Async highlighting result (populated after shiki loads). Keyed so stale
+  // results from a previous code/language are ignored without touching refs.
+  const [asyncState, setAsyncState] = useState<{
+    code: string;
+    language: BundledLanguage;
+    tokens: TokenizedCode;
+  } | null>(null);
 
-  // Invalidate stale async tokens synchronously during render
-  if (asyncKeyRef.current.code !== code || asyncKeyRef.current.language !== language) {
-    asyncKeyRef.current = { code, language };
-    setAsyncTokens(null);
-  }
+  const asyncTokens =
+    asyncState?.code === code && asyncState?.language === language
+      ? asyncState.tokens
+      : null;
 
   useEffect(() => {
     let cancelled = false;
+    const cacheKey = getTokensCacheKey(code, language);
 
-    const result = highlightCode(code, language, (next) => {
+    // Cache already warm — syncTokens from the render peek covers display.
+    // Avoid calling highlightCode with a callback here: on a hit it invokes
+    // the callback synchronously, which trips set-state-in-effect.
+    if (tokensCache.has(cacheKey)) {
+      return;
+    }
+
+    highlightCode(code, language, (next) => {
       if (!cancelled) {
-        setAsyncTokens(next);
+        setAsyncState({ code, language, tokens: next });
       }
     });
-
-    // Highlighting can finish (and populate the cache) before this effect
-    // subscribes — apply the sync result so we don't stay on raw tokens.
-    if (result && !cancelled) {
-      setAsyncTokens(result);
-    }
 
     return () => {
       cancelled = true;
