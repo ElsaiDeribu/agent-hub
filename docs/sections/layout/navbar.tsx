@@ -7,6 +7,7 @@ import { Logo } from "@/components/icons/logo";
 import GitHub from "@/components/icons/github-icon";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { ThemeToggleIcon } from "@/components/theme/components/theme-toggle";
 
 const GITHUB_URL = "https://github.com/ElsaiDeribu/agent-hub";
 
@@ -59,6 +60,8 @@ export function Navbar({ className }: { className?: string }) {
               <span className="hidden sm:inline">GitHub</span>
             </a>
           </Button>
+
+          <ThemeToggleIcon />
         </nav>
       </nav>
     </header>
