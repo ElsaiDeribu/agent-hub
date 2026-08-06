@@ -145,6 +145,13 @@ export default function AgentDetail({ agent }: AgentDetailProps) {
             className="flex-1 mt-0 data-[state=inactive]:hidden"
           >
             <ChatPreview
+              key={[
+                agent.name,
+                activeFramework,
+                agent.preview.welcomeMessage ?? "",
+                String(agent.sandboxPreview !== false),
+                (agent.preview.requiredEnv ?? []).join("|"),
+              ].join("::")}
               agentName={agent.name}
               framework={activeFramework}
               welcomeMessage={agent.preview.welcomeMessage}

@@ -21,8 +21,10 @@ export function Markdown({ className, ...other }: MarkdownProps) {
 }
 
 const components: Components = {
-  img: ({ node: _node, alt, ...props }) => <img alt={alt ?? ""} {...props} />,
-  a: ({ node: _node, href = "", children, ...props }) => {
+  img: ({ alt, src, title, ...props }) => (
+    <img alt={alt ?? ""} src={src} title={title} {...props} />
+  ),
+  a: ({ href = "", children, ...props }) => {
     const isHttp = href.startsWith("http");
 
     if (isHttp) {
@@ -33,10 +35,6 @@ const components: Components = {
       );
     }
 
-    return (
-      <Link href={href} {...props}>
-        {children}
-      </Link>
-    );
+    return <Link href={href} {...props}>{children}</Link>;
   },
 };

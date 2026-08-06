@@ -23,7 +23,6 @@ export function useSandboxChat({
   sandboxPreview,
 }: UseSandboxChatOptions) {
   const needsKeys = requiredEnv.length > 0;
-  const requiredEnvKey = requiredEnv.join("|");
   const initialMessage = welcomeMessage?.trim() || DEFAULT_WELCOME_MESSAGE;
 
   const [phase, setPhase] = useState<Phase>("idle");
@@ -34,7 +33,9 @@ export function useSandboxChat({
   const [isTyping, setIsTyping] = useState(false);
   const [startersUsed, setStartersUsed] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
-  const [sessionError, setSessionError] = useState<string | null>(null);
+  const [sessionError, setSessionError] = useState<string | null>(
+    sandboxPreview ? null : "This agent does not have a sandbox preview yet.",
+  );
   // Kept only in React state — never written to localStorage / sessionStorage.
   const [envValues, setEnvValues] = useState<Record<string, string>>({});
   const [showSecrets, setShowSecrets] = useState(false);
@@ -48,26 +49,9 @@ export function useSandboxChat({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  // Reset on agent change; never auto-create a sandbox.
+  // Parent remounts this hook (via key) when agent/framework changes.
+  // Cleanup only: tear down the sandbox session on unmount.
   useEffect(() => {
-    abortRef.current?.abort();
-    const sid = sessionIdRef.current;
-    if (sid) {
-      deleteSession(sid).catch(() => undefined);
-    }
-    sessionIdRef.current = null;
-    startGenerationRef.current += 1;
-
-    setPhase("idle");
-    setMessages([{ role: "assistant", content: initialMessage }]);
-    setStartersUsed(false);
-    setInput("");
-    setIsTyping(false);
-    setSessionError(sandboxPreview ? null : "This agent does not have a sandbox preview yet.");
-    setSessionId(null);
-    setEnvValues({});
-    setShowSecrets(false);
-
     return () => {
       abortRef.current?.abort();
       const current = sessionIdRef.current;
@@ -76,7 +60,7 @@ export function useSandboxChat({
       }
       sessionIdRef.current = null;
     };
-  }, [agentName, framework, initialMessage, sandboxPreview, requiredEnvKey]);
+  }, []);
 
   const startSandbox = async (env: Record<string, string> = {}) => {
     const generation = ++startGenerationRef.current;

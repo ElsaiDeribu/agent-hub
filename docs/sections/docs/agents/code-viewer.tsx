@@ -200,14 +200,24 @@ export function CodeViewer({
   onActiveFileChange,
   className,
 }: CodeViewerProps) {
-  const [fileContents, setFileContents] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
+  const filesIdentity = useMemo(
+    () => `${framework}\0${files.map((f) => f.path).join("\0")}`,
+    [files, framework],
+  );
+
+  const [cache, setCache] = useState<{
+    identity: string;
+    contents: Record<string, string>;
+  }>({ identity: "", contents: {} });
+
+  // Derive loading from whether cache matches the current files — avoids
+  // synchronous setState at the top of the fetch effect.
+  const loading = files.length > 0 && cache.identity !== filesIdentity;
 
   useEffect(() => {
     if (files.length === 0) return;
 
-    setLoading(true);
-    setFileContents({});
+    let cancelled = false;
 
     const fetchAll = async () => {
       const results: Record<string, string> = {};
@@ -224,12 +234,17 @@ export function CodeViewer({
           }
         }),
       );
-      setFileContents(results);
-      setLoading(false);
+      if (!cancelled) {
+        setCache({ identity: filesIdentity, contents: results });
+      }
     };
 
-    fetchAll();
-  }, [files, framework]);
+    void fetchAll();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [files, filesIdentity]);
 
   const handleSelect = useCallback(
     (path: string) => {
@@ -253,7 +268,7 @@ export function CodeViewer({
     );
   }
 
-  const activeContent = fileContents[activeFile] ?? "";
+  const activeContent = cache.contents[activeFile] ?? "";
   const language = getLanguage(activeFile);
 
   return (
