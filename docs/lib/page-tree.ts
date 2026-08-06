@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { source } from "@/lib/source";
+import { paths } from "@/routes/paths";
+import { REGISTRY_ITEMS } from "@/data/registry";
 
 export type DocsNavSubItem = {
   title: string;
@@ -9,7 +11,7 @@ export type DocsNavSubItem = {
 export type DocsNavItem = {
   title: string;
   url: string;
-  icon?: "book";
+  icon?: "book" | "bot";
   isActive?: boolean;
   items: DocsNavSubItem[];
 };
@@ -75,6 +77,17 @@ export function getDocsNav(): DocsNavItem[] {
       }
     }
   }
+
+  items.push({
+    title: "Agents",
+    url: paths.agents,
+    icon: "bot",
+    isActive: true,
+    items: REGISTRY_ITEMS.map((agent) => ({
+      title: agent.title,
+      url: paths.docs.agents.detail(agent.name),
+    })),
+  });
 
   return items;
 }

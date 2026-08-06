@@ -1,0 +1,1 @@
+export { default as AgentsCatalog } from "./agents-catalog";

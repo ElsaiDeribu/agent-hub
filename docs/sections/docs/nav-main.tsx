@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, ChevronRight, type LucideIcon } from "lucide-react";
+import { BookOpen, Bot, ChevronRight, type LucideIcon } from "lucide-react";
 import type { DocsNavItem } from "@/lib/page-tree";
 import {
   Collapsible,
@@ -22,6 +22,7 @@ import {
 
 const ICONS: Record<NonNullable<DocsNavItem["icon"]>, LucideIcon> = {
   book: BookOpen,
+  bot: Bot,
 };
 
 export function NavMain({ items }: { items: DocsNavItem[] }) {

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { paths } from "@/routes/paths";
 import { Logo } from "@/components/icons/logo";
 import GitHub from "@/components/icons/github-icon";
 import { Button } from "@/components/ui/button";
@@ -11,10 +12,14 @@ import { ThemeToggleIcon } from "@/components/theme/components/theme-toggle";
 
 const GITHUB_URL = "https://github.com/ElsaiDeribu/agent-hub";
 
-const NAV_LINKS = [{ label: "Docs", href: "/docs" }] as const;
+const NAV_LINKS = [
+  { label: "Agents", href: paths.agents },
+  { label: "Docs", href: paths.docs.root },
+] as const;
 
 export function Navbar({ className }: { className?: string }) {
   const pathname = usePathname();
+  const showSidebarTrigger = pathname.startsWith(paths.docs.root);
 
   return (
     <header
@@ -25,8 +30,8 @@ export function Navbar({ className }: { className?: string }) {
     >
       <nav className="flex h-16 w-full items-center justify-between px-4 lg:px-6">
         <div className="flex items-center gap-2">
-          <SidebarTrigger className="md:hidden" />
-          <Link href="/" className="flex items-center">
+          {showSidebarTrigger ? <SidebarTrigger className="md:hidden" /> : null}
+          <Link href={paths.home} className="flex items-center">
             <Logo variant="full" className="h-10" />
           </Link>
         </div>
