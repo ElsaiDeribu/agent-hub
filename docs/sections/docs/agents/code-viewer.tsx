@@ -274,7 +274,7 @@ export function CodeViewer({
   return (
     <div
       className={cn(
-        "flex overflow-hidden rounded-xl border bg-background",
+        "flex overflow-hidden rounded-xl border bg-background thin-scrollbar",
         className,
       )}
     >
