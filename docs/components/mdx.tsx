@@ -1,9 +1,9 @@
-import type { MDXComponents } from "mdx/types";
-import type { ComponentProps } from "react";
-import Link from "next/link";
-import { CliCommand } from "@/components/docs/cli-command";
+import { CliCommand } from "@/components/cli-command";
 import { Step, Steps } from "@/components/ui/steps";
 import { cn } from "@/lib/utils";
+import type { MDXComponents } from "mdx/types";
+import Link from "next/link";
+import type { ComponentProps } from "react";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
@@ -11,7 +11,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
       <h2
         className={cn(
           "mt-10 scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0",
-          className,
+          className
         )}
         {...props}
       />
@@ -20,7 +20,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
       <h3
         className={cn(
           "mt-8 scroll-m-20 text-lg font-semibold tracking-tight",
-          className,
+          className
         )}
         {...props}
       />
@@ -29,7 +29,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
       <p
         className={cn(
           "leading-relaxed text-muted-foreground [&:not(:first-child)]:mt-4",
-          className,
+          className
         )}
         {...props}
       />
@@ -37,7 +37,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     a: ({ className, href, ...props }: ComponentProps<"a">) => {
       const classNames = cn(
         "font-medium text-foreground underline underline-offset-4 hover:text-primary",
-        className,
+        className
       );
 
       if (href?.startsWith("/")) {
@@ -62,7 +62,10 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ),
     ol: ({ className, ...props }: ComponentProps<"ol">) => (
       <ol
-        className={cn("my-4 ml-6 list-decimal text-muted-foreground", className)}
+        className={cn(
+          "my-4 ml-6 list-decimal text-muted-foreground",
+          className
+        )}
         {...props}
       />
     ),
@@ -88,7 +91,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
         <code
           className={cn(
             "relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-[0.8rem]",
-            className,
+            className
           )}
           {...props}
         />
@@ -98,7 +101,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
       <pre
         className={cn(
           "my-4 overflow-x-auto rounded-lg border bg-muted/40 p-4 text-sm [&_code]:bg-transparent [&_code]:p-0 [&_code]:text-sm",
-          className,
+          className
         )}
         {...props}
       />
@@ -106,6 +109,6 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     Steps,
     Step,
     CliCommand,
-    ...components,
+    ...components
   };
 }

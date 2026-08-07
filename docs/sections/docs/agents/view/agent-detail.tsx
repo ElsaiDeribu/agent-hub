@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  CliCommand,
-  buildHarnessCommands
-} from "@/components/docs/cli-command";
+import { CliCommand, buildHarnessCommands } from "@/components/cli-command";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -150,7 +147,7 @@ export default function AgentDetail({ agent }: AgentDetailProps) {
                 activeFramework,
                 agent.preview.welcomeMessage ?? "",
                 String(agent.sandboxPreview !== false),
-                (agent.preview.requiredEnv ?? []).join("|"),
+                (agent.preview.requiredEnv ?? []).join("|")
               ].join("::")}
               agentName={agent.name}
               framework={activeFramework}

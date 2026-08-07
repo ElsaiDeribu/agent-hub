@@ -1,13 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { Zap, ArrowRight, LayoutGrid } from "lucide-react";
-import { paths } from "@/routes/paths";
+import { CliCommand, buildHarnessCommands } from "@/components/cli-command";
 import { Button } from "@/components/ui/button";
-import {
-  CliCommand,
-  buildHarnessCommands,
-} from "@/components/docs/cli-command";
+import { paths } from "@/routes/paths";
+import { ArrowRight, LayoutGrid, Zap } from "lucide-react";
+import Link from "next/link";
 
 interface HomePageProps {
   agentCount: number;
