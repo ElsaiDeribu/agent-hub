@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     template: "%s · Agent Hub Docs",
   },
   description: "Documentation for Agent Hub",
+  icons: {
+    icon: "/branding/agenthub-favicon.svg",
+  },
 };
 
 export default function RootLayout({
