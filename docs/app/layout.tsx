@@ -3,30 +3,31 @@ import { Geist, Geist_Mono } from "next/font/google";
 import ThemeProvider from "@/components/theme/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
+import { AuthProvider } from "@/auth/context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  subsets: ["latin"]
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin"],
+  subsets: ["latin"]
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Agent Hub Docs",
-    template: "%s · Agent Hub Docs",
+    default: "AgentHub Docs",
+    template: "%s · AgentHub Docs"
   },
-  description: "Documentation for Agent Hub",
+  description: "Documentation for AgentHub",
   icons: {
-    icon: "/branding/agenthub-favicon.svg",
-  },
+    icon: "/branding/agenthub-favicon.svg"
+  }
 };
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
@@ -37,9 +38,11 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
-        <ThemeProvider>
-          <TooltipProvider>{children}</TooltipProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

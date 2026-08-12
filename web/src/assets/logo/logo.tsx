@@ -16,7 +16,7 @@ const SOURCES = {
   full: { dark: logoFullDark, light: logoFullLight },
 } as const;
 
-export function Logo({ variant = 'mark', className, alt = 'Agent Hub' }: LogoProps) {
+export function Logo({ variant = 'mark', className, alt = 'AgentHub' }: LogoProps) {
   const { dark, light } = SOURCES[variant];
 
   return (

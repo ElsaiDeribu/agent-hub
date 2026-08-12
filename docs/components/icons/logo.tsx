@@ -25,7 +25,7 @@ const SOURCES = {
 export function Logo({
   variant = "mark",
   className,
-  alt = "Agent Hub",
+  alt = "AgentHub",
 }: LogoProps) {
   const { dark, light, width, height } = SOURCES[variant];
 

@@ -4,7 +4,7 @@ import { Navbar } from "@/sections/layout/navbar";
 import { HomePage } from "@/sections/home/view";
 
 export const metadata: Metadata = {
-  title: "Agent Hub",
+  title: "AgentHub",
   description:
     "Browse production-ready, open source AI agents, preview them live, and add them to your project with one command.",
 };

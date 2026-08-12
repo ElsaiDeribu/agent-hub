@@ -17,4 +17,11 @@ export const paths = {
       detail: (name: string) => `${ROOTS.DOCS}/agents/${name}`,
     },
   },
+
+  // AUTH
+  auth: {
+    login: "/login",
+    register: "/register",
+    forgotPassword: "/forgot-password",
+  },
 };
