@@ -23,6 +23,18 @@ The agent source files are copied into `./customer-support/` and the required in
 
 Add the required API keys to a `.env` file in your project root. The exact keys are printed after scaffolding and listed on each agent's page.
 
+```bash
+OPENAI_API_KEY=sk-...
+# or use Anthropic:
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+<div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
+  <p className="!mt-0 text-xs text-amber-700 dark:text-amber-400">
+    Never commit <code>.env</code> to version control. Add it to <code>.gitignore</code>.
+  </p>
+</div>
+
 </Steps>
 
 <Card title="All set!" href="/agents" action="Browse agents">

@@ -6,7 +6,7 @@ import { useMemo, useEffect, useReducer, useCallback } from 'react';
 import { AuthContext } from './auth-context';
 import { setSession, isValidToken } from './utils';
 
-import type { AuthUserType, ActionMapType, AuthStateType } from '../../types';
+import type { AuthUserType, ActionMapType, AuthStateType } from '../types';
 
 // ----------------------------------------------------------------------
 
