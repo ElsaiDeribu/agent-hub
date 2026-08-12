@@ -1,4 +1,5 @@
 import { CliCommand } from "@/components/cli-command";
+import { Card, Cards } from "@/components/mdx/card";
 import { Step, Steps } from "@/components/ui/steps";
 import { cn } from "@/lib/utils";
 import type { MDXComponents } from "mdx/types";
@@ -109,6 +110,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     Steps,
     Step,
     CliCommand,
+    Cards,
+    Card,
     ...components
   };
 }
