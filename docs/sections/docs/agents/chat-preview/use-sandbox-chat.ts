@@ -1,6 +1,9 @@
 "use client";
 
 import { useRef, useState, useEffect, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { paths } from "@/routes/paths";
+import { useAuthContext } from "@/auth/hooks";
 import { streamChat, createSession, deleteSession } from "@/lib/sandbox-api";
 
 import { envLabel, DEFAULT_WELCOME_MESSAGE } from "./copy";
@@ -22,6 +25,8 @@ export function useSandboxChat({
   requiredEnv,
   sandboxPreview,
 }: UseSandboxChatOptions) {
+  const router = useRouter();
+  const { authenticated, loading: authLoading } = useAuthContext();
   const needsKeys = requiredEnv.length > 0;
   const initialMessage = welcomeMessage?.trim() || DEFAULT_WELCOME_MESSAGE;
 
@@ -62,7 +67,16 @@ export function useSandboxChat({
     };
   }, []);
 
+  const requireAuth = () => {
+    if (authLoading) return false;
+    if (authenticated) return true;
+    const returnTo = `${window.location.pathname}${window.location.search}`;
+    router.push(`${paths.auth.login}?${new URLSearchParams({ returnTo })}`);
+    return false;
+  };
+
   const startSandbox = async (env: Record<string, string> = {}) => {
+    if (!requireAuth()) return;
     const generation = ++startGenerationRef.current;
     setPhase("starting");
     setSessionError(null);
@@ -91,6 +105,7 @@ export function useSandboxChat({
 
   const handleTry = () => {
     if (!sandboxPreview || phase === "starting") return;
+    if (!requireAuth()) return;
     setSessionError(null);
     if (needsKeys) {
       setPhase("awaitingKeys");
@@ -207,6 +222,8 @@ export function useSandboxChat({
     sessionReady,
     busy,
     livePreview,
+    authenticated,
+    authLoading,
     handleTry,
     handleKeySubmit,
     handleKeyBack,

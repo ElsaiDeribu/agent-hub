@@ -7,6 +7,7 @@ import { paths } from '@/routes/paths';
 import Google from '@/components/icons/google';
 import { useForm } from 'react-hook-form';
 import { useAuthContext } from '@/auth/hooks';
+import { getErrorMessage } from '@/auth/context/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useBoolean } from '@/hooks/use-boolean';
@@ -22,7 +23,7 @@ import { FormItem, FormField, FormLabel, FormControl, FormMessage } from '@/comp
 // ----------------------------------------------------------------------
 
 export default function RegisterView({ className, ...props }: React.ComponentProps<'div'>) {
-  const { register } = useAuthContext();
+  const { register, loginWithGoogle } = useAuthContext();
 
   const router = useRouter();
 
@@ -34,13 +35,18 @@ export default function RegisterView({ className, ...props }: React.ComponentPro
 
   const password = useBoolean();
 
-  const RegisterSchema = z.object({
-    first_name: z.string().min(1, 'First name is required'),
-    last_name: z.string().min(1, 'Last name is required'),
-    email: z.string().min(1, 'Email is required').email('Email must be a valid email address'),
-    password: z.string().min(1, 'Password is required'),
-    confirm_password: z.string().min(1, 'Confirm password is required'),
-  });
+  const RegisterSchema = z
+    .object({
+      first_name: z.string().min(1, 'First name is required'),
+      last_name: z.string().min(1, 'Last name is required'),
+      email: z.string().min(1, 'Email is required').email('Email must be a valid email address'),
+      password: z.string().min(1, 'Password is required'),
+      confirm_password: z.string().min(1, 'Confirm password is required'),
+    })
+    .refine((data) => data.password === data.confirm_password, {
+      message: 'Passwords do not match',
+      path: ['confirm_password'],
+    });
 
   const defaultValues = {
     first_name: '',
@@ -63,7 +69,7 @@ export default function RegisterView({ className, ...props }: React.ComponentPro
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await register?.(
+      await register(
         data.email,
         data.password,
         data.confirm_password,
@@ -75,7 +81,7 @@ export default function RegisterView({ className, ...props }: React.ComponentPro
     } catch (error) {
       console.error(error);
       reset();
-      setErrorMsg(error instanceof Error ? error.message : String(error));
+      setErrorMsg(getErrorMessage(error));
     }
   });
 
@@ -165,7 +171,12 @@ export default function RegisterView({ className, ...props }: React.ComponentPro
           </div>
 
           <div className="flex flex-col gap-4">
-            <Button variant="outline" className="w-full">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => loginWithGoogle()}
+            >
               <Google />
               Sign up with Google
             </Button>

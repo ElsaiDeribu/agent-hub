@@ -5,11 +5,17 @@ import { HOST_API } from '@/lib/config';
 
 // ----------------------------------------------------------------------
 
-const axiosInstance = axios.create({ baseURL: HOST_API });
+const axiosInstance = axios.create({
+  baseURL: HOST_API,
+  withCredentials: true,
+});
 
 axiosInstance.interceptors.response.use(
   (res) => res,
-  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+  (error) =>
+    Promise.reject(
+      (error.response && error.response.data) || error.message || 'Something went wrong'
+    )
 );
 
 export default axiosInstance;
@@ -31,5 +37,7 @@ export const endpoints = {
     me: '/api/auth/me',
     login: '/api/auth/login',
     register: '/api/auth/register',
+    logout: '/api/auth/logout',
+    google: '/api/auth/sign-in/social?provider=google',
   },
 };

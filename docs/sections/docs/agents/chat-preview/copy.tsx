@@ -15,8 +15,9 @@ export function getBannerText(options: {
   needsKeys: boolean;
   livePreview: boolean;
   sessionId: string | null;
+  authenticated?: boolean;
 }): ReactNode {
-  const { phase, sessionError, needsKeys, livePreview, sessionId } = options;
+  const { phase, sessionError, needsKeys, livePreview, sessionId, authenticated = true } = options;
 
   if (sessionError) return sessionError;
   if (phase === "starting") return "Starting sandbox session…";
@@ -24,6 +25,9 @@ export function getBannerText(options: {
     return "API key required — entered in-memory only, sent to your local backend/sandbox";
   }
   if (phase === "idle") {
+    if (!authenticated) {
+      return "Sign in to start a sandbox preview";
+    }
     return needsKeys
       ? "Sandbox starts on demand — click Try, then enter your API key"
       : "Sandbox starts on demand — click Try to launch a preview session";

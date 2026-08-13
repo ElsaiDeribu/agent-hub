@@ -1,10 +1,10 @@
 'use client';
 
 import axios, { endpoints } from '@/lib/utils/axios';
+import { HOST_API } from '@/lib/config';
 import { useMemo, useEffect, useReducer, useCallback } from 'react';
 
 import { AuthContext } from './auth-context';
-import { setSession, isValidToken } from './utils';
 
 import type { AuthUserType, ActionMapType, AuthStateType } from '../types';
 
@@ -39,7 +39,7 @@ const initialState: AuthStateType = {
   loading: true,
 };
 
-const reducer = (state: AuthStateType, action: ActionsType) => {
+const reducer = (state: AuthStateType, action: ActionsType): AuthStateType => {
   if (action.type === Types.INITIAL) {
     return {
       loading: false,
@@ -69,8 +69,6 @@ const reducer = (state: AuthStateType, action: ActionsType) => {
 
 // ----------------------------------------------------------------------
 
-const STORAGE_KEY = 'accessToken';
-
 type Props = {
   children: React.ReactNode;
 };
@@ -80,72 +78,36 @@ export function AuthProvider({ children }: Props) {
 
   const initialize = useCallback(async () => {
     try {
-      const accessToken = sessionStorage.getItem(STORAGE_KEY);
+      // Session lives in an HttpOnly cookie; ask the API who we are.
+      const res = await axios.get(endpoints.auth.me);
+      const { user } = res.data;
 
-      if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
-
-        const res = await axios.get(endpoints.auth.me);
-
-        const { user } = res.data;
-
-        dispatch({
-          type: Types.INITIAL,
-          payload: {
-            user: {
-              ...user,
-              accessToken,
-            },
-          },
-        });
-      } else {
-        dispatch({
-          type: Types.INITIAL,
-          payload: {
-            user: null,
-          },
-        });
-      }
-    } catch (error) {
-      console.error(error);
       dispatch({
         type: Types.INITIAL,
-        payload: {
-          user: null,
-        },
+        payload: { user: user ?? null },
+      });
+    } catch {
+      dispatch({
+        type: Types.INITIAL,
+        payload: { user: null },
       });
     }
   }, []);
 
   useEffect(() => {
-    initialize();
+    void initialize();
   }, [initialize]);
 
-  // LOGIN
   const login = useCallback(async (email: string, password: string) => {
-    const data = {
-      email,
-      password,
-    };
-
-    const res = await axios.post(endpoints.auth.login, data);
-
-    const { accessToken, user } = res.data;
-
-    setSession(accessToken);
+    const res = await axios.post(endpoints.auth.login, { email, password });
+    const { user } = res.data;
 
     dispatch({
       type: Types.LOGIN,
-      payload: {
-        user: {
-          ...user,
-          accessToken,
-        },
-      },
+      payload: { user },
     });
   }, []);
 
-  // REGISTER
   const register = useCallback(
     async (
       email: string,
@@ -154,45 +116,40 @@ export function AuthProvider({ children }: Props) {
       first_name: string,
       last_name: string
     ) => {
-      const data = {
+      const res = await axios.post(endpoints.auth.register, {
         email,
         password,
         confirm_password,
         first_name,
         last_name,
-      };
-
-      const res = await axios.post(endpoints.auth.register, data);
-
-      const { accessToken, user } = res.data;
-
-      sessionStorage.setItem(STORAGE_KEY, accessToken);
+      });
+      const { user } = res.data;
 
       dispatch({
         type: Types.REGISTER,
-        payload: {
-          user: {
-            ...user,
-            accessToken,
-          },
-        },
+        payload: { user },
       });
     },
     []
   );
 
-  // LOGOUT
+  const loginWithGoogle = useCallback(() => {
+    // Full-page redirect into the API OAuth start; cookie is set on callback.
+    window.location.href = `${HOST_API}${endpoints.auth.google}`;
+  }, []);
+
   const logout = useCallback(async () => {
-    setSession(null);
-    dispatch({
-      type: Types.LOGOUT,
-    });
+    try {
+      await axios.post(endpoints.auth.logout);
+    } catch {
+      // Cookie clear is best-effort; always drop local auth state.
+    }
+    dispatch({ type: Types.LOGOUT });
   }, []);
 
   // ----------------------------------------------------------------------
 
   const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
-
   const status = state.loading ? 'loading' : checkAuthenticated;
 
   const memoizedValue = useMemo(
@@ -201,12 +158,12 @@ export function AuthProvider({ children }: Props) {
       loading: status === 'loading',
       authenticated: status === 'authenticated',
       unauthenticated: status === 'unauthenticated',
-      //
       login,
       register,
+      loginWithGoogle,
       logout,
     }),
-    [login, logout, register, state.user, status]
+    [login, loginWithGoogle, logout, register, state.user, status]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

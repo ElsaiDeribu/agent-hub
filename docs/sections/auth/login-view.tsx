@@ -7,9 +7,9 @@ import { paths } from '@/routes/paths';
 import Google from '@/components/icons/google';
 import { useForm } from 'react-hook-form';
 import { useAuthContext } from '@/auth/hooks';
+import { getErrorMessage } from '@/auth/context/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-// import { useBoolean } from '@/hooks/use-boolean';
 import Link from 'next/link';
 import { PATH_AFTER_LOGIN } from '@/lib/config';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,7 +21,7 @@ import { Card, CardTitle, CardHeader, CardContent, CardDescription } from '@/com
 // ----------------------------------------------------------------------
 
 export default function LoginView({ className, ...props }: React.ComponentProps<'div'>) {
-  const { login } = useAuthContext();
+  const { login, loginWithGoogle } = useAuthContext();
 
   const router = useRouter();
 
@@ -31,16 +31,14 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
 
   const returnTo = searchParams.get('returnTo');
 
-  // const password = useBoolean();
-
   const LoginSchema = z.object({
     email: z.string().min(1, 'Email is required').email('Email must be a valid email address'),
     password: z.string().min(1, 'Password is required'),
   });
 
   const defaultValues = {
-    email: 'demo@boilerplate.app',
-    password: 'demo1234',
+    email: '',
+    password: '',
   };
 
   const methods = useForm({
@@ -56,13 +54,13 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await login?.(data.email, data.password);
+      await login(data.email, data.password);
 
       router.push(returnTo || PATH_AFTER_LOGIN);
     } catch (error) {
       console.error(error);
       reset();
-      setErrorMsg(error instanceof Error ? error.message : String(error));
+      setErrorMsg(getErrorMessage(error));
     }
   });
 
@@ -117,7 +115,12 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
             </span>
           </div>
           <div className="flex flex-col gap-4">
-            <Button variant="outline" className="w-full">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => loginWithGoogle()}
+            >
               <Google />
               Login with Google
             </Button>

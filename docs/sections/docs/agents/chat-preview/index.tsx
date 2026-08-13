@@ -44,6 +44,7 @@ export function ChatPreview({
           needsKeys: chat.needsKeys,
           livePreview: chat.livePreview,
           sessionId: chat.sessionId,
+          authenticated: chat.authenticated,
         })}
       </PreviewBanner>
 
@@ -54,6 +55,8 @@ export function ChatPreview({
             needsKeys={chat.needsKeys}
             sandboxPreview={sandboxPreview}
             sessionError={chat.sessionError}
+            authenticated={chat.authenticated}
+            authLoading={chat.authLoading}
             onTry={chat.handleTry}
           />
         ) : chat.phase === "awaitingKeys" ? (
