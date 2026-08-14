@@ -75,6 +75,11 @@ def _google_redirect_uri() -> str:
     return f"{settings.auth_base_url.rstrip('/')}/oauth/callback/google"
 
 
+def _frontend_redirect_url() -> str:
+    """Post-OAuth Location: configured frontend only, never a request parameter."""
+    return (settings.auth_frontend_callback or "/").strip() or "/"
+
+
 def _user_payload(user: User) -> dict:
     return UserPublic.model_validate(user).model_dump(mode="json")
 
@@ -204,7 +209,6 @@ async def google_callback(
     db: Annotated[AsyncSession, Depends(get_db)],
     code: str | None = None,
     state: str | None = None,
-    frontend_callback: str | None = None,
 ):
     if not code or not state:
         return error_response(400, "code and state required")
@@ -243,9 +247,6 @@ async def google_callback(
     except ValueError as exc:
         return error_response(401, str(exc))
 
-    redirect_url = (
-        frontend_callback or settings.auth_frontend_callback or "/"
-    ).strip() or "/"
-    response = RedirectResponse(url=redirect_url, status_code=302)
+    response = RedirectResponse(url=_frontend_redirect_url(), status_code=302)
     attach_session_cookie(response, session.token)
     return response

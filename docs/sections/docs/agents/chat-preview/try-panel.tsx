@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Play } from "lucide-react";
-import { usePathname } from "next/navigation";
 import { paths } from "@/routes/paths";
 import { Button } from "@/components/ui/button";
 
@@ -27,8 +26,6 @@ export function TryPanel({
   authLoading,
   onTry
 }: TryPanelProps) {
-  const pathname = usePathname();
-  const loginHref = `${paths.auth.login}?${new URLSearchParams({ returnTo: pathname })}`;
   const needsSignIn = !authLoading && !authenticated;
 
   return (
@@ -36,7 +33,7 @@ export function TryPanel({
       <div className="flex flex-col items-center gap-3 text-center px-4">
         {needsSignIn && sandboxPreview ? (
           <Button type="button" size="lg" asChild className="gap-2">
-            <Link href={loginHref}>
+            <Link href={paths.auth.login}>
               <Play className="size-4" />
               Try
             </Link>

@@ -1,7 +1,7 @@
-import { paths } from '@/routes/paths';
 import { useEffect, useCallback } from 'react';
 import { SplashScreen } from '@/components/loading-screen';
-import { useRouter, useSearchParams } from '@/routes/hooks';
+import { useRouter } from '@/routes/hooks';
+import { PATH_AFTER_LOGIN } from '@/config-global';
 
 import { useAuthContext } from '../hooks';
 
@@ -22,17 +22,13 @@ export default function GuestGuard({ children }: Props) {
 function Container({ children }: Props) {
   const router = useRouter();
 
-  const searchParams = useSearchParams();
-
-  const returnTo = searchParams.get('returnTo') || paths.docs.root;
-
   const { authenticated } = useAuthContext();
 
   const check = useCallback(() => {
     if (authenticated) {
-      router.replace(returnTo);
+      router.replace(PATH_AFTER_LOGIN);
     }
-  }, [authenticated, returnTo, router]);
+  }, [authenticated, router]);
 
   useEffect(() => {
     check();

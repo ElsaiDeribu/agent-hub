@@ -70,8 +70,7 @@ export function useSandboxChat({
   const requireAuth = () => {
     if (authLoading) return false;
     if (authenticated) return true;
-    const returnTo = `${window.location.pathname}${window.location.search}`;
-    router.push(`${paths.auth.login}?${new URLSearchParams({ returnTo })}`);
+    router.push(paths.auth.login);
     return false;
   };
 

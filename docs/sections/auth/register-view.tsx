@@ -15,7 +15,7 @@ import Link from 'next/link';
 import { PATH_AFTER_LOGIN } from '@/lib/config';
 import { zodResolver } from '@hookform/resolvers/zod';
 import LoadingButton from '@/components/ui/loading-button';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import FormProvider from '@/components/hook-form/form-provider';
 import { Card, CardTitle, CardHeader, CardContent } from '@/components/ui/card';
 import { FormItem, FormField, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
@@ -28,10 +28,6 @@ export default function RegisterView({ className, ...props }: React.ComponentPro
   const router = useRouter();
 
   const [errorMsg, setErrorMsg] = useState('');
-
-  const searchParams = useSearchParams();
-
-  const returnTo = searchParams.get('returnTo');
 
   const password = useBoolean();
 
@@ -77,7 +73,7 @@ export default function RegisterView({ className, ...props }: React.ComponentPro
         data.last_name
       );
 
-      router.push(returnTo || PATH_AFTER_LOGIN);
+      router.push(PATH_AFTER_LOGIN);
     } catch (error) {
       console.error(error);
       reset();

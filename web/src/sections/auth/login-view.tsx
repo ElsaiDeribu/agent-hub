@@ -12,7 +12,7 @@ import { RouterLink } from '@/routes/components';
 import { PATH_AFTER_LOGIN } from '@/config-global';
 import { zodResolver } from '@hookform/resolvers/zod';
 import LoadingButton from '@/components/ui/loading-button';
-import { useRouter, useSearchParams } from '@/routes/hooks';
+import { useRouter } from '@/routes/hooks';
 import FormProvider from '@/components/hook-form/form-provider';
 import { FormItem, FormField, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Card, CardTitle, CardHeader, CardContent, CardDescription } from '@/components/ui/card';
@@ -24,10 +24,6 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
   const router = useRouter();
 
   const [errorMsg, setErrorMsg] = useState('');
-
-  const searchParams = useSearchParams();
-
-  const returnTo = searchParams.get('returnTo');
 
   // const password = useBoolean();
 
@@ -56,7 +52,7 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
     try {
       await login?.(data.email, data.password);
 
-      router.push(returnTo || PATH_AFTER_LOGIN);
+      router.push(PATH_AFTER_LOGIN);
     } catch (error) {
       console.error(error);
       reset();
