@@ -9,6 +9,9 @@ __pycache__/
 .mypy_cache/
 *.md
 !README.md
-Dockerfile
 docker-compose.yml
 .dockerignore
+.env
+.env.*
+!.env.example
+data/

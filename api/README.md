@@ -64,6 +64,10 @@ microsandbox runs **real microVMs**, so it needs hardware virtualization:
 
 ## Run with Docker (Linux + KVM host)
 
+Copy `api/.env.example` to `api/.env` first. The image **entrypoint** waits for
+Postgres and builds `DATABASE_URL` from `POSTGRES_*`; **start** then runs
+`alembic upgrade head` and uvicorn.
+
 From the **repo root**:
 
 ```bash
@@ -120,10 +124,54 @@ registry/<agent-id>/<framework>/
   src/...           # optional modular implementation (also copied into sandbox)
 ```
 
+## Database
+
+The API uses **async SQLAlchemy** (`create_async_engine` + `AsyncSession`) in
+`db.py`. Models live under `auth/models.py` (shared `Base`). Schema changes go
+through **Alembic**, not `create_all`. Apply migrations before serving:
+
+```bash
+cd api
+uv run alembic upgrade head
+uv run alembic revision --autogenerate -m "describe the change"
+```
+
+Docker uses an entrypoint/start pair:
+
+1. `/entrypoint` (`api/compose/entrypoint`) waits for
+   `${POSTGRES_HOST}:${POSTGRES_PORT}` and exports `DATABASE_URL` from
+   `POSTGRES_*` (set in `docker-compose.yml`).
+2. `docker-compose.yml` runs `/app/compose/start`, which applies
+   `alembic upgrade head` and then uvicorn.
+
+Existing databases that already have the auth tables but no `alembic_version`
+row are stamped at head.
+
+Postgres is required. For non-Docker runs set:
+
+```bash
+DATABASE_URL=postgresql+psycopg://agenthub:agenthub@localhost:5432/agenthub
+```
+
+With Docker Compose, Postgres is started and the entrypoint points the API at it:
+
+```bash
+docker compose -f api/docker-compose.yml up --build
+```
+
+Request bodies are validated with Pydantic (`auth/schemas.py`): `EmailStr`,
+min/max length, and matching `confirm_password` on register.
+
 ## Environment variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
+| `DATABASE_URL` | *(required)* | Postgres SQLAlchemy URL (`postgresql+psycopg://…`). Docker entrypoint overwrites this from `POSTGRES_*`. |
+| `POSTGRES_HOST` | `postgres` | Postgres hostname inside Compose |
+| `POSTGRES_PORT` | `5432` | Postgres port |
+| `POSTGRES_DB` | `agenthub` | Database name |
+| `POSTGRES_USER` | `agenthub` | Database user |
+| `POSTGRES_PASSWORD` | `agenthub` | Database password |
 | `MSB_IMAGE` | `node` | OCI image for sandboxes |
 | `REGISTRY_DIR` | `../registry` (relative to api) | Path to root registry |
 | `CORS_ORIGINS` | web/vite origins | Comma-separated allowed origins |
