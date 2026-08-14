@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from pydantic import SecretStr
+from typing import Literal
+
+from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -20,13 +22,18 @@ class Settings(BaseSettings):
     postgres_user: str = "agenthub"
     # SecretStr only masks repr/logs; it is not encryption, and database_url still embeds the plaintext.
     postgres_password: SecretStr = SecretStr("agenthub")
+    db_pool_size: int = 5
+    db_echo: bool = False
 
     # --- Auth ---
     auth_base_url: str = "http://localhost:8000/api/auth"
     auth_frontend_callback: str = "http://localhost:3000"
     auth_session_expires_minutes: int = 60 * 24 * 7
+    auth_cookie_name: str = "agent_hub_session"
     # False for local HTTP. Set AUTH_COOKIE_SECURE=true in production (HTTPS).
-    auth_cookie_secure: bool = False 
+    auth_cookie_secure: bool = False
+    # Use "none" (with AUTH_COOKIE_SECURE=true) when the frontend is on another site.
+    auth_cookie_samesite: Literal["lax", "strict", "none"] = "lax"
 
     # --- Google OAuth ---
     google_client_id: str = ""
@@ -48,9 +55,18 @@ class Settings(BaseSettings):
     # --- Sandbox / registry ---
     registry_dir: str = "/app/registry"
     msb_image: str = "node"
+    sandbox_memory_mb: int = 1024
     session_idle_timeout: int = 1800
     session_max_duration: int = 3600
     session_base_port: int = 10000
+    session_reaper_interval: int = 60
+
+    @field_validator("auth_cookie_samesite", mode="before")
+    @classmethod
+    def _normalize_samesite(cls, value: object) -> object:
+        if isinstance(value, str):
+            return value.strip().lower()
+        return value
 
     @property
     def database_url(self) -> str:

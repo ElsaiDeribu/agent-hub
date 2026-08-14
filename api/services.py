@@ -125,7 +125,7 @@ class SessionManager:
             f"agent-{session_id}",
             image=DEFAULT_IMAGE,
             ports=[PortBinding.tcp(host_port, 3000)],
-            memory=1024,
+            memory=settings.sandbox_memory_mb,
             replace=True,
         )
 
@@ -329,7 +329,7 @@ manager = SessionManager()
 
 async def reaper_loop() -> None:
     while True:
-        await asyncio.sleep(60)
+        await asyncio.sleep(settings.session_reaper_interval)
         try:
             await manager.reap_idle()
         except Exception as exc:

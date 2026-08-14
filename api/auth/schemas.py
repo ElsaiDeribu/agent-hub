@@ -7,6 +7,8 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
+from config import settings
+
 
 class RegisterRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
@@ -85,7 +87,7 @@ class ErrorResponse(BaseModel):
 
 _SESSION_COOKIE_HEADER = {
     "Set-Cookie": {
-        "description": "HttpOnly session cookie (`agent_hub_session`).",
+        "description": f"HttpOnly session cookie (`{settings.auth_cookie_name}`).",
         "schema": {"type": "string"},
     }
 }
