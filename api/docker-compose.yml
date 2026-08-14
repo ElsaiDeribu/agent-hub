@@ -18,15 +18,6 @@ services:
     command: /app/compose/start
     env_file:
       - .env
-    environment:
-      # Container paths / public URLs (override .env where host paths differ)
-      - REGISTRY_DIR=/app/registry
-      - AUTH_BASE_URL=http://localhost:8000/api/auth
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=agenthub
-      - POSTGRES_USER=agenthub
-      - POSTGRES_PASSWORD=agenthub
     depends_on:
       - postgres
     # Persist pulled OCI images / runtime state so cold starts stay fast.

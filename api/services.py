@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
 from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -16,6 +15,8 @@ import httpx
 from microsandbox import PortBinding, Sandbox
 from microsandbox.errors import ExecTimeoutError, MicrosandboxError
 
+from config import settings
+
 
 def _shell_quote(value: str) -> str:
     """Minimal single-quote escaping for embedding values in `sh -c`."""
@@ -26,11 +27,9 @@ def _shell_quote(value: str) -> str:
 # Configuration
 # ---------------------------------------------------------------------------
 
-DEFAULT_IMAGE = os.environ.get("MSB_IMAGE", "node")
+DEFAULT_IMAGE = settings.msb_image
 # Canonical registry: `registry/<agent-id>/<framework>/` with metadata.json.
-# Override with REGISTRY_DIR for Docker or alternate layouts.
-_DEFAULT_REGISTRY = Path(__file__).resolve().parent.parent / "registry"
-REGISTRY_DIR = Path(os.environ.get("REGISTRY_DIR", str(_DEFAULT_REGISTRY)))
+REGISTRY_DIR = Path(settings.registry_dir)
 
 
 def list_frameworks(agent_id: str) -> list[str]:
@@ -60,9 +59,9 @@ def agent_impl_dir(agent_id: str, framework: str) -> Path:
     return REGISTRY_DIR / agent_id / framework
 
 
-SESSION_IDLE_TIMEOUT_S = int(os.environ.get("SESSION_IDLE_TIMEOUT", "1800"))
-SESSION_MAX_DURATION_S = int(os.environ.get("SESSION_MAX_DURATION", "3600"))
-SESSION_BASE_PORT = int(os.environ.get("SESSION_BASE_PORT", "10000"))
+SESSION_IDLE_TIMEOUT_S = settings.session_idle_timeout
+SESSION_MAX_DURATION_S = settings.session_max_duration
+SESSION_BASE_PORT = settings.session_base_port
 
 
 # ---------------------------------------------------------------------------
