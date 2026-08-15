@@ -47,7 +47,26 @@ package has its own `metadata.json` (`files`, `dependencies`, `env`).
   Body: `{ "message": "...", "history": [] }`.
 - `DELETE /sessions/{id}` — stop the sandbox and free resources.
 
-Interactive docs are served at `/docs`.
+### Auth
+
+Mounted at `/api/auth`. Sessions use an HttpOnly cookie (`AUTH_COOKIE_NAME`).
+
+- `POST /api/auth/register` — email/password sign-up.
+- `POST /api/auth/login` — email/password sign-in.
+- `GET /api/auth/me` — current user (cookie or `Authorization: Bearer`).
+- `POST /api/auth/logout` — clear the session.
+- `GET|POST /api/auth/sign-in/social?provider=google` — start Google OAuth.
+- `GET /api/auth/oauth/callback/google` — Google OAuth callback.
+
+### Interactive API docs
+
+When `DEBUG=true` (local settings), FastAPI serves:
+
+- `/docs` — Swagger UI
+- `/redoc` — ReDoc
+- `/openapi.json` — OpenAPI schema
+
+These are disabled in production (`DEBUG=false`).
 
 ## Requirements
 
@@ -75,10 +94,9 @@ cp .envs/.local/.api.example .envs/.local/.api
 cp .envs/.local/.postgres.example .envs/.local/.postgres
 ```
 
-Local **entrypoint** waits for Compose Postgres and builds `DATABASE_URL`
-from `POSTGRES_*`; **start** then runs `alembic upgrade head` and uvicorn
-with `--reload`. Production waits for an **external** Postgres, migrates,
-then gunicorn.
+Local **entrypoint** waits for Compose Postgres; **start** then runs
+`alembic upgrade head` and uvicorn with `--reload`. Production waits for an
+**external** Postgres, migrates, then gunicorn.
 
 From the **repo root**:
 
@@ -104,7 +122,7 @@ curl http://localhost:8000/registry
 # Start a session (no API keys)
 curl -X POST http://localhost:8000/sessions/customer-support \
   -H "Content-Type: application/json" \
-  -d '{"env": {}}'
+  -d '{"framework": "langchain", "env": {}}'
 # {"session_id":"a1b2c3d4e5f6","status":"ready"}
 
 # Chat (SSE streaming)
@@ -162,32 +180,32 @@ uv run alembic revision --autogenerate -m "describe the change"
 Local Docker uses an entrypoint/start pair:
 
 1. `/entrypoint` (`api/compose/local/api/entrypoint`) waits for
-   `${POSTGRES_HOST}:${POSTGRES_PORT}` and exports `DATABASE_URL` from
-   `POSTGRES_*` (set in `.envs/.local/.postgres`).
+   `${POSTGRES_HOST}:${POSTGRES_PORT}` (set in `.envs/.local/.postgres`).
 2. Compose runs `/start` (`compose/local/api/start`), which applies
    `alembic upgrade head` and then uvicorn.
 
 Production Compose does **not** run Postgres. Point
 `.envs/.production/.postgres` at an external database. `/entrypoint`
-waits for `${POSTGRES_HOST}:${POSTGRES_PORT}` and exports
-`DATABASE_URL`; `/start` applies `alembic upgrade head` then gunicorn.
+waits for `${POSTGRES_HOST}:${POSTGRES_PORT}`; `/start` applies
+`alembic upgrade head` then gunicorn.
 The API healthcheck hits `/health`.
 
 Existing databases that already have the auth tables but no `alembic_version`
 row are stamped at head.
 
-Postgres is required. For non-Docker runs set:
+Postgres is required. The app builds the SQLAlchemy URL from `POSTGRES_*`
+(not a `DATABASE_URL` env var). For non-Docker runs set:
 
 ```bash
-DATABASE_URL=postgresql+psycopg://agenthub:agenthub@localhost:5432/agenthub
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=agenthub
+POSTGRES_USER=agenthub
+POSTGRES_PASSWORD=agenthub
 ```
 
-Local Docker Compose starts Postgres and the entrypoint points the API at
-it. Production expects `POSTGRES_HOST` to be an external server.
-
-```bash
-docker compose -f api/docker-compose.local.yml up --build
-```
+Local Docker Compose starts Postgres. Production expects `POSTGRES_HOST`
+to be an external server.
 
 Request bodies are validated with Pydantic (`auth/schemas.py`): `EmailStr`,
 min/max length, and matching `confirm_password` on register.
@@ -210,19 +228,31 @@ run `uv sync --no-default-groups --group production`.
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `SETTINGS_MODULE` | `config.settings.local` | Settings module (`config.settings.production` in production) |
-| `DATABASE_URL` | *(required)* | Postgres SQLAlchemy URL (`postgresql+psycopg://…`). Docker entrypoint overwrites this from `POSTGRES_*`. |
+| `DEBUG` | `true` local / `false` production | Enables `/docs`, `/redoc`, and `/openapi.json` when true |
 | `POSTGRES_HOST` | `postgres` | Postgres hostname (`postgres` in local Compose; external host in production) |
 | `POSTGRES_PORT` | `5432` | Postgres port |
 | `POSTGRES_DB` | `agenthub` | Database name |
 | `POSTGRES_USER` | `agenthub` | Database user |
 | `POSTGRES_PASSWORD` | `agenthub` | Database password |
+| `DB_POOL_SIZE` | `5` | SQLAlchemy pool size |
+| `AUTH_BASE_URL` | `http://localhost:8000/api/auth` | Public auth router URL (Google redirect is `${AUTH_BASE_URL}/oauth/callback/google`; required in production) |
+| `AUTH_FRONTEND_CALLBACK` | `http://localhost:3000` | Post-OAuth frontend redirect (required in production) |
+| `AUTH_SESSION_EXPIRES_MINUTES` | `10080` | Session lifetime in minutes |
+| `AUTH_COOKIE_NAME` | `agent_hub_session` | Session cookie name |
+| `AUTH_COOKIE_SECURE` | `false` local / `true` production | Set `Secure` on the session cookie (HTTPS) |
+| `AUTH_COOKIE_SAMESITE` | `lax` | Cookie SameSite (`lax`, `strict`, or `none`) |
+| `GOOGLE_CLIENT_ID` | *(empty)* | Google OAuth client id (leave empty to disable) |
+| `GOOGLE_CLIENT_SECRET` | *(empty)* | Google OAuth client secret |
 | `MSB_IMAGE` | `node` | OCI image for sandboxes |
+| `SANDBOX_MEMORY_MB` | `1024` | Memory limit per sandbox (MB) |
 | `REGISTRY_GITHUB_OWNER` | `ElsaiDeribu` | GitHub org/user that hosts the registry |
 | `REGISTRY_GITHUB_REPO` | `agent-hub` | GitHub repository name |
 | `REGISTRY_GITHUB_BRANCH` | `main` | Branch used for raw file URLs |
 | `CORS_ORIGINS` | web/vite origins | Comma-separated allowed origins (required in production) |
 | `HOST` | `0.0.0.0` | Bind address |
 | `PORT` | `8000` | Bind port |
+| `WEB_CONCURRENCY` | `4` | Gunicorn workers (production compose) |
 | `SESSION_IDLE_TIMEOUT` | `1800` | Seconds before idle session is reaped |
 | `SESSION_MAX_DURATION` | `3600` | Max session lifetime in seconds |
 | `SESSION_BASE_PORT` | `10000` | Starting port for session port allocation |
+| `SESSION_REAPER_INTERVAL` | `60` | How often the session reaper runs (seconds) |

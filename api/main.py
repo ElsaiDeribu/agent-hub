@@ -73,11 +73,16 @@ async def lifespan(_app: FastAPI):
     await engine.dispose()
 
 
+_docs_enabled = settings.debug
+
 app = FastAPI(
     title="microsandbox-demo",
     version="0.2.0",
     summary="Preview AI agents inside microsandbox microVMs.",
     lifespan=lifespan,
+    docs_url="/docs" if _docs_enabled else None,
+    redoc_url="/redoc" if _docs_enabled else None,
+    openapi_url="/openapi.json" if _docs_enabled else None,
     openapi_tags=[
         {"name": "health", "description": "Liveness and runtime status."},
         {"name": "registry", "description": "Sandbox-ready agent packages."},
