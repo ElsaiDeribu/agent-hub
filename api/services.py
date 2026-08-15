@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
 from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -16,6 +15,7 @@ from microsandbox import PortBinding, Sandbox
 from microsandbox.errors import ExecTimeoutError, MicrosandboxError
 
 from config import settings
+from registry import RegistryError, fetch_package_files, fetch_package_metadata
 
 
 def _shell_quote(value: str) -> str:
@@ -28,36 +28,6 @@ def _shell_quote(value: str) -> str:
 # ---------------------------------------------------------------------------
 
 DEFAULT_IMAGE = settings.msb_image
-# Canonical registry: `registry/<agent-id>/<framework>/` with metadata.json.
-REGISTRY_DIR = Path(settings.registry_dir)
-
-
-def list_frameworks(agent_id: str) -> list[str]:
-    """Return framework package names under an agent that have metadata.json."""
-    agent_root = REGISTRY_DIR / agent_id
-    if not agent_root.is_dir():
-        return []
-    frameworks: list[str] = []
-    for entry in sorted(agent_root.iterdir()):
-        if entry.name.startswith("_"):
-            continue
-        if entry.is_dir() and (entry / "metadata.json").is_file():
-            frameworks.append(entry.name)
-    return frameworks
-
-
-def agent_impl_dir(agent_id: str, framework: str) -> Path:
-    """Resolve `registry/<agent>/<framework>/` (must contain metadata.json)."""
-    frameworks = list_frameworks(agent_id)
-    if not frameworks:
-        raise FileNotFoundError(f"Agent '{agent_id}' not found in registry")
-    if framework not in frameworks:
-        raise FileNotFoundError(
-            f"Framework '{framework}' not found for agent '{agent_id}'. "
-            f"Available: {', '.join(frameworks)}"
-        )
-    return REGISTRY_DIR / agent_id / framework
-
 
 SESSION_IDLE_TIMEOUT_S = settings.session_idle_timeout
 SESSION_MAX_DURATION_S = settings.session_max_duration
@@ -97,14 +67,12 @@ class SessionManager:
         framework: str,
         env: dict[str, str] | None = None,
     ) -> Session:
-        agent_dir = agent_impl_dir(agent_id, framework)
-        meta_path = agent_dir / "metadata.json"
-        metadata = json.loads(meta_path.read_text())
+        metadata = await fetch_package_metadata(agent_id, framework)
         entrypoint = metadata.get("entrypoint", "_preview.ts")
         dependencies = metadata.get("dependencies", [])
         relative_files = metadata.get("files", [])
-        if not relative_files:
-            raise RuntimeError(
+        if not isinstance(relative_files, list) or not relative_files:
+            raise RegistryError(
                 f"Registry agent '{agent_id}/{framework}' lists no files"
             )
 
@@ -115,6 +83,10 @@ class SessionManager:
             raise ValueError(
                 "Missing required environment variables: " + ", ".join(missing)
             )
+
+        package_files = await fetch_package_files(
+            agent_id, framework, relative_files
+        )
 
         session_id = uuid4().hex[:12]
 
@@ -132,20 +104,13 @@ class SessionManager:
         try:
             await sb.fs.mkdir("/app/agent")
 
-            agent_root = agent_dir.resolve()
-            for rel_path in relative_files:
-                host_path = (agent_dir / rel_path).resolve()
-                if not host_path.is_relative_to(agent_root):
-                    raise ValueError(f"Invalid registry path: {rel_path}")
-                if not host_path.is_file():
-                    raise FileNotFoundError(f"Registry file missing: {rel_path}")
-
+            for rel_path, content in package_files.items():
                 parts = Path(rel_path).parts
                 # Create each intermediate directory (sandbox mkdir may not be recursive).
                 for i in range(1, len(parts)):
                     parent = "/app/agent/" + "/".join(parts[:i])
                     await sb.fs.mkdir(parent)
-                await sb.fs.write(f"/app/agent/{rel_path}", host_path.read_bytes())
+                await sb.fs.write(f"/app/agent/{rel_path}", content)
 
             await sb.exec("npm", ["init", "-y"], cwd="/app/agent", timeout=30.0)
             # Ensure ESM so `import` in the preview harness works under Node/tsx.

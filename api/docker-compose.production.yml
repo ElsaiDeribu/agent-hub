@@ -3,8 +3,6 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/api/Dockerfile
-      additional_contexts:
-        registry: ../registry
     image: agenthub_production_api
     volumes:
       - agenthub_production_microsandbox_data:/root/.microsandbox

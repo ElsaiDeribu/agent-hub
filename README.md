@@ -9,8 +9,8 @@ sandbox preview backend.
 
 | Path | Role |
 |------|------|
-| `registry.json` | Canonical catalog (CLI + docs) |
-| `registry/<agent>/<framework>/` | Single source of truth: install files, code viewer, and sandbox package (`metadata.json`) |
+| `registry.json` | Canonical catalog (CLI + docs + API) |
+| `registry/<agent>/<framework>/` | Single source of truth: install files, code viewer, and sandbox package (`metadata.json`). Fetched on demand from GitHub. |
 | `api/` | FastAPI + microsandbox session runner |
 | `web/` | Browse / preview UI |
 | `cli/` | `agent-hub-harness` CLI |

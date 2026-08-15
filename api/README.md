@@ -22,9 +22,9 @@ Docs UI  ──POST /sessions/abc123/chat─────────────
          ◄─── SSE: data: {"type":"done"}
 ```
 
-Sandbox previews run the same files under
-`registry/<agent-id>/<framework>/` that the docs code viewer shows. Each
-framework package has its own `metadata.json` (`files`, `dependencies`, `env`).
+Sandbox previews fetch the same files the docs code viewer shows, on demand
+from GitHub (`registry/<agent-id>/<framework>/` on `main`). Each framework
+package has its own `metadata.json` (`files`, `dependencies`, `env`).
 
 ## Endpoints
 
@@ -124,8 +124,9 @@ uv sync
 uv run uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-By default the service reads agents from `../registry/<id>/<framework>/`.
-Override with `REGISTRY_DIR` if needed.
+By default the service fetches agents from GitHub
+(`raw.githubusercontent.com/ElsaiDeribu/agent-hub/main`). Override with
+`REGISTRY_GITHUB_OWNER`, `REGISTRY_GITHUB_REPO`, and `REGISTRY_GITHUB_BRANCH`.
 
 The first session creation pulls the sandbox OCI image (`node` by default), so
 it is slower than subsequent calls. Override the default image with the
@@ -133,16 +134,17 @@ it is slower than subsequent calls. Override the default image with the
 
 ## Registry layout
 
-Canonical catalog: repo-root `registry.json` + `registry/`.
+Canonical catalog: GitHub `registry.json` + `registry/<agent>/<framework>/`.
 
-Each agent/framework package is the single source of truth:
+Preview fetches only the requested package (never the full tree):
 
 ```
+registry.json                         # catalog (cached ~60s)
 registry/<agent-id>/<framework>/
   metadata.json     # files, dependencies, env, entrypoint, welcome copy
   agent.ts          # exports agent.stream() (sandbox + install surface)
   _preview.ts       # HTTP harness on :3000
-  src/...           # optional modular implementation (also copied into sandbox)
+  src/...           # optional modular implementation (copied into sandbox)
 ```
 
 ## Database
@@ -215,7 +217,9 @@ run `uv sync --no-default-groups --group production`.
 | `POSTGRES_USER` | `agenthub` | Database user |
 | `POSTGRES_PASSWORD` | `agenthub` | Database password |
 | `MSB_IMAGE` | `node` | OCI image for sandboxes |
-| `REGISTRY_DIR` | `../registry` (relative to api) | Path to root registry |
+| `REGISTRY_GITHUB_OWNER` | `ElsaiDeribu` | GitHub org/user that hosts the registry |
+| `REGISTRY_GITHUB_REPO` | `agent-hub` | GitHub repository name |
+| `REGISTRY_GITHUB_BRANCH` | `main` | Branch used for raw file URLs |
 | `CORS_ORIGINS` | web/vite origins | Comma-separated allowed origins (required in production) |
 | `HOST` | `0.0.0.0` | Bind address |
 | `PORT` | `8000` | Bind port |

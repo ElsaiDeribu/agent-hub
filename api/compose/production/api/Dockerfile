@@ -2,7 +2,7 @@
 # The bundled msb binary requires glibc >= 2.38; Debian trixie ships 2.40.
 # The container itself needs /dev/kvm at runtime -- see docker-compose.production.yml.
 #
-# Build from api/ (compose also injects the repo-root registry/ context):
+# Build from api/:
 #   docker compose -f docker-compose.production.yml up --build
 FROM python:3.13-slim-trixie
 
@@ -14,8 +14,7 @@ ENV PYTHONUNBUFFERED=1 \
     UV_LINK_MODE=copy \
     UV_PROJECT_ENVIRONMENT=/app/.venv \
     PATH="/app/.venv/bin:$PATH" \
-    SETTINGS_MODULE=config.settings.production \
-    REGISTRY_DIR=/app/registry
+    SETTINGS_MODULE=config.settings.production
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
@@ -39,7 +38,6 @@ RUN sed -i 's/\r$//g' /start
 RUN chmod +x /start
 
 COPY . ${APP_HOME}
-COPY --from=registry . ${APP_HOME}/registry/
 
 EXPOSE 8000
 

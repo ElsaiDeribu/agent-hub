@@ -31,7 +31,9 @@ WEB_CONCURRENCY=4
 
 # Sandbox / registry
 # ------------------------------------------------------------------------------
-REGISTRY_DIR=/app/registry
+REGISTRY_GITHUB_OWNER=ElsaiDeribu
+REGISTRY_GITHUB_REPO=agent-hub
+REGISTRY_GITHUB_BRANCH=main
 MSB_IMAGE=node
 SANDBOX_MEMORY_MB=1024
 SESSION_IDLE_TIMEOUT=1800

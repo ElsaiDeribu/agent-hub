@@ -47,13 +47,14 @@ from schemas import (
     SessionStatusResponse,
     SessionSummary,
 )
-from services import (
-    REGISTRY_DIR,
-    agent_impl_dir,
+from registry import (
+    RegistryError,
+    fetch_package_metadata,
+    get_agent_packages,
     list_frameworks,
-    manager,
-    reaper_loop,
+    list_packages,
 )
+from services import manager, reaper_loop
 
 _reaper_task: asyncio.Task | None = None
 
@@ -150,20 +151,18 @@ async def health(db: Annotated[AsyncSession, Depends(get_db)]) -> HealthResponse
 
 @app.get("/registry", response_model=list[RegistryPackage], tags=["registry"])
 async def list_registry() -> list[RegistryPackage]:
-    """List sandbox-ready agent/framework packages (`registry/<agent>/<framework>/`)."""
-    packages: list[RegistryPackage] = []
-    if not REGISTRY_DIR.exists():
-        return packages
-    for entry in sorted(REGISTRY_DIR.iterdir()):
-        if not entry.is_dir() or entry.name.startswith("_"):
-            continue
-        for framework in list_frameworks(entry.name):
-            meta_path = agent_impl_dir(entry.name, framework) / "metadata.json"
-            meta = json.loads(meta_path.read_text())
-            meta.setdefault("id", entry.name)
-            meta["framework"] = framework
-            packages.append(RegistryPackage.model_validate(meta))
-    return packages
+    """List sandbox-ready agent/framework packages from GitHub (`registry.json`)."""
+    try:
+        packages = await list_packages()
+    except FileNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except RegistryError as exc:
+        raise HTTPException(502, str(exc)) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(
+            status_code=502, detail=f"Failed to fetch registry catalog: {exc}"
+        ) from exc
+    return [RegistryPackage.model_validate(meta) for meta in packages]
 
 
 @app.get(
@@ -176,30 +175,28 @@ async def get_registry_agent(
     agent_id: str, framework: str | None = None
 ) -> RegistryAgentDetail | RegistryPackage:
     """Get metadata for a registry agent. Pass `framework` for one package."""
-    frameworks = list_frameworks(agent_id)
-    if not frameworks:
-        raise HTTPException(404, f"Agent '{agent_id}' not found in registry")
-
-    if framework is None:
-        packages = []
-        for fw in frameworks:
-            meta = json.loads(
-                (agent_impl_dir(agent_id, fw) / "metadata.json").read_text()
-            )
-            meta["framework"] = fw
-            packages.append(RegistryPackage.model_validate(meta))
-        return RegistryAgentDetail(
-            id=agent_id, frameworks=frameworks, packages=packages
-        )
-
     try:
-        meta_path = agent_impl_dir(agent_id, framework) / "metadata.json"
+        if framework is None:
+            frameworks, packages = await get_agent_packages(agent_id)
+            return RegistryAgentDetail(
+                id=agent_id,
+                frameworks=frameworks,
+                packages=[RegistryPackage.model_validate(meta) for meta in packages],
+            )
+
+        frameworks = await list_frameworks(agent_id)
+        meta = await fetch_package_metadata(agent_id, framework)
     except FileNotFoundError as exc:
         raise HTTPException(404, str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    except RegistryError as exc:
+        raise HTTPException(502, str(exc)) from exc
+    except httpx.HTTPError as exc:
+        raise HTTPException(
+            status_code=502, detail=f"Failed to fetch registry package: {exc}"
+        ) from exc
 
-    meta = json.loads(meta_path.read_text())
-    meta.setdefault("id", agent_id)
-    meta["framework"] = framework
     meta["frameworks"] = frameworks
     return RegistryPackage.model_validate(meta)
 
@@ -219,7 +216,7 @@ async def create_session(
     agent_id: str,
     req: RegistryPreviewRequest,
 ) -> CreateSessionResponse:
-    """Load an agent framework package from the registry and start a preview session."""
+    """Load an agent framework package from GitHub and start a preview session."""
     try:
         session = await manager.create_session(
             agent_id, framework=req.framework, env=req.env
@@ -228,12 +225,14 @@ async def create_session(
         raise HTTPException(status_code=404, detail=str(exc))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
+    except RegistryError as exc:
+        raise HTTPException(status_code=502, detail=str(exc))
     except RuntimeError as exc:
         raise HTTPException(status_code=504, detail=str(exc))
     except MicrosandboxError as exc:
         raise HTTPException(status_code=502, detail=f"Sandbox error: {exc}")
     except httpx.HTTPError as exc:
-        raise HTTPException(status_code=502, detail=f"Agent HTTP error: {exc}")
+        raise HTTPException(status_code=502, detail=f"Failed to fetch registry: {exc}")
 
     return CreateSessionResponse(session_id=session.session_id, status="ready")
 

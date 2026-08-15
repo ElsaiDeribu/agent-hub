@@ -15,7 +15,7 @@ class HealthResponse(BaseModel):
 
 
 class RegistryPackage(BaseModel):
-    """One `registry/<agent>/<framework>/` package (from metadata.json)."""
+    """One `registry/<agent>/<framework>/` package (from GitHub metadata.json)."""
 
     model_config = ConfigDict(extra="allow")
 
@@ -53,7 +53,7 @@ class RegistryPreviewRequest(BaseModel):
     framework: str = Field(
         min_length=1,
         max_length=64,
-        description="Framework package under registry/<agent>/<framework>/.",
+        description="Framework package under registry/<agent>/<framework>/ on GitHub.",
         examples=["langchain"],
     )
     env: dict[str, str] = Field(

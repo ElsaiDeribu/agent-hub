@@ -53,8 +53,10 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
 
-    # --- Sandbox / registry ---
-    registry_dir: str = "/app/registry"
+    # --- Sandbox / registry (GitHub raw, same source as CLI + docs viewer) ---
+    registry_github_owner: str = "ElsaiDeribu"
+    registry_github_repo: str = "agent-hub"
+    registry_github_branch: str = "main"
     msb_image: str = "node"
     sandbox_memory_mb: int = 1024
     session_idle_timeout: int = 1800
@@ -80,6 +82,14 @@ class Settings(BaseSettings):
     @property
     def cors_origin_list(self) -> list[str]:
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
+
+    @property
+    def registry_raw_base(self) -> str:
+        return (
+            "https://raw.githubusercontent.com/"
+            f"{self.registry_github_owner}/{self.registry_github_repo}/"
+            f"{self.registry_github_branch}"
+        )
 
     @property
     def google_configured(self) -> bool:
