@@ -1,4 +1,4 @@
-"""App settings loaded from the environment / `.env` file."""
+"""Base settings shared by local and production."""
 
 from __future__ import annotations
 
@@ -10,10 +10,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
         extra="ignore",
+        env_file_encoding="utf-8",
     )
+
+    debug: bool = False
 
     # --- Postgres ---
     postgres_host: str = "postgres"
@@ -83,6 +84,3 @@ class Settings(BaseSettings):
     @property
     def google_configured(self) -> bool:
         return bool(self.google_client_id and self.google_client_secret.get_secret_value())
-
-
-settings = Settings()  # type: ignore[call-arg]

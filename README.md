@@ -28,6 +28,11 @@ uv run uvicorn main:app --host 0.0.0.0 --port 8000
 Requires hardware virtualization (KVM on Linux, or WHP on Windows for local
 runs). Docker+KVM only works on Linux hosts that expose `/dev/kvm`.
 
+```bash
+# From repo root — local stack (API + Postgres)
+docker compose -f api/docker-compose.local.yml up --build
+```
+
 ### 2. Docs UI
 
 ```bash

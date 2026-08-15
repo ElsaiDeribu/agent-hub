@@ -4,7 +4,7 @@ microsandbox (>=0.6) is an embeddable, local-first runtime: the wheel bundles
 the `msb` binary and `libkrunfw`, so this process spawns hardware-isolated
 microVMs directly. There is no separate server to connect to. Because it boots
 real VMs, the host must expose virtualization (`/dev/kvm` on Linux); see the
-compose Dockerfile / docker-compose.yml for how the container is granted that access.
+compose Dockerfiles / docker-compose.local.yml for how the container is granted that access.
 
 Deploy a registry agent into an isolated sandbox, start it as a long-running
 server, and proxy chat traffic to it with SSE streaming.

@@ -1,0 +1,43 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./compose/local/api/Dockerfile
+      additional_contexts:
+        registry: ../registry
+    image: agenthub_local_api
+    container_name: agenthub_local_api
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app:z
+      - /app/.venv
+      - ../registry:/app/registry:z
+      - agenthub_local_microsandbox_data:/root/.microsandbox
+    env_file:
+      - ./.envs/.local/.api
+      - ./.envs/.local/.postgres
+    ports:
+      - '8000:8000'
+    # microsandbox launches hardware-isolated microVMs, which requires KVM.
+    # This works only on a Linux host that exposes /dev/kvm (bare metal or a
+    # VM with nested virtualization enabled). It will NOT work under Docker
+    # Desktop on Windows/macOS, where /dev/kvm is not available.
+    privileged: true
+    devices:
+      - /dev/kvm:/dev/kvm
+    command: /start
+
+  postgres:
+    image: docker.io/postgres:16
+    container_name: agenthub_local_postgres
+    volumes:
+      - agenthub_local_postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.envs/.local/.postgres
+    ports:
+      - '5432:5432'
+
+volumes:
+  agenthub_local_postgres_data: {}
+  agenthub_local_microsandbox_data: {}

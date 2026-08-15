@@ -64,14 +64,35 @@ microsandbox runs **real microVMs**, so it needs hardware virtualization:
 
 ## Run with Docker (Linux + KVM host)
 
-Copy `api/.env.example` to `api/.env` first. The image **entrypoint** waits for
-Postgres and builds `DATABASE_URL` from `POSTGRES_*`; **start** then runs
-`alembic upgrade head` and uvicorn.
+Local and production are split via compose files, env files, settings
+modules, and uv dependency groups in `pyproject.toml`.
+
+Copy the example env files once:
+
+```bash
+cd api
+cp .envs/.local/.api.example .envs/.local/.api
+cp .envs/.local/.postgres.example .envs/.local/.postgres
+```
+
+Local **entrypoint** waits for Compose Postgres and builds `DATABASE_URL`
+from `POSTGRES_*`; **start** then runs `alembic upgrade head` and uvicorn
+with `--reload`. Production waits for an **external** Postgres, migrates,
+then gunicorn.
 
 From the **repo root**:
 
 ```bash
-docker compose -f api/docker-compose.yml up --build
+docker compose -f api/docker-compose.local.yml up --build
+```
+
+Production (fill in `.envs/.production/.api` and point `.postgres` at
+your external database first):
+
+```bash
+cp api/.envs/.production/.api.example api/.envs/.production/.api
+cp api/.envs/.production/.postgres.example api/.envs/.production/.postgres
+docker compose -f api/docker-compose.production.yml up --build
 ```
 
 Then, from another shell:
@@ -136,13 +157,19 @@ uv run alembic upgrade head
 uv run alembic revision --autogenerate -m "describe the change"
 ```
 
-Docker uses an entrypoint/start pair:
+Local Docker uses an entrypoint/start pair:
 
-1. `/entrypoint` (`api/compose/entrypoint`) waits for
+1. `/entrypoint` (`api/compose/local/api/entrypoint`) waits for
    `${POSTGRES_HOST}:${POSTGRES_PORT}` and exports `DATABASE_URL` from
-   `POSTGRES_*` (set in `docker-compose.yml`).
-2. `docker-compose.yml` runs `/app/compose/start`, which applies
+   `POSTGRES_*` (set in `.envs/.local/.postgres`).
+2. Compose runs `/start` (`compose/local/api/start`), which applies
    `alembic upgrade head` and then uvicorn.
+
+Production Compose does **not** run Postgres. Point
+`.envs/.production/.postgres` at an external database. `/entrypoint`
+waits for `${POSTGRES_HOST}:${POSTGRES_PORT}` and exports
+`DATABASE_URL`; `/start` applies `alembic upgrade head` then gunicorn.
+The API healthcheck hits `/health`.
 
 Existing databases that already have the auth tables but no `alembic_version`
 row are stamped at head.
@@ -153,28 +180,43 @@ Postgres is required. For non-Docker runs set:
 DATABASE_URL=postgresql+psycopg://agenthub:agenthub@localhost:5432/agenthub
 ```
 
-With Docker Compose, Postgres is started and the entrypoint points the API at it:
+Local Docker Compose starts Postgres and the entrypoint points the API at
+it. Production expects `POSTGRES_HOST` to be an external server.
 
 ```bash
-docker compose -f api/docker-compose.yml up --build
+docker compose -f api/docker-compose.local.yml up --build
 ```
 
 Request bodies are validated with Pydantic (`auth/schemas.py`): `EmailStr`,
 min/max length, and matching `confirm_password` on register.
 
+## Environment files
+
+Secrets and per-environment values live under `.envs/` (gitignored except
+`*.example`). Settings are selected with `SETTINGS_MODULE`:
+
+| Environment | Compose | Env files | Settings | uv group |
+|-------------|---------|-----------|----------|----------|
+| Local | `docker-compose.local.yml` | `.envs/.local/.api`, `.postgres` | `config.settings.local` | `local` |
+| Production | `docker-compose.production.yml` | `.envs/.production/.api`, `.postgres` | `config.settings.production` | `production` |
+
+`uv sync` on the host installs the `local` group by default. Production images
+run `uv sync --no-default-groups --group production`.
+
 ## Environment variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
+| `SETTINGS_MODULE` | `config.settings.local` | Settings module (`config.settings.production` in production) |
 | `DATABASE_URL` | *(required)* | Postgres SQLAlchemy URL (`postgresql+psycopg://…`). Docker entrypoint overwrites this from `POSTGRES_*`. |
-| `POSTGRES_HOST` | `postgres` | Postgres hostname inside Compose |
+| `POSTGRES_HOST` | `postgres` | Postgres hostname (`postgres` in local Compose; external host in production) |
 | `POSTGRES_PORT` | `5432` | Postgres port |
 | `POSTGRES_DB` | `agenthub` | Database name |
 | `POSTGRES_USER` | `agenthub` | Database user |
 | `POSTGRES_PASSWORD` | `agenthub` | Database password |
 | `MSB_IMAGE` | `node` | OCI image for sandboxes |
 | `REGISTRY_DIR` | `../registry` (relative to api) | Path to root registry |
-| `CORS_ORIGINS` | web/vite origins | Comma-separated allowed origins |
+| `CORS_ORIGINS` | web/vite origins | Comma-separated allowed origins (required in production) |
 | `HOST` | `0.0.0.0` | Bind address |
 | `PORT` | `8000` | Bind port |
 | `SESSION_IDLE_TIMEOUT` | `1800` | Seconds before idle session is reaped |

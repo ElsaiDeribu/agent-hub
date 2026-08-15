@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+
+alembic upgrade head
+exec gunicorn main:app \
+  --bind "0.0.0.0:${PORT:-8000}" \
+  --chdir=/app \
+  --workers "${WEB_CONCURRENCY:-4}" \
+  -k uvicorn_worker.UvicornWorker

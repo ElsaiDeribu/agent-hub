@@ -17,3 +17,15 @@ dependencies = [
     "sqlalchemy>=2.0.0",
     "uvicorn>=0.51.0",
 ]
+
+[dependency-groups]
+local = [
+    "watchfiles>=1.0.0",
+]
+production = [
+    "gunicorn>=23.0.0",
+    "uvicorn-worker>=0.3.0",
+]
+
+[tool.uv]
+default-groups = ["local"]

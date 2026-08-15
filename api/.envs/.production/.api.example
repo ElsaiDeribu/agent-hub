@@ -1,0 +1,40 @@
+# General
+# ------------------------------------------------------------------------------
+SETTINGS_MODULE=config.settings.production
+DEBUG=false
+
+# Auth
+# ------------------------------------------------------------------------------
+# Public base URL of the auth router (no trailing slash).
+# Google OAuth redirect URI is derived as: ${AUTH_BASE_URL}/oauth/callback/google
+AUTH_BASE_URL=https://api.example.com/api/auth
+AUTH_FRONTEND_CALLBACK=https://app.example.com
+AUTH_SESSION_EXPIRES_MINUTES=10080
+AUTH_COOKIE_NAME=agent_hub_session
+AUTH_COOKIE_SECURE=true
+AUTH_COOKIE_SAMESITE=lax
+
+# Google OAuth (optional — leave empty to disable Google sign-in)
+# ------------------------------------------------------------------------------
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# HTTP / CORS
+# ------------------------------------------------------------------------------
+CORS_ORIGINS=https://app.example.com
+HOST=0.0.0.0
+PORT=8000
+
+# Gunicorn
+# ------------------------------------------------------------------------------
+WEB_CONCURRENCY=4
+
+# Sandbox / registry
+# ------------------------------------------------------------------------------
+REGISTRY_DIR=/app/registry
+MSB_IMAGE=node
+SANDBOX_MEMORY_MB=1024
+SESSION_IDLE_TIMEOUT=1800
+SESSION_MAX_DURATION=3600
+SESSION_BASE_PORT=10000
+SESSION_REAPER_INTERVAL=60

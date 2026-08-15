@@ -152,6 +152,13 @@ activemq-data/
 *.env
 !.env.example
 .envrc
+.envs/*
+!.envs/.local/
+!.envs/.production/
+.envs/.local/*
+.envs/.production/*
+!.envs/.local/*.example
+!.envs/.production/*.example
 .venv
 env/
 venv/
@@ -218,3 +225,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Runtime data
+data/
+
+# OS
+.DS_Store
+Thumbs.db

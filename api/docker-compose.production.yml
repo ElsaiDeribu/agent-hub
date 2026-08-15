@@ -1,0 +1,31 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./compose/production/api/Dockerfile
+      additional_contexts:
+        registry: ../registry
+    image: agenthub_production_api
+    volumes:
+      - agenthub_production_microsandbox_data:/root/.microsandbox
+    env_file:
+      - ./.envs/.production/.api
+      - ./.envs/.production/.postgres
+    ports:
+      - '8000:8000'
+    # microsandbox launches hardware-isolated microVMs, which requires KVM.
+    # This works only on a Linux host that exposes /dev/kvm (bare metal or a
+    # VM with nested virtualization enabled).
+    privileged: true
+    devices:
+      - /dev/kvm:/dev/kvm
+    command: /start
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:8000/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  agenthub_production_microsandbox_data: {}

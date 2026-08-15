@@ -1,0 +1,36 @@
+# General
+# ------------------------------------------------------------------------------
+SETTINGS_MODULE=config.settings.local
+DEBUG=true
+
+# Auth
+# ------------------------------------------------------------------------------
+# Public base URL of the auth router (no trailing slash).
+# Google OAuth redirect URI is derived as: ${AUTH_BASE_URL}/oauth/callback/google
+AUTH_BASE_URL=http://localhost:8000/api/auth
+AUTH_FRONTEND_CALLBACK=http://localhost:3000
+AUTH_SESSION_EXPIRES_MINUTES=10080
+AUTH_COOKIE_NAME=agent_hub_session
+AUTH_COOKIE_SECURE=false
+AUTH_COOKIE_SAMESITE=lax
+
+# Google OAuth (optional — leave empty to disable Google sign-in)
+# ------------------------------------------------------------------------------
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+
+# HTTP / CORS
+# ------------------------------------------------------------------------------
+CORS_ORIGINS=http://localhost:8081,http://127.0.0.1:8081,http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000
+HOST=0.0.0.0
+PORT=8000
+
+# Sandbox / registry
+# ------------------------------------------------------------------------------
+REGISTRY_DIR=/app/registry
+MSB_IMAGE=node
+SANDBOX_MEMORY_MB=1024
+SESSION_IDLE_TIMEOUT=1800
+SESSION_MAX_DURATION=3600
+SESSION_BASE_PORT=10000
+SESSION_REAPER_INTERVAL=60
