@@ -20,7 +20,6 @@ services:
     # This works only on a Linux host that exposes /dev/kvm (bare metal or a
     # VM with nested virtualization enabled). It will NOT work under Docker
     # Desktop on Windows/macOS, where /dev/kvm is not available.
-    privileged: true
     devices:
       - /dev/kvm:/dev/kvm
     command: /start

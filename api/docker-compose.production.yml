@@ -14,7 +14,6 @@ services:
     # microsandbox launches hardware-isolated microVMs, which requires KVM.
     # This works only on a Linux host that exposes /dev/kvm (bare metal or a
     # VM with nested virtualization enabled).
-    privileged: true
     devices:
       - /dev/kvm:/dev/kvm
     command: /start
