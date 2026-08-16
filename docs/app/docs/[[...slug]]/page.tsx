@@ -1,4 +1,4 @@
-import { DocsPageShell } from "@/components/docs/toc";
+import { DocsPageShell } from "@/sections/layout/docs/toc";
 import { getMDXComponents } from "@/components/mdx";
 import { source } from "@/lib/source";
 import { notFound } from "next/navigation";
