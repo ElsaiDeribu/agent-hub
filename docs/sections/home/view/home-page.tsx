@@ -14,7 +14,7 @@ export default function HomePage({ agentCount }: HomePageProps) {
   return (
     <main className="flex-1">
       <section className="bg-gradient-to-b from-muted/30 to-background">
-        <div className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-7xl px-4 pb-16 pt-[25vh] text-center sm:px-6 sm:pb-24 sm:pt-[10%]">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-xs text-muted-foreground">
             <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
             TypeScript agents you can install in seconds

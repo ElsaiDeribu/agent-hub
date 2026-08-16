@@ -4,6 +4,8 @@ import ThemeProvider from "@/components/theme/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 import { AuthProvider } from "@/auth/context";
+import { Navbar } from "@/sections/layout/navbar";
+import { NavbarProvider } from "@/sections/layout/navbar-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,12 +37,17 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased thin-scrollbar`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full bg-background antialiased thin-scrollbar`}
     >
       <body className="min-h-full flex flex-col font-sans">
         <AuthProvider>
           <ThemeProvider>
-            <TooltipProvider>{children}</TooltipProvider>
+            <TooltipProvider>
+              <NavbarProvider>
+                <Navbar />
+                {children}
+              </NavbarProvider>
+            </TooltipProvider>
           </ThemeProvider>
         </AuthProvider>
       </body>

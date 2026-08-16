@@ -9,12 +9,12 @@ import { useTheme } from "@/components/theme/theme-provider";
 const CYCLE: Theme[] = ["light", "dark"];
 
 const ICONS: Partial<Record<Theme, React.ReactNode>> = {
-  light: <Sun className="size-4" />,
-  dark: <Moon className="size-4" />,
+  light: <Sun className="size-5" />,
+  dark: <Moon className="size-5" />,
 };
 
 const toggleClassName =
-  "flex size-8 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer";
+  "inline-flex size-9 items-center justify-center text-muted-foreground transition-colors duration-200 hover:text-foreground cursor-pointer";
 
 const emptySubscribe = () => () => {};
 

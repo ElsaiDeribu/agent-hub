@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { PanelLeftIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { paths } from "@/routes/paths";
 import { Logo } from "@/components/icons/logo";
 import GitHub from "@/components/icons/github-icon";
-import { Button } from "@/components/ui/button";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ThemeToggleIcon } from "@/components/theme/components/theme-toggle";
+import { useNavbar } from "@/sections/layout/navbar-context";
 
 const GITHUB_URL = "https://github.com/ElsaiDeribu/agent-hub";
 
@@ -17,63 +17,89 @@ const NAV_LINKS = [
   { label: "Docs", href: paths.docs.root },
 ] as const;
 
-export function Navbar({
-  className,
-  showSidebarTrigger = false,
-}: {
-  className?: string;
-  showSidebarTrigger?: boolean;
-}) {
+const AUTH_PREFIXES = [paths.auth.login, paths.auth.register] as const;
+
+const navLinkClassName =
+  "text-[15px] font-medium leading-none text-muted-foreground transition-colors duration-200 hover:text-foreground";
+
+export function Navbar({ className }: { className?: string }) {
   const pathname = usePathname();
+  const { sidebarToggleRef } = useNavbar();
+
+  const isHidden = AUTH_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const isIsland = pathname === paths.home;
+  const showSidebarTrigger = pathname.startsWith(paths.docs.root);
+
+  if (isHidden) {
+    return null;
+  }
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 shrink-0 border-b bg-background/80 backdrop-blur-sm",
+        "z-50 shrink-0 transition-[top,padding] duration-300 ease-in-out motion-reduce:transition-none",
+        isIsland
+          ? "pointer-events-none fixed inset-x-0 top-0 px-3 pt-3 sm:px-4 sm:pt-4 md:px-6"
+          : "sticky top-0 px-0",
         className,
       )}
     >
-      <nav className="flex h-16 w-full items-center justify-between px-4 lg:px-6">
-        <div className="flex items-center gap-2">
-          {showSidebarTrigger ? <SidebarTrigger className="md:hidden" /> : null}
-          <Link href={paths.home} className="flex items-center">
-            <Logo variant="full" className="h-10" />
+      <div
+        className={cn(
+          "mx-auto flex w-full items-center justify-between transition-[max-width,height,border-radius,background-color,box-shadow,border-color,padding] duration-300 ease-in-out motion-reduce:transition-none",
+          isIsland
+            ? "pointer-events-auto h-16 max-w-5xl rounded-2xl border border-border/60 bg-background/95 px-5 shadow-sm backdrop-blur-md sm:px-6"
+            : "h-16 max-w-full rounded-none border-b border-border bg-background/80 px-4 shadow-none backdrop-blur-sm lg:px-6",
+        )}
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          {showSidebarTrigger ? (
+            <button
+              type="button"
+              aria-label="Toggle sidebar"
+              onClick={() => sidebarToggleRef.current?.()}
+              className="inline-flex size-9 items-center justify-center text-muted-foreground transition-colors duration-200 hover:text-foreground md:hidden"
+            >
+              <PanelLeftIcon className="size-5" />
+            </button>
+          ) : null}
+          <Link href={paths.home} className="inline-flex shrink-0 items-center">
+            <Logo variant="full" className={cn(isIsland ? "h-9" : "h-10")} />
           </Link>
         </div>
 
-        <nav className="flex items-center gap-1">
+        <div className="flex items-center gap-5 sm:gap-6">
           {NAV_LINKS.map((link) => {
             const isActive =
               pathname === link.href || pathname.startsWith(`${link.href}/`);
 
             return (
-              <Button
+              <Link
                 key={link.href}
-                variant="ghost"
-                size="sm"
-                asChild
-                className={cn(isActive && "bg-accent text-accent-foreground")}
+                href={link.href}
+                className={cn(
+                  navLinkClassName,
+                  isActive && "text-foreground",
+                )}
               >
-                <Link href={link.href}>{link.label}</Link>
-              </Button>
+                {link.label}
+              </Link>
             );
           })}
 
-          <Button
-            variant="ghost"
-            size="sm"
-            asChild
-            className="gap-1.5 text-muted-foreground hover:text-foreground"
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(navLinkClassName, "inline-flex items-center gap-1.5")}
           >
-            <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
-              <GitHub className="size-4 fill-current" />
-              <span className="hidden sm:inline">GitHub</span>
-            </a>
-          </Button>
+            <GitHub className="size-[18px] fill-current" />
+            <span className="hidden sm:inline">GitHub</span>
+          </a>
 
           <ThemeToggleIcon />
-        </nav>
-      </nav>
+        </div>
+      </div>
     </header>
   );
 }

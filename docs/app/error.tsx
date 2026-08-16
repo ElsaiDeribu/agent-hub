@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Footer } from "@/sections/layout/footer";
-import { Navbar } from "@/sections/layout/navbar";
 import { StatusPage } from "@/sections/layout/status-page";
 import { paths } from "@/routes/paths";
 
@@ -22,7 +21,6 @@ export default function Error({
 
   return (
     <>
-      <Navbar />
       <StatusPage
         icon={AlertCircle}
         title="Something went wrong"

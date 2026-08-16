@@ -1,7 +1,7 @@
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { getDocsNav } from "@/lib/page-tree";
 import { AppSidebar } from "@/sections/docs/app-sidebar";
-import { Navbar } from "@/sections/layout/navbar";
+import { DocsNavbarBridge } from "@/sections/layout/docs-navbar-bridge";
 import type { ReactNode } from "react";
 
 export default function DocsLayout({ children }: { children: ReactNode }) {
@@ -9,7 +9,7 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
 
   return (
     <SidebarProvider className="flex min-h-svh w-full flex-col">
-      <Navbar showSidebarTrigger />
+      <DocsNavbarBridge />
       <div className="flex min-h-0 flex-1">
         <AppSidebar
           items={navItems}
