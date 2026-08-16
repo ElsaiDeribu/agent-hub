@@ -17,9 +17,14 @@ const NAV_LINKS = [
   { label: "Docs", href: paths.docs.root },
 ] as const;
 
-export function Navbar({ className }: { className?: string }) {
+export function Navbar({
+  className,
+  showSidebarTrigger = false,
+}: {
+  className?: string;
+  showSidebarTrigger?: boolean;
+}) {
   const pathname = usePathname();
-  const showSidebarTrigger = pathname.startsWith(paths.docs.root);
 
   return (
     <header

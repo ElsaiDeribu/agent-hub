@@ -9,7 +9,7 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
 
   return (
     <SidebarProvider className="flex min-h-svh w-full flex-col">
-      <Navbar />
+      <Navbar showSidebarTrigger />
       <div className="flex min-h-0 flex-1">
         <AppSidebar
           items={navItems}
