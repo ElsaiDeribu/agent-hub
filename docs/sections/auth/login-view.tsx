@@ -89,15 +89,7 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
             name="password"
             render={({ field }) => (
               <FormItem>
-                <div className="flex items-center">
-                  <FormLabel>Password</FormLabel>
-                  <Link
-                    href={paths.auth.forgotPassword}
-                    className="ml-auto text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link>
-                </div>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input type="password" {...field} />
                 </FormControl>
