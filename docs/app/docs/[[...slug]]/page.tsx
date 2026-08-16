@@ -1,3 +1,4 @@
+import { DocsPageShell } from "@/components/docs/toc";
 import { getMDXComponents } from "@/components/mdx";
 import { source } from "@/lib/source";
 import { notFound } from "next/navigation";
@@ -13,7 +14,7 @@ export default async function Page(props: {
   const MDX = page.data.body;
 
   return (
-    <>
+    <DocsPageShell toc={page.data.toc}>
       <h1 className="mb-2 text-3xl font-semibold tracking-tight">
         {page.data.title}
       </h1>
@@ -25,7 +26,7 @@ export default async function Page(props: {
       <article className="max-w-none">
         <MDX components={getMDXComponents()} />
       </article>
-    </>
+    </DocsPageShell>
   );
 }
 

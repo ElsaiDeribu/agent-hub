@@ -26,6 +26,15 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
         {...props}
       />
     ),
+    h4: ({ className, ...props }: ComponentProps<"h4">) => (
+      <h4
+        className={cn(
+          "mt-6 scroll-m-20 text-base font-semibold tracking-tight",
+          className
+        )}
+        {...props}
+      />
+    ),
     p: ({ className, ...props }: ComponentProps<"p">) => (
       <p
         className={cn(

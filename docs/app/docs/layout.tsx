@@ -16,7 +16,7 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
           className="top-16! h-[calc(100svh-4rem)]!"
         />
         <SidebarInset className="min-w-0">
-          <div className="w-full px-[10%] py-10">{children}</div>
+          <div className="w-full px-6 py-10 lg:px-10">{children}</div>
         </SidebarInset>
       </div>
     </SidebarProvider>
