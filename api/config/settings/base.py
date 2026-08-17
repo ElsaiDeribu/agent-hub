@@ -53,7 +53,7 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
 
-    # --- Sandbox / registry (GitHub raw, same source as CLI + docs viewer) ---
+    # --- Sandbox / registry ---
     registry_github_owner: str = "ElsaiDeribu"
     registry_github_repo: str = "agent-hub"
     registry_github_branch: str = "main"
@@ -63,6 +63,15 @@ class Settings(BaseSettings):
     session_max_duration: int = 3600
     session_base_port: int = 10000
     session_reaper_interval: int = 60
+
+    # --- Email / SMTP ---
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_username: SecretStr = SecretStr("")
+    smtp_password: SecretStr = SecretStr("")
+    smtp_use_tls: bool = True
+    smtp_from_address: str = ""
+    smtp_from_name: str = "AgentHub"
 
     @field_validator("auth_cookie_samesite", mode="before")
     @classmethod
