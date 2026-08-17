@@ -33,7 +33,7 @@ export function TryPanel({
       <div className="flex flex-col items-center gap-3 text-center px-4">
         {needsSignIn && sandboxPreview ? (
           <Button type="button" size="lg" asChild className="gap-2">
-            <Link href={paths.auth.login}>
+            <Link href={paths.auth.signIn}>
               <Play className="size-4" />
               Try
             </Link>

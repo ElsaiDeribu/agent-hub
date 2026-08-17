@@ -35,9 +35,9 @@ export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
 export const endpoints = {
   auth: {
     me: '/api/auth/me',
-    login: '/api/auth/login',
-    register: '/api/auth/register',
-    logout: '/api/auth/logout',
-    google: '/api/auth/sign-in/social?provider=google',
+    signIn: '/api/auth/sign-in',
+    signUp: '/api/auth/sign-up',
+    signOut: '/api/auth/sign-out',
+    signInSocial: '/api/auth/sign-in/social?provider=google',
   },
 };

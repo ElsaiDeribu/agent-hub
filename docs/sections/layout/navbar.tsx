@@ -17,7 +17,7 @@ const NAV_LINKS = [
   { label: "Docs", href: paths.docs.root },
 ] as const;
 
-const AUTH_PREFIXES = [paths.auth.login, paths.auth.register] as const;
+const AUTH_PREFIXES = [paths.auth.signIn, paths.auth.signUp] as const;
 
 const navLinkClassName =
   "text-[15px] font-medium leading-none text-muted-foreground transition-colors duration-200 hover:text-foreground";

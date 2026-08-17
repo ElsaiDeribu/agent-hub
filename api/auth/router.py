@@ -17,9 +17,9 @@ from .schemas import (
     AUTH_ERROR_401,
     OAUTH_REDIRECT_RESPONSES,
     USER_RESPONSE,
-    LoginRequest,
-    LogoutResponse,
-    RegisterRequest,
+    SignInRequest,
+    SignOutResponse,
+    SignUpRequest,
     SocialSignInRequest,
     UserPublic,
     UserResponse,
@@ -33,9 +33,9 @@ from .service import (
     google_configured,
     google_userinfo,
     save_oauth_state,
-    sign_in,
-    sign_out,
-    sign_up,
+    sign_in as sign_in_service,
+    sign_out as sign_out_service,
+    sign_up as sign_up_service,
 )
 from .utils import (
     attach_session_cookie,
@@ -99,18 +99,18 @@ async def _start_google(provider: str, db: AsyncSession) -> JSONResponse | Redir
 
 
 @router.post(
-    "/register",
+    "/sign-up",
     response_model=UserResponse,
     responses={**USER_RESPONSE, **AUTH_ERROR_400},
 )
-async def register(
-    body: RegisterRequest,
+async def sign_up(
+    body: SignUpRequest,
     request: Request,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     try:
         ip, ua = client_meta(request)
-        user, session = await sign_up(
+        user, session = await sign_up_service(
             db,
             email=str(body.email),
             password=body.password,
@@ -127,17 +127,17 @@ async def register(
 
 
 @router.post(
-    "/login",
+    "/sign-in",
     response_model=UserResponse,
     responses={**USER_RESPONSE, **AUTH_ERROR_400, **AUTH_ERROR_401},
 )
-async def login(
-    body: LoginRequest,
+async def sign_in(
+    body: SignInRequest,
     request: Request,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     ip, ua = client_meta(request)
-    result = await sign_in(
+    result = await sign_in_service(
         db,
         email=str(body.email),
         password=body.password,
@@ -161,11 +161,11 @@ async def me(current_user: CurrentUser):
     return JSONResponse(content={"user": _user_payload(current_user)})
 
 
-@router.post("/logout", response_model=LogoutResponse)
-async def logout(request: Request, db: Annotated[AsyncSession, Depends(get_db)]):
+@router.post("/sign-out", response_model=SignOutResponse)
+async def sign_out(request: Request, db: Annotated[AsyncSession, Depends(get_db)]):
     token = extract_session_token(request)
     if token:
-        await sign_out(db, token)
+        await sign_out_service(db, token)
         await db.commit()
     response = JSONResponse(content={"success": True})
     clear_session_cookie(response)

@@ -20,7 +20,7 @@ export const paths = {
 
   // AUTH
   auth: {
-    login: "/login",
-    register: "/register",
+    signIn: "/sign-in",
+    signUp: "/sign-up",
   },
 };

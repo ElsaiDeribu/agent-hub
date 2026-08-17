@@ -70,7 +70,7 @@ export function useSandboxChat({
   const requireAuth = () => {
     if (authLoading) return false;
     if (authenticated) return true;
-    router.push(paths.auth.login);
+    router.push(paths.auth.signIn);
     return false;
   };
 

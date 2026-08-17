@@ -3,7 +3,7 @@
 import { useEffect, useCallback } from 'react';
 import { SplashScreen } from '@/components/loading-screen';
 import { useRouter } from 'next/navigation';
-import { PATH_AFTER_LOGIN } from '@/lib/config';
+import { PATH_AFTER_SIGN_IN } from '@/lib/config';
 
 import { useAuthContext } from '../hooks';
 
@@ -28,7 +28,7 @@ function Container({ children }: Props) {
 
   const check = useCallback(() => {
     if (authenticated) {
-      router.replace(PATH_AFTER_LOGIN);
+      router.replace(PATH_AFTER_SIGN_IN);
     }
   }, [authenticated, router]);
 

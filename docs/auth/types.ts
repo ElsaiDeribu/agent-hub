@@ -34,14 +34,14 @@ export type AuthContextType = {
   loading: boolean;
   authenticated: boolean;
   unauthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (
     email: string,
     password: string,
     confirm_password: string,
     first_name: string,
     last_name: string
   ) => Promise<void>;
-  loginWithGoogle: () => void;
-  logout: () => Promise<void>;
+  signInWithGoogle: () => void;
+  signOut: () => Promise<void>;
 };

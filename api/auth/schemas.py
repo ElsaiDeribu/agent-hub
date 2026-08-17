@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, mo
 from config import settings
 
 
-class RegisterRequest(BaseModel):
+class SignUpRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
     email: EmailStr = Field(max_length=255, examples=["user@example.com"])
@@ -26,7 +26,7 @@ class RegisterRequest(BaseModel):
     )
 
     @model_validator(mode="after")
-    def passwords_match(self) -> RegisterRequest:
+    def passwords_match(self) -> SignUpRequest:
         if self.confirm_password and self.confirm_password != self.password:
             raise ValueError("passwords do not match")
         return self
@@ -38,7 +38,7 @@ class RegisterRequest(BaseModel):
         return " ".join(part for part in (self.first_name, self.last_name) if part)
 
 
-class LoginRequest(BaseModel):
+class SignInRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
 
     email: EmailStr = Field(max_length=255, examples=["user@example.com"])
@@ -76,7 +76,7 @@ class UserResponse(BaseModel):
     user: UserPublic
 
 
-class LogoutResponse(BaseModel):
+class SignOutResponse(BaseModel):
     success: bool = True
 
 
@@ -95,7 +95,7 @@ _SESSION_COOKIE_HEADER = {
 USER_RESPONSE: dict[int | str, dict[str, Any]] = {
     200: {
         "model": UserResponse,
-        "description": "Authenticated user. Sets the session cookie on register/login.",
+        "description": "Authenticated user. Sets the session cookie on sign-up/sign-in.",
         "headers": _SESSION_COOKIE_HEADER,
     },
 }

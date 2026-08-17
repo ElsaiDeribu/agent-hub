@@ -30,7 +30,7 @@ function Container({ children }: Props) {
 
   const check = useCallback(() => {
     if (!authenticated) {
-      router.replace(paths.auth.login);
+      router.replace(paths.auth.signIn);
     } else {
       setChecked(true);
     }

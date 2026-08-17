@@ -51,10 +51,10 @@ package has its own `metadata.json` (`files`, `dependencies`, `env`).
 
 Mounted at `/api/auth`. Sessions use an HttpOnly cookie (`AUTH_COOKIE_NAME`).
 
-- `POST /api/auth/register` — email/password sign-up.
-- `POST /api/auth/login` — email/password sign-in.
+- `POST /api/auth/sign-up` — email/password sign-up.
+- `POST /api/auth/sign-in` — email/password sign-in.
 - `GET /api/auth/me` — current user (cookie or `Authorization: Bearer`).
-- `POST /api/auth/logout` — clear the session.
+- `POST /api/auth/sign-out` — clear the session.
 - `GET|POST /api/auth/sign-in/social?provider=google` — start Google OAuth.
 - `GET /api/auth/oauth/callback/google` — Google OAuth callback.
 
@@ -208,7 +208,7 @@ Local Docker Compose starts Postgres. Production expects `POSTGRES_HOST`
 to be an external server.
 
 Request bodies are validated with Pydantic (`auth/schemas.py`): `EmailStr`,
-min/max length, and matching `confirm_password` on register.
+min/max length, and matching `confirm_password` on sign-up.
 
 ## Environment files
 

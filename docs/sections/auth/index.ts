@@ -1,2 +1,2 @@
-export { default as LoginView } from './login-view';
-export { default as RegisterView } from './register-view';
+export { default as SignInView } from './sign-in-view';
+export { default as SignUpView } from './sign-up-view';

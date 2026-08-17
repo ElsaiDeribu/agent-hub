@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { LoginView } from "@/sections/auth";
+import { SignInView } from "@/sections/auth";
 
 export const metadata: Metadata = {
-  title: "Login",
+  title: "Sign in",
   description: "Sign in to your AgentHub account",
 };
 
-export default function LoginPage() {
-  return <LoginView />;
+export default function SignInPage() {
+  return <SignInView />;
 }

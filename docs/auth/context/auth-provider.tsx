@@ -12,22 +12,22 @@ import type { AuthUserType, ActionMapType, AuthStateType } from '../types';
 
 enum Types {
   INITIAL = 'INITIAL',
-  LOGIN = 'LOGIN',
-  REGISTER = 'REGISTER',
-  LOGOUT = 'LOGOUT',
+  SIGN_IN = 'SIGN_IN',
+  SIGN_UP = 'SIGN_UP',
+  SIGN_OUT = 'SIGN_OUT',
 }
 
 type Payload = {
   [Types.INITIAL]: {
     user: AuthUserType;
   };
-  [Types.LOGIN]: {
+  [Types.SIGN_IN]: {
     user: AuthUserType;
   };
-  [Types.REGISTER]: {
+  [Types.SIGN_UP]: {
     user: AuthUserType;
   };
-  [Types.LOGOUT]: undefined;
+  [Types.SIGN_OUT]: undefined;
 };
 
 type ActionsType = ActionMapType<Payload>[keyof ActionMapType<Payload>];
@@ -46,19 +46,19 @@ const reducer = (state: AuthStateType, action: ActionsType): AuthStateType => {
       user: action.payload.user,
     };
   }
-  if (action.type === Types.LOGIN) {
+  if (action.type === Types.SIGN_IN) {
     return {
       ...state,
       user: action.payload.user,
     };
   }
-  if (action.type === Types.REGISTER) {
+  if (action.type === Types.SIGN_UP) {
     return {
       ...state,
       user: action.payload.user,
     };
   }
-  if (action.type === Types.LOGOUT) {
+  if (action.type === Types.SIGN_OUT) {
     return {
       ...state,
       user: null,
@@ -98,17 +98,17 @@ export function AuthProvider({ children }: Props) {
     void initialize();
   }, [initialize]);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const res = await axios.post(endpoints.auth.login, { email, password });
+  const signIn = useCallback(async (email: string, password: string) => {
+    const res = await axios.post(endpoints.auth.signIn, { email, password });
     const { user } = res.data;
 
     dispatch({
-      type: Types.LOGIN,
+      type: Types.SIGN_IN,
       payload: { user },
     });
   }, []);
 
-  const register = useCallback(
+  const signUp = useCallback(
     async (
       email: string,
       password: string,
@@ -116,7 +116,7 @@ export function AuthProvider({ children }: Props) {
       first_name: string,
       last_name: string
     ) => {
-      const res = await axios.post(endpoints.auth.register, {
+      const res = await axios.post(endpoints.auth.signUp, {
         email,
         password,
         confirm_password,
@@ -126,25 +126,25 @@ export function AuthProvider({ children }: Props) {
       const { user } = res.data;
 
       dispatch({
-        type: Types.REGISTER,
+        type: Types.SIGN_UP,
         payload: { user },
       });
     },
     []
   );
 
-  const loginWithGoogle = useCallback(() => {
+  const signInWithGoogle = useCallback(() => {
     // Full-page redirect into the API OAuth start; cookie is set on callback.
-    window.location.href = `${HOST_API}${endpoints.auth.google}`;
+    window.location.href = `${HOST_API}${endpoints.auth.signInSocial}`;
   }, []);
 
-  const logout = useCallback(async () => {
+  const signOut = useCallback(async () => {
     try {
-      await axios.post(endpoints.auth.logout);
+      await axios.post(endpoints.auth.signOut);
     } catch {
       // Cookie clear is best-effort; always drop local auth state.
     }
-    dispatch({ type: Types.LOGOUT });
+    dispatch({ type: Types.SIGN_OUT });
   }, []);
 
   // ----------------------------------------------------------------------
@@ -158,12 +158,12 @@ export function AuthProvider({ children }: Props) {
       loading: status === 'loading',
       authenticated: status === 'authenticated',
       unauthenticated: status === 'unauthenticated',
-      login,
-      register,
-      loginWithGoogle,
-      logout,
+      signIn,
+      signUp,
+      signInWithGoogle,
+      signOut,
     }),
-    [login, loginWithGoogle, logout, register, state.user, status]
+    [signIn, signInWithGoogle, signOut, signUp, state.user, status]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

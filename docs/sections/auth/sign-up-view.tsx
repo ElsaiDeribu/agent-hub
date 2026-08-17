@@ -10,35 +10,50 @@ import { useAuthContext } from '@/auth/hooks';
 import { getErrorMessage } from '@/auth/context/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useBoolean } from '@/hooks/use-boolean';
 import Link from 'next/link';
-import { PATH_AFTER_LOGIN } from '@/lib/config';
+import { PATH_AFTER_SIGN_IN } from '@/lib/config';
 import { zodResolver } from '@hookform/resolvers/zod';
 import LoadingButton from '@/components/ui/loading-button';
 import { useRouter } from 'next/navigation';
 import FormProvider from '@/components/hook-form/form-provider';
+import { Card, CardTitle, CardHeader, CardContent } from '@/components/ui/card';
 import { FormItem, FormField, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Card, CardTitle, CardHeader, CardContent, CardDescription } from '@/components/ui/card';
+
 // ----------------------------------------------------------------------
 
-export default function LoginView({ className, ...props }: React.ComponentProps<'div'>) {
-  const { login, loginWithGoogle } = useAuthContext();
+export default function SignUpView({ className, ...props }: React.ComponentProps<'div'>) {
+  const { signUp, signInWithGoogle } = useAuthContext();
 
   const router = useRouter();
 
   const [errorMsg, setErrorMsg] = useState('');
 
-  const LoginSchema = z.object({
-    email: z.string().min(1, 'Email is required').email('Email must be a valid email address'),
-    password: z.string().min(1, 'Password is required'),
-  });
+  const password = useBoolean();
+
+  const SignUpSchema = z
+    .object({
+      first_name: z.string().min(1, 'First name is required'),
+      last_name: z.string().min(1, 'Last name is required'),
+      email: z.string().min(1, 'Email is required').email('Email must be a valid email address'),
+      password: z.string().min(1, 'Password is required'),
+      confirm_password: z.string().min(1, 'Confirm password is required'),
+    })
+    .refine((data) => data.password === data.confirm_password, {
+      message: 'Passwords do not match',
+      path: ['confirm_password'],
+    });
 
   const defaultValues = {
+    first_name: '',
+    last_name: '',
     email: '',
     password: '',
+    confirm_password: '',
   };
 
   const methods = useForm({
-    resolver: zodResolver(LoginSchema),
+    resolver: zodResolver(SignUpSchema),
     defaultValues,
   });
 
@@ -50,9 +65,15 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await login(data.email, data.password);
+      await signUp(
+        data.email,
+        data.password,
+        data.confirm_password,
+        data.first_name,
+        data.last_name
+      );
 
-      router.push(PATH_AFTER_LOGIN);
+      router.push(PATH_AFTER_SIGN_IN);
     } catch (error) {
       console.error(error);
       reset();
@@ -62,8 +83,7 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
 
   const renderHead = (
     <CardHeader className="text-center">
-      <CardTitle className="text-xl">Welcome back</CardTitle>
-      <CardDescription>Login to your Boilerplate account</CardDescription>
+      <CardTitle className="text-xl">Get started absolutely free</CardTitle>
     </CardHeader>
   );
 
@@ -71,6 +91,35 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
     <CardContent>
       <div className="grid gap-6">
         <div className="grid gap-6">
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={methods.control}
+              name="first_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>First name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="First name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={methods.control}
+              name="last_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Last name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Last name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           <FormField
             control={methods.control}
             name="email"
@@ -84,12 +133,26 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
               </FormItem>
             )}
           />
+
           <FormField
             control={methods.control}
             name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input type={password.value ? 'text' : 'password'} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={methods.control}
+            name="confirm_password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
                 <FormControl>
                   <Input type="password" {...field} />
                 </FormControl>
@@ -102,20 +165,21 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
               Or continue with
             </span>
           </div>
+
           <div className="flex flex-col gap-4">
             <Button
               type="button"
               variant="outline"
               className="w-full"
-              onClick={() => loginWithGoogle()}
+              onClick={() => signInWithGoogle()}
             >
               <Google />
-              Login with Google
+              Sign up with Google
             </Button>
           </div>
 
           <LoadingButton type="submit" className="w-full" loading={isSubmitting}>
-            Login
+            Create account
           </LoadingButton>
         </div>
       </div>
@@ -124,9 +188,9 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
 
   const renderFooter = (
     <div className="text-center text-sm">
-      Don&apos;t have an account?{' '}
-      <Link href={paths.auth.register} className="underline underline-offset-4">
-        Sign up
+      Already have an account?{' '}
+      <Link href={paths.auth.signIn} className="underline underline-offset-4">
+        Sign in
       </Link>
     </div>
   );
@@ -140,7 +204,6 @@ export default function LoginView({ className, ...props }: React.ComponentProps<
           {!!errorMsg && <h1 style={{ marginBottom: 3, color: 'red' }}>{errorMsg}</h1>}
           {renderForm}
         </FormProvider>
-
         {renderFooter}
       </Card>
     </div>
