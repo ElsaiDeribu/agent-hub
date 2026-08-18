@@ -80,6 +80,17 @@ class SignOutResponse(BaseModel):
     success: bool = True
 
 
+class SignUpPendingResponse(BaseModel):
+    email: EmailStr
+    message: str = "Verification email sent."
+
+
+class ResendVerificationRequest(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True)
+
+    email: EmailStr = Field(max_length=255, examples=["user@example.com"])
+
+
 class ErrorResponse(BaseModel):
     code: str = Field(examples=["BAD_REQUEST"])
     message: str
@@ -95,7 +106,7 @@ _SESSION_COOKIE_HEADER = {
 USER_RESPONSE: dict[int | str, dict[str, Any]] = {
     200: {
         "model": UserResponse,
-        "description": "Authenticated user. Sets the session cookie on sign-up/sign-in.",
+        "description": "Authenticated user. Sets the session cookie on sign-in and email verification.",
         "headers": _SESSION_COOKIE_HEADER,
     },
 }

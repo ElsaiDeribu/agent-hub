@@ -13,7 +13,12 @@ from .oauth import (
     generate_code_verifier,
     new_oauth_state,
 )
-from .security import generate_session_token, hash_password, verify_password
+from .security import (
+    generate_session_token,
+    hash_password,
+    hash_verification_token,
+    verify_password,
+)
 
 __all__ = [
     "COOKIE_SESSION",
@@ -27,6 +32,7 @@ __all__ = [
     "generate_code_verifier",
     "generate_session_token",
     "hash_password",
+    "hash_verification_token",
     "new_oauth_state",
     "oauth_redirect",
     "user_response",

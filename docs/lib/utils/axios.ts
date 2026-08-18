@@ -39,5 +39,6 @@ export const endpoints = {
     signUp: '/api/auth/sign-up',
     signOut: '/api/auth/sign-out',
     signInSocial: '/api/auth/sign-in/social?provider=google',
+    resendVerification: '/api/auth/resend-verification',
   },
 };

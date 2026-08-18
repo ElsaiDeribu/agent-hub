@@ -41,7 +41,8 @@ export type AuthContextType = {
     confirm_password: string,
     first_name: string,
     last_name: string
-  ) => Promise<void>;
+  ) => Promise<{ email: string; message: string }>;
   signInWithGoogle: () => void;
   signOut: () => Promise<void>;
+  resendVerificationEmail: (email: string) => Promise<void>;
 };

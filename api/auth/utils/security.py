@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import secrets
 
 from passlib.context import CryptContext
@@ -22,3 +23,7 @@ def verify_password(password: str, password_hash: str) -> bool:
 
 def generate_session_token() -> str:
     return secrets.token_urlsafe(32)
+
+
+def hash_verification_token(raw_token: str) -> str:
+    return hashlib.sha256(raw_token.encode()).hexdigest()

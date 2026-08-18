@@ -2,17 +2,19 @@
 
 from __future__ import annotations
 
+import secrets
 from datetime import UTC, datetime, timedelta
 from typing import Any
 from urllib.parse import urlencode
 from uuid import uuid4
 
 import httpx
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from config import settings
+from utils.email import send_email
 
 from .models import (
     EMAIL_PASSWORD_PROVIDER_ID,
@@ -27,8 +29,11 @@ from .utils import (
     generate_code_challenge,
     generate_session_token,
     hash_password,
+    hash_verification_token,
     verify_password,
 )
+
+EMAIL_VERIFY_PREFIX = "email_verify:"
 
 
 def google_configured() -> bool:
@@ -75,7 +80,7 @@ async def sign_up(
     image: str = "",
     ip_address: str | None = None,
     user_agent: str | None = None,
-) -> tuple[User, AuthSession]:
+) -> User:
     email = email.strip().lower()
     result = await db.execute(select(User).where(User.email == email))
     existing = result.scalars().first()
@@ -105,7 +110,140 @@ async def sign_up(
             updated_at=now,
         )
     )
-    return user, await _create_session(db, user.id, ip_address, user_agent)
+    return user
+
+
+def _email_verify_identifier(token_hash: str) -> str:
+    return f"{EMAIL_VERIFY_PREFIX}{token_hash}"
+
+
+def _email_verify_url(raw_token: str) -> str:
+    return f"{settings.auth_base_url.rstrip('/')}/verify-email?token={raw_token}"
+
+
+async def _delete_email_verifications_for_user(db: AsyncSession, user_id: str) -> None:
+    await db.execute(
+        delete(Verification).where(
+            Verification.identifier.like(f"{EMAIL_VERIFY_PREFIX}%"),
+            Verification.value == user_id,
+        )
+    )
+
+
+async def create_email_verification(db: AsyncSession, user_id: str) -> str:
+    """Replace any pending token for the user and return a new raw token for the email link."""
+    await _delete_email_verifications_for_user(db, user_id)
+
+    raw_token = secrets.token_urlsafe(32)
+    token_hash = hash_verification_token(raw_token)
+    now = datetime.now(UTC)
+    db.add(
+        Verification(
+            id=str(uuid4()),
+            identifier=_email_verify_identifier(token_hash),
+            value=user_id,
+            expires_at=now + timedelta(minutes=settings.auth_email_verify_ttl_minutes),
+            created_at=now,
+            updated_at=now,
+        )
+    )
+    await db.flush()
+    return raw_token
+
+
+async def consume_email_verification(db: AsyncSession, raw_token: str) -> User | None:
+    token_hash = hash_verification_token(raw_token.strip())
+    result = await db.execute(
+        select(Verification).where(
+            Verification.identifier == _email_verify_identifier(token_hash)
+        )
+    )
+    verification = result.scalars().first()
+    if verification is None:
+        return None
+
+    expires_at = verification.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=UTC)
+    user_id = verification.value
+    await db.delete(verification)
+    if expires_at < datetime.now(UTC):
+        return None
+
+    result = await db.execute(select(User).where(User.id == user_id))
+    user = result.scalars().first()
+    if user is None:
+        return None
+
+    user.email_verified = True
+    user.updated_at = datetime.now(UTC)
+    await db.flush()
+    return user
+
+
+async def can_resend_email_verification(db: AsyncSession, user_id: str) -> bool:
+    result = await db.execute(
+        select(Verification)
+        .where(
+            Verification.identifier.like(f"{EMAIL_VERIFY_PREFIX}%"),
+            Verification.value == user_id,
+        )
+        .order_by(Verification.created_at.desc())
+        .limit(1)
+    )
+    verification = result.scalars().first()
+    if verification is None:
+        return True
+
+    created_at = verification.created_at
+    if created_at is None:
+        return True
+    if created_at.tzinfo is None:
+        created_at = created_at.replace(tzinfo=UTC)
+    cooldown = timedelta(seconds=settings.auth_email_verify_resend_cooldown_seconds)
+    return datetime.now(UTC) >= created_at + cooldown
+
+
+async def send_verification_email(user: User, raw_token: str) -> None:
+    verify_url = _email_verify_url(raw_token)
+    await send_email(
+        to=user.email,
+        subject="Verify your AgentHub email",
+        body=f"Click the link below to verify your email:\n\n{verify_url}",
+        html_content=(
+            f'<p>Click the link below to verify your email:</p>'
+            f'<p><a href="{verify_url}">Verify email</a></p>'
+        ),
+    )
+
+
+async def queue_verification_for_email(
+    db: AsyncSession, email: str
+) -> tuple[User, str] | None:
+    """Create a new verification token for an unverified user, or return None if not applicable."""
+    email = email.strip().lower()
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalars().first()
+    if user is None or user.email_verified:
+        return None
+    if not await can_resend_email_verification(db, user.id):
+        raise ValueError("Please wait before requesting another email")
+    raw_token = await create_email_verification(db, user.id)
+    return user, raw_token
+
+
+async def verify_email_and_sign_in(
+    db: AsyncSession,
+    raw_token: str,
+    *,
+    ip_address: str | None = None,
+    user_agent: str | None = None,
+) -> tuple[User, AuthSession] | None:
+    user = await consume_email_verification(db, raw_token)
+    if user is None:
+        return None
+    session = await _create_session(db, user.id, ip_address, user_agent)
+    return user, session
 
 
 async def sign_in(
@@ -125,6 +263,8 @@ async def sign_in(
         return None
     if not verify_password(password, account.password):
         return None
+    if not user.email_verified:
+        raise ValueError("Please verify your email before signing in.")
     return user, await _create_session(db, user.id, ip_address, user_agent)
 
 

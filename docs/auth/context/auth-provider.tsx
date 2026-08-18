@@ -13,7 +13,6 @@ import type { AuthUserType, ActionMapType, AuthStateType } from '../types';
 enum Types {
   INITIAL = 'INITIAL',
   SIGN_IN = 'SIGN_IN',
-  SIGN_UP = 'SIGN_UP',
   SIGN_OUT = 'SIGN_OUT',
 }
 
@@ -22,9 +21,6 @@ type Payload = {
     user: AuthUserType;
   };
   [Types.SIGN_IN]: {
-    user: AuthUserType;
-  };
-  [Types.SIGN_UP]: {
     user: AuthUserType;
   };
   [Types.SIGN_OUT]: undefined;
@@ -47,12 +43,6 @@ const reducer = (state: AuthStateType, action: ActionsType): AuthStateType => {
     };
   }
   if (action.type === Types.SIGN_IN) {
-    return {
-      ...state,
-      user: action.payload.user,
-    };
-  }
-  if (action.type === Types.SIGN_UP) {
     return {
       ...state,
       user: action.payload.user,
@@ -123,12 +113,7 @@ export function AuthProvider({ children }: Props) {
         first_name,
         last_name,
       });
-      const { user } = res.data;
-
-      dispatch({
-        type: Types.SIGN_UP,
-        payload: { user },
-      });
+      return res.data as { email: string; message: string };
     },
     []
   );
@@ -147,6 +132,10 @@ export function AuthProvider({ children }: Props) {
     dispatch({ type: Types.SIGN_OUT });
   }, []);
 
+  const resendVerificationEmail = useCallback(async (email: string) => {
+    await axios.post(endpoints.auth.resendVerification, { email });
+  }, []);
+
   // ----------------------------------------------------------------------
 
   const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
@@ -162,8 +151,9 @@ export function AuthProvider({ children }: Props) {
       signUp,
       signInWithGoogle,
       signOut,
+      resendVerificationEmail,
     }),
-    [signIn, signInWithGoogle, signOut, signUp, state.user, status]
+    [resendVerificationEmail, signIn, signInWithGoogle, signOut, signUp, state.user, status]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

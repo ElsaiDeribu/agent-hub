@@ -35,6 +35,9 @@ class Settings(BaseSettings):
     auth_cookie_secure: bool = False
     # Use "none" (with AUTH_COOKIE_SECURE=true) when the frontend is on another site.
     auth_cookie_samesite: Literal["lax", "strict", "none"] = "lax"
+    auth_email_verify_ttl_minutes: int = 15
+    auth_email_verify_resend_cooldown_seconds: int = 60
+    auth_post_verify_redirect_path: str = "/docs"
 
     # --- Google OAuth ---
     google_client_id: str = ""

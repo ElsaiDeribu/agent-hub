@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,23 +19,29 @@ from .schemas import (
     USER_RESPONSE,
     SignInRequest,
     SignOutResponse,
+    SignUpPendingResponse,
     SignUpRequest,
     SocialSignInRequest,
+    ResendVerificationRequest,
     UserPublic,
     UserResponse,
 )
 from .service import (
     consume_oauth_state,
+    create_email_verification,
     exchange_google_code,
     get_authenticated_user,
     get_or_create_google_user,
     google_authorize_url,
     google_configured,
     google_userinfo,
+    queue_verification_for_email,
     save_oauth_state,
+    send_verification_email,
     sign_in as sign_in_service,
     sign_out as sign_out_service,
     sign_up as sign_up_service,
+    verify_email_and_sign_in,
 )
 from .utils import (
     attach_session_cookie,
@@ -80,6 +86,18 @@ def _frontend_redirect_url() -> str:
     return (settings.auth_frontend_callback or "/").strip() or "/"
 
 
+def _post_verify_redirect_url() -> str:
+    base = settings.auth_frontend_callback.rstrip("/")
+    path = settings.auth_post_verify_redirect_path.strip() or "/"
+    if not path.startswith("/"):
+        path = f"/{path}"
+    return f"{base}{path}"
+
+
+def _sign_in_url() -> str:
+    return f"{settings.auth_frontend_callback.rstrip('/')}/sign-in"
+
+
 def _user_payload(user: User) -> dict:
     return UserPublic.model_validate(user).model_dump(mode="json")
 
@@ -100,17 +118,18 @@ async def _start_google(provider: str, db: AsyncSession) -> JSONResponse | Redir
 
 @router.post(
     "/sign-up",
-    response_model=UserResponse,
-    responses={**USER_RESPONSE, **AUTH_ERROR_400},
+    response_model=SignUpPendingResponse,
+    responses={400: AUTH_ERROR_400[400]},
 )
 async def sign_up(
     body: SignUpRequest,
     request: Request,
+    background_tasks: BackgroundTasks,
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     try:
         ip, ua = client_meta(request)
-        user, session = await sign_up_service(
+        user = await sign_up_service(
             db,
             email=str(body.email),
             password=body.password,
@@ -119,11 +138,18 @@ async def sign_up(
             ip_address=ip,
             user_agent=ua,
         )
+        raw_token = await create_email_verification(db, user.id)
         await db.commit()
     except ValueError as exc:
         return error_response(400, str(exc))
 
-    return user_response(_user_payload(user), session.token)
+    background_tasks.add_task(send_verification_email, user, raw_token)
+    return JSONResponse(
+        content=SignUpPendingResponse(
+            email=user.email,
+            message="Verification email sent.",
+        ).model_dump(mode="json")
+    )
 
 
 @router.post(
@@ -137,13 +163,16 @@ async def sign_in(
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     ip, ua = client_meta(request)
-    result = await sign_in_service(
-        db,
-        email=str(body.email),
-        password=body.password,
-        ip_address=ip,
-        user_agent=ua,
-    )
+    try:
+        result = await sign_in_service(
+            db,
+            email=str(body.email),
+            password=body.password,
+            ip_address=ip,
+            user_agent=ua,
+        )
+    except ValueError as exc:
+        return error_response(403, str(exc))
     if result is None:
         return error_response(401, "Invalid credentials")
 
@@ -170,6 +199,53 @@ async def sign_out(request: Request, db: Annotated[AsyncSession, Depends(get_db)
     response = JSONResponse(content={"success": True})
     clear_session_cookie(response)
     return response
+
+
+@router.get(
+    "/verify-email",
+    response_model=None,
+    status_code=302,
+    responses=OAUTH_REDIRECT_RESPONSES,
+)
+async def verify_email(
+    request: Request,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    token: str = "",
+):
+    if not token.strip():
+        return RedirectResponse(url=_sign_in_url(), status_code=302)
+
+    ip, ua = client_meta(request)
+    result = await verify_email_and_sign_in(
+        db, token, ip_address=ip, user_agent=ua
+    )
+    await db.commit()
+    if result is None:
+        return RedirectResponse(url=_sign_in_url(), status_code=302)
+
+    _user, session = result
+    response = RedirectResponse(url=_post_verify_redirect_url(), status_code=302)
+    attach_session_cookie(response, session.token)
+    return response
+
+
+@router.post("/resend-verification")
+async def resend_verification(
+    body: ResendVerificationRequest,
+    background_tasks: BackgroundTasks,
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    try:
+        queued = await queue_verification_for_email(db, str(body.email))
+        await db.commit()
+    except ValueError as exc:
+        return error_response(429, str(exc))
+
+    if queued is not None:
+        user, raw_token = queued
+        background_tasks.add_task(send_verification_email, user, raw_token)
+
+    return JSONResponse(content={"success": True})
 
 
 @router.get(

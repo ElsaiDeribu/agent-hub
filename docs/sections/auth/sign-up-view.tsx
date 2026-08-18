@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useBoolean } from '@/hooks/use-boolean';
 import Link from 'next/link';
-import { PATH_AFTER_SIGN_IN } from '@/lib/config';
 import { zodResolver } from '@hookform/resolvers/zod';
 import LoadingButton from '@/components/ui/loading-button';
 import { useRouter } from 'next/navigation';
@@ -65,7 +64,7 @@ export default function SignUpView({ className, ...props }: React.ComponentProps
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await signUp(
+      const result = await signUp(
         data.email,
         data.password,
         data.confirm_password,
@@ -73,7 +72,7 @@ export default function SignUpView({ className, ...props }: React.ComponentProps
         data.last_name
       );
 
-      router.push(PATH_AFTER_SIGN_IN);
+      router.push(`${paths.auth.verifyEmail}?email=${encodeURIComponent(result.email)}`);
     } catch (error) {
       console.error(error);
       reset();
