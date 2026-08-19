@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify your {app_name} email</title>
+</head>
+<body style="margin:0;padding:0;background-color:{color_background};font-family:{font_stack};color:{color_foreground};">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:{color_background};padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:550px;">
+          <tr>
+            <td style="background-color:{color_card};border:1px solid {color_border};border-radius:10px;padding:26px 20px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td align="center" style="padding-bottom:24px;">
+                    <img src="cid:{logo_cid}" alt="{app_name}" width="140" height="40" style="display:block;width:160px;height:auto;margin:0 auto;border:0;outline:none;text-decoration:none;">
+                  </td>
+                </tr>
+              </table>
+              <h1 style="margin:0 0 8px;font-size:20px;line-height:28px;font-weight:600;color:{color_foreground};text-align:center;">
+                Verify your email
+              </h1>
+              <p style="margin:0 0 24px;font-size:14px;line-height:22px;color:{color_muted};text-align:center;">
+                To complete your account setup, please click the verification link below:
+              </p>
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td align="center" style="padding-bottom:24px;">
+                    <a href="{safe_url}" target="_blank" style="display:inline-block;background-color:{color_primary};color:{color_primary_foreground};font-size:14px;font-weight:500;line-height:20px;text-decoration:none;border-radius:10px;padding:12px 24px;">
+                      Verify email
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0 0 8px;font-size:13px;line-height:20px;color:{color_muted};text-align:center;">
+                Or copy and paste this link into your browser:
+              </p>
+              <p style="margin:0;font-size:13px;line-height:20px;text-align:center;word-break:break-all;">
+                <a href="{safe_url}" target="_blank" style="color:{color_foreground};text-decoration:underline;">{safe_url}</a>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding-top:24px;font-size:12px;line-height:18px;color:{color_muted};text-align:center;">
+              This link expires in {ttl_minutes} minutes.<br>
+              If you did not create an account, you can ignore this email.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

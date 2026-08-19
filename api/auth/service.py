@@ -15,6 +15,7 @@ from sqlalchemy.orm import selectinload
 
 from config import settings
 from utils.email import send_email
+from utils.email_templates import render_verification_email
 
 from .models import (
     EMAIL_PASSWORD_PROVIDER_ID,
@@ -264,14 +265,16 @@ async def can_resend_email_verification(db: AsyncSession, user_id: str) -> bool:
 
 async def send_verification_email(user: User, raw_token: str) -> None:
     verify_url = _email_verify_url(raw_token)
+    rendered = render_verification_email(
+        verify_url=verify_url,
+        ttl_minutes=settings.auth_email_verify_ttl_minutes,
+    )
     await send_email(
         to=user.email,
         subject="Verify your AgentHub email",
-        body=f"Click the link below to verify your email:\n\n{verify_url}",
-        html_content=(
-            f'<p>Click the link below to verify your email:</p>'
-            f'<p><a href="{verify_url}">Verify email</a></p>'
-        ),
+        body=rendered.body,
+        html_content=rendered.html,
+        inline_images=rendered.inline_images,
     )
 
 
