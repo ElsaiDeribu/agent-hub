@@ -40,7 +40,7 @@ from .service import (
     google_configured,
     google_userinfo,
     handle_google_oauth,
-    queue_verification_for_email,
+    prepare_email_verification_resend,
     save_oauth_state,
     send_verification_email,
     sign_in as sign_in_service,
@@ -248,13 +248,13 @@ async def resend_verification(
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     try:
-        queued = await queue_verification_for_email(db, str(body.email))
+        prepared = await prepare_email_verification_resend(db, str(body.email))
         await db.commit()
     except ValueError as exc:
         return error_response(429, str(exc))
 
-    if queued is not None:
-        user, raw_token = queued
+    if prepared is not None:
+        user, raw_token = prepared
         background_tasks.add_task(send_verification_email, user, raw_token)
 
     return JSONResponse(content={"success": True})

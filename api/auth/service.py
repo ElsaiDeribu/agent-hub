@@ -275,7 +275,7 @@ async def send_verification_email(user: User, raw_token: str) -> None:
     )
 
 
-async def queue_verification_for_email(
+async def prepare_email_verification_resend(
     db: AsyncSession, email: str
 ) -> tuple[User, str] | None:
     """Create a new verification token for an unverified user, or return None if not applicable."""
