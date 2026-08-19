@@ -25,3 +25,19 @@ export function getErrorMessage(error: unknown): string {
 
   return 'Something went wrong';
 }
+
+const OAUTH_ERROR_MESSAGES: Record<string, string> = {
+  account_not_linked:
+    'An account with this email already exists. Verify your email, then sign in with Google again.',
+  google_email_not_verified: 'Your Google email must be verified before you can sign in.',
+  account_already_linked: 'This Google account is already linked to another user.',
+  oauth_failed: 'Google sign-in failed. Please try again.',
+  email_not_found: 'Your Google account does not include an email address.',
+};
+
+export function getOAuthErrorMessage(code: string | null | undefined): string | null {
+  if (!code?.trim()) {
+    return null;
+  }
+  return OAUTH_ERROR_MESSAGES[code.trim()] ?? 'Google sign-in failed. Please try again.';
+}

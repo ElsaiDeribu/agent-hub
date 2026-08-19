@@ -26,15 +26,20 @@ from .schemas import (
     UserPublic,
     UserResponse,
 )
+from .exceptions import (
+    AccountAlreadyLinkedError,
+    AccountNotLinkedError,
+    GoogleEmailNotVerifiedError,
+)
 from .service import (
     consume_oauth_state,
     create_email_verification,
     exchange_google_code,
     get_authenticated_user,
-    get_or_create_google_user,
     google_authorize_url,
     google_configured,
     google_userinfo,
+    handle_google_oauth,
     queue_verification_for_email,
     save_oauth_state,
     send_verification_email,
@@ -94,12 +99,15 @@ def _post_verify_redirect_url() -> str:
     return f"{base}{path}"
 
 
-def _sign_in_url() -> str:
-    return f"{settings.auth_frontend_callback.rstrip('/')}/sign-in"
+def _sign_in_url(*, error: str | None = None) -> str:
+    base = f"{settings.auth_frontend_callback.rstrip('/')}/sign-in"
+    if not error:
+        return base
+    return f"{base}?error={error}"
 
 
-def _user_payload(user: User) -> dict:
-    return UserPublic.model_validate(user).model_dump(mode="json")
+def _oauth_error_redirect(code: str) -> RedirectResponse:
+    return RedirectResponse(url=_sign_in_url(error=code), status_code=302)
 
 
 async def _start_google(provider: str, db: AsyncSession) -> JSONResponse | RedirectResponse:
@@ -114,6 +122,10 @@ async def _start_google(provider: str, db: AsyncSession) -> JSONResponse | Redir
     await db.commit()
     url = google_authorize_url(_google_redirect_uri(), state, code_verifier)
     return oauth_redirect(url)
+
+
+def _user_payload(user: User) -> dict:
+    return UserPublic.model_validate(user).model_dump(mode="json")
 
 
 @router.post(
@@ -290,38 +302,47 @@ async def google_callback(
         return error_response(400, "code and state required")
 
     code_verifier = await consume_oauth_state(db, state)
-    if not code_verifier:
+    if code_verifier is None:
         return error_response(400, "Invalid or expired state")
 
     try:
-        tokens = await exchange_google_code(
-            code, code_verifier, _google_redirect_uri()
-        )
+        tokens = await exchange_google_code(code, code_verifier, _google_redirect_uri())
         access = tokens.get("access_token")
         if not access:
-            return error_response(401, "No access token from Google")
+            return _oauth_error_redirect("oauth_failed")
         userinfo = await google_userinfo(str(access))
-        google_id = str(userinfo.get("id") or userinfo.get("sub") or "")
+        google_id = str(userinfo.get("sub") or userinfo.get("id") or "")
         email = (userinfo.get("email") or "").strip().lower()
         if not google_id:
-            return error_response(400, "No Google user id")
+            return _oauth_error_redirect("oauth_failed")
         if not email:
-            return error_response(400, "Google account has no email")
+            return _oauth_error_redirect("email_not_found")
 
         ip, ua = client_meta(request)
-        _user, session = await get_or_create_google_user(
+        _user, session = await handle_google_oauth(
             db,
             google_id=google_id,
             email=email,
             name=(userinfo.get("name") or "").strip() or email,
             image=(userinfo.get("picture") or "").strip(),
             tokens=tokens,
+            google_email_verified=bool(userinfo.get("verified_email")),
             ip_address=ip,
             user_agent=ua,
         )
         await db.commit()
-    except ValueError as exc:
-        return error_response(401, str(exc))
+    except AccountNotLinkedError:
+        await db.rollback()
+        return _oauth_error_redirect("account_not_linked")
+    except GoogleEmailNotVerifiedError:
+        await db.rollback()
+        return _oauth_error_redirect("google_email_not_verified")
+    except AccountAlreadyLinkedError:
+        await db.rollback()
+        return _oauth_error_redirect("account_already_linked")
+    except ValueError:
+        await db.rollback()
+        return _oauth_error_redirect("oauth_failed")
 
     response = RedirectResponse(url=_frontend_redirect_url(), status_code=302)
     attach_session_cookie(response, session.token)

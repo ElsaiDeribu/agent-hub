@@ -2,19 +2,19 @@
 
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { paths } from '@/routes/paths';
 import Google from '@/components/icons/google';
 import { useForm } from 'react-hook-form';
 import { useAuthContext } from '@/auth/hooks';
-import { getErrorMessage } from '@/auth/context/utils';
+import { getErrorMessage, getOAuthErrorMessage } from '@/auth/context/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PATH_AFTER_SIGN_IN } from '@/lib/config';
 import { zodResolver } from '@hookform/resolvers/zod';
 import LoadingButton from '@/components/ui/loading-button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import FormProvider from '@/components/hook-form/form-provider';
 import { FormItem, FormField, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Card, CardTitle, CardHeader, CardContent, CardDescription } from '@/components/ui/card';
@@ -24,8 +24,16 @@ export default function SignInView({ className, ...props }: React.ComponentProps
   const { signIn, signInWithGoogle } = useAuthContext();
 
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [errorMsg, setErrorMsg] = useState('');
+
+  useEffect(() => {
+    const oauthError = getOAuthErrorMessage(searchParams.get('error'));
+    if (oauthError) {
+      setErrorMsg(oauthError);
+    }
+  }, [searchParams]);
 
   const SignInSchema = z.object({
     email: z.string().min(1, 'Email is required').email('Email must be a valid email address'),
@@ -70,6 +78,11 @@ export default function SignInView({ className, ...props }: React.ComponentProps
   const renderForm = (
     <CardContent>
       <div className="grid gap-6">
+        {!!errorMsg && (
+          <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+            {errorMsg}
+          </div>
+        )}
         <div className="grid gap-6">
           <FormField
             control={methods.control}
@@ -137,7 +150,6 @@ export default function SignInView({ className, ...props }: React.ComponentProps
         {renderHead}
 
         <FormProvider methods={methods} onSubmit={onSubmit}>
-          {!!errorMsg && <h1 style={{ marginBottom: 3, color: 'red' }}>{errorMsg}</h1>}
           {renderForm}
         </FormProvider>
 

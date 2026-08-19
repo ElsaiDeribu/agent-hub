@@ -24,6 +24,11 @@ from .models import (
     User,
     Verification,
 )
+from .exceptions import (
+    AccountAlreadyLinkedError,
+    AccountNotLinkedError,
+    GoogleEmailNotVerifiedError,
+)
 from .utils import (
     OAUTH_STATE_TTL_SECONDS,
     generate_code_challenge,
@@ -69,6 +74,59 @@ async def _account_for(db: AsyncSession, user_id: str, provider_id: str) -> Acco
         )
     )
     return result.scalars().first()
+
+
+async def _google_account_by_id(db: AsyncSession, google_id: str) -> Account | None:
+    result = await db.execute(
+        select(Account).where(
+            Account.provider_id == GOOGLE_PROVIDER_ID,
+            Account.account_id == google_id,
+        )
+    )
+    return result.scalars().first()
+
+
+def _apply_google_tokens(account: Account, tokens: dict[str, Any], now: datetime) -> None:
+    account.access_token = tokens.get("access_token")
+    account.refresh_token = tokens.get("refresh_token") or account.refresh_token
+    account.id_token = tokens.get("id_token")
+    account.scope = tokens.get("scope")
+    account.updated_at = now
+
+
+async def _upsert_google_account(
+    db: AsyncSession,
+    *,
+    user_id: str,
+    google_id: str,
+    tokens: dict[str, Any],
+    now: datetime,
+) -> Account:
+    existing_by_id = await _google_account_by_id(db, google_id)
+    if existing_by_id is not None and existing_by_id.user_id != user_id:
+        raise AccountAlreadyLinkedError(
+            "This Google account is already linked to another user"
+        )
+
+    account = await _account_for(db, user_id, GOOGLE_PROVIDER_ID)
+    if account is None:
+        account = Account(
+            id=str(uuid4()),
+            account_id=google_id,
+            provider_id=GOOGLE_PROVIDER_ID,
+            user_id=user_id,
+            created_at=now,
+            updated_at=now,
+        )
+        db.add(account)
+    elif account.account_id != google_id:
+        raise AccountAlreadyLinkedError(
+            "This user is already linked to a different Google account"
+        )
+
+    _apply_google_tokens(account, tokens, now)
+    await db.flush()
+    return account
 
 
 async def sign_up(
@@ -318,7 +376,7 @@ async def consume_oauth_state(db: AsyncSession, state: str) -> str | None:
     await db.delete(verification)
     if expires_at < datetime.now(UTC):
         return None
-    return code_verifier
+    return code_verifier or None
 
 
 def google_authorize_url(redirect_uri: str, state: str, code_verifier: str) -> str:
@@ -383,7 +441,7 @@ async def google_userinfo(access_token: str) -> dict[str, Any]:
     return payload
 
 
-async def get_or_create_google_user(
+async def handle_google_oauth(
     db: AsyncSession,
     *,
     google_id: str,
@@ -391,11 +449,28 @@ async def get_or_create_google_user(
     name: str,
     image: str,
     tokens: dict[str, Any],
+    google_email_verified: bool,
     ip_address: str | None = None,
     user_agent: str | None = None,
 ) -> tuple[User, AuthSession]:
+    """Resolve Google OAuth sign-in with safe implicit account linking."""
+    if not google_email_verified:
+        raise GoogleEmailNotVerifiedError("Google email is not verified")
+
     email = email.strip().lower()
     now = datetime.now(UTC)
+
+    linked_account = await _google_account_by_id(db, google_id)
+    if linked_account is not None:
+        result = await db.execute(select(User).where(User.id == linked_account.user_id))
+        user = result.scalars().first()
+        if user is None:
+            raise ValueError("Linked Google account references a missing user")
+        _apply_google_tokens(linked_account, tokens, now)
+        linked_account.updated_at = now
+        session = await _create_session(db, user.id, ip_address, user_agent)
+        return user, session
+
     result = await db.execute(select(User).where(User.email == email))
     user = result.scalars().first()
     if user is None:
@@ -410,34 +485,35 @@ async def get_or_create_google_user(
         )
         db.add(user)
         await db.flush()
-    else:
-        user.email_verified = True
+        await _upsert_google_account(
+            db, user_id=user.id, google_id=google_id, tokens=tokens, now=now
+        )
+        session = await _create_session(db, user.id, ip_address, user_agent)
+        return user, session
+
+    password_account = await _account_for(db, user.id, EMAIL_PASSWORD_PROVIDER_ID)
+    google_account = await _account_for(db, user.id, GOOGLE_PROVIDER_ID)
+    if password_account is not None and google_account is None:
+        if not user.email_verified:
+            raise AccountNotLinkedError(
+                "An account with this email already exists. "
+                "Verify your email, then sign in with Google again."
+            )
+        await _upsert_google_account(
+            db, user_id=user.id, google_id=google_id, tokens=tokens, now=now
+        )
         if image and not user.image:
             user.image = image
         user.updated_at = now
+        session = await _create_session(db, user.id, ip_address, user_agent)
+        return user, session
 
-    account = await _account_for(db, user.id, GOOGLE_PROVIDER_ID)
-    if account is None:
-        db.add(
-            Account(
-                id=str(uuid4()),
-                account_id=google_id,
-                provider_id=GOOGLE_PROVIDER_ID,
-                user_id=user.id,
-                access_token=tokens.get("access_token"),
-                refresh_token=tokens.get("refresh_token"),
-                id_token=tokens.get("id_token"),
-                scope=tokens.get("scope"),
-                created_at=now,
-                updated_at=now,
-            )
+    if google_account is not None:
+        raise AccountAlreadyLinkedError(
+            "This user is already linked to a different Google account"
         )
-    else:
-        account.account_id = google_id
-        account.access_token = tokens.get("access_token")
-        account.refresh_token = tokens.get("refresh_token") or account.refresh_token
-        account.id_token = tokens.get("id_token")
-        account.scope = tokens.get("scope")
-        account.updated_at = now
 
-    return user, await _create_session(db, user.id, ip_address, user_agent)
+    raise AccountNotLinkedError(
+        "Unable to sign in with Google for this account. "
+        "Sign in with your existing method first."
+    )
