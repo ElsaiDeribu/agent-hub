@@ -32,16 +32,10 @@ package has its own `metadata.json` (`files`, `dependencies`, `env`).
 
 - `GET /health` — liveness; reports runtime status and active session count.
 
-### Registry
-
-- `GET /registry` — list sandbox-ready agent/framework packages.
-- `GET /registry/{agent_id}` — list packages for an agent; pass `?framework=` for one package.
-
 ### Sessions (agent preview)
 
 - `POST /sessions/{agent_id}` — deploy a framework package from the registry.
   Body (required): `{ "framework": "langchain", "env": { "OPENAI_API_KEY": "..." } }`.
-- `GET /sessions` — list all active sessions.
 - `GET /sessions/{id}/status` — health-check a running agent.
 - `POST /sessions/{id}/chat` — send a message; returns SSE stream.
   Body: `{ "message": "...", "history": [] }`.
@@ -116,9 +110,6 @@ docker compose -f api/docker-compose.production.yml up --build
 Then, from another shell:
 
 ```bash
-# List sandbox-ready agents
-curl http://localhost:8000/registry
-
 # Start a session (no API keys)
 curl -X POST http://localhost:8000/sessions/customer-support \
   -H "Content-Type: application/json" \

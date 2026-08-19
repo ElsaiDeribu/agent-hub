@@ -1,4 +1,4 @@
-"""On-demand GitHub registry client for fetching agent packages."""
+"""On-demand GitHub client for fetching agent packages into a sandbox."""
 
 from __future__ import annotations
 
@@ -73,7 +73,7 @@ async def _fetch_json(
 
 
 async def fetch_catalog(*, force: bool = False) -> dict[str, Any]:
-    """Fetch `registry.json`, cached briefly to avoid hammering GitHub on list."""
+    """Fetch `registry.json`, cached briefly to avoid hammering GitHub."""
     global _catalog, _catalog_at
     now = time.monotonic()
     if not force and _catalog is not None and (now - _catalog_at) < _CATALOG_TTL_S:
@@ -150,43 +150,3 @@ async def fetch_package_files(
 
         pairs = await asyncio.gather(*[one(rel) for rel in relative_files])
     return dict(pairs)
-
-
-async def list_packages() -> list[dict[str, Any]]:
-    """All sandbox-ready packages: catalog + each framework's metadata.json."""
-    catalog = await fetch_catalog()
-    jobs: list[tuple[str, str]] = []
-    for item in catalog.get("items") or []:
-        agent_id = item.get("name")
-        if not isinstance(agent_id, str) or not _SLUG_RE.fullmatch(agent_id):
-            continue
-        if item.get("sandboxPreview") is False:
-            continue
-        for framework in _item_frameworks(item):
-            if _SLUG_RE.fullmatch(framework):
-                jobs.append((agent_id, framework))
-
-    async with httpx.AsyncClient(timeout=_FETCH_TIMEOUT, follow_redirects=True) as client:
-
-        async def load(agent_id: str, framework: str) -> dict[str, Any] | None:
-            try:
-                metadata = await _fetch_json(
-                    f"registry/{agent_id}/{framework}/metadata.json",
-                    client=client,
-                )
-            except (FileNotFoundError, RegistryError):
-                return None
-            return _package_from_metadata(agent_id, framework, metadata)
-
-        results = await asyncio.gather(
-            *[load(agent_id, framework) for agent_id, framework in jobs]
-        )
-    return [pkg for pkg in results if pkg is not None]
-
-
-async def get_agent_packages(agent_id: str) -> tuple[list[str], list[dict[str, Any]]]:
-    frameworks = await list_frameworks(agent_id)
-    packages = await asyncio.gather(
-        *[fetch_package_metadata(agent_id, framework) for framework in frameworks]
-    )
-    return frameworks, list(packages)

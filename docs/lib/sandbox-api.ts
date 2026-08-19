@@ -2,17 +2,6 @@ import { HOST_API } from "@/lib/config";
 
 export type ChatHistoryMessage = { role: string; content: string };
 
-export type SandboxAgentMeta = {
-  id: string;
-  name: string;
-  description?: string;
-  category?: string;
-  welcomeMessage?: string;
-  starterMessages?: string[];
-  tags?: string[];
-  frameworks?: string[];
-};
-
 function apiBase(): string {
   return HOST_API;
 }
@@ -28,12 +17,6 @@ async function readError(res: Response): Promise<string> {
   } catch {
     return res.statusText || `HTTP ${res.status}`;
   }
-}
-
-export async function listSandboxAgents(): Promise<SandboxAgentMeta[]> {
-  const res = await fetch(`${apiBase()}/registry`);
-  if (!res.ok) throw new Error(await readError(res));
-  return res.json();
 }
 
 export async function createSession(

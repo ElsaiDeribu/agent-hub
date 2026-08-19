@@ -13,62 +13,35 @@ server, and proxy chat traffic to it with SSE streaming.
 from __future__ import annotations
 
 import asyncio
-import json
 from contextlib import asynccontextmanager, suppress
-from datetime import datetime, timezone
 from typing import Annotated
 
-import httpx
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse
+from microsandbox import is_installed
+from pydantic import BaseModel, Field
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
-
-from microsandbox import is_installed
-from microsandbox.errors import MicrosandboxError
 
 from auth.router import router as auth_router
 from config import settings
 from db import engine, get_db
-from schemas import (
-    CHAT_STREAM_RESPONSES,
-    CREATE_SESSION_ERRORS,
-    REGISTRY_NOT_FOUND,
-    SESSION_NOT_FOUND,
-    ChatRequest,
-    CreateSessionResponse,
-    DeleteSessionResponse,
-    HealthResponse,
-    RegistryAgentDetail,
-    RegistryPackage,
-    RegistryPreviewRequest,
-    SessionStatusResponse,
-    SessionSummary,
-)
-from registry import (
-    RegistryError,
-    fetch_package_metadata,
-    get_agent_packages,
-    list_frameworks,
-    list_packages,
-)
-from services import manager, reaper_loop
-
-_reaper_task: asyncio.Task | None = None
+from sessions.manager import SessionManager, get_session_manager
+from sessions.reaper import reaper_loop
+from sessions.router import router as sessions_router
 
 
 @asynccontextmanager
-async def lifespan(_app: FastAPI):
-    global _reaper_task
-    _reaper_task = asyncio.create_task(reaper_loop())
+async def lifespan(app: FastAPI):
+    manager = SessionManager()
+    app.state.sessions = manager
+    reaper_task = asyncio.create_task(reaper_loop(manager))
     yield
-    if _reaper_task is not None:
-        _reaper_task.cancel()
-        with suppress(asyncio.CancelledError):
-            await _reaper_task
-        _reaper_task = None
+    reaper_task.cancel()
+    with suppress(asyncio.CancelledError):
+        await reaper_task
     await manager.destroy_all()
     await engine.dispose()
 
@@ -85,7 +58,6 @@ app = FastAPI(
     openapi_url="/openapi.json" if _docs_enabled else None,
     openapi_tags=[
         {"name": "health", "description": "Liveness and runtime status."},
-        {"name": "registry", "description": "Sandbox-ready agent packages."},
         {"name": "sessions", "description": "Preview sessions inside microVMs."},
         {"name": "auth", "description": "Email/password and Google OAuth sessions."},
     ],
@@ -123,17 +95,18 @@ async def validation_exception_handler(
         content={"code": "BAD_REQUEST", "message": _validation_message(exc)},
     )
 
-# Server-session auth (HttpOnly cookie): email/password + Google OAuth
-app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 
-
-# ---------------------------------------------------------------------------
-# Health
-# ---------------------------------------------------------------------------
+class HealthResponse(BaseModel):
+    status: str = Field(examples=["ok"])
+    microsandbox_installed: bool
+    active_sessions: int = Field(ge=0)
 
 
 @app.get("/health", response_model=HealthResponse, tags=["health"])
-async def health(db: Annotated[AsyncSession, Depends(get_db)]) -> HealthResponse:
+async def health(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    sessions: Annotated[SessionManager, Depends(get_session_manager)],
+) -> HealthResponse:
     """Liveness probe that also reports whether the microsandbox runtime is ready."""
     try:
         await db.execute(text("SELECT 1"))
@@ -145,203 +118,12 @@ async def health(db: Annotated[AsyncSession, Depends(get_db)]) -> HealthResponse
     return HealthResponse(
         status="ok",
         microsandbox_installed=is_installed(),
-        active_sessions=len(manager.sessions),
+        active_sessions=len(sessions.sessions),
     )
 
 
-# ---------------------------------------------------------------------------
-# Registry
-# ---------------------------------------------------------------------------
-
-
-@app.get("/registry", response_model=list[RegistryPackage], tags=["registry"])
-async def list_registry() -> list[RegistryPackage]:
-    """List sandbox-ready agent/framework packages from GitHub (`registry.json`)."""
-    try:
-        packages = await list_packages()
-    except FileNotFoundError as exc:
-        raise HTTPException(404, str(exc)) from exc
-    except RegistryError as exc:
-        raise HTTPException(502, str(exc)) from exc
-    except httpx.HTTPError as exc:
-        raise HTTPException(
-            status_code=502, detail=f"Failed to fetch registry catalog: {exc}"
-        ) from exc
-    return [RegistryPackage.model_validate(meta) for meta in packages]
-
-
-@app.get(
-    "/registry/{agent_id}",
-    response_model=RegistryAgentDetail | RegistryPackage,
-    responses=REGISTRY_NOT_FOUND,
-    tags=["registry"],
-)
-async def get_registry_agent(
-    agent_id: str, framework: str | None = None
-) -> RegistryAgentDetail | RegistryPackage:
-    """Get metadata for a registry agent. Pass `framework` for one package."""
-    try:
-        if framework is None:
-            frameworks, packages = await get_agent_packages(agent_id)
-            return RegistryAgentDetail(
-                id=agent_id,
-                frameworks=frameworks,
-                packages=[RegistryPackage.model_validate(meta) for meta in packages],
-            )
-
-        frameworks = await list_frameworks(agent_id)
-        meta = await fetch_package_metadata(agent_id, framework)
-    except FileNotFoundError as exc:
-        raise HTTPException(404, str(exc)) from exc
-    except ValueError as exc:
-        raise HTTPException(400, str(exc)) from exc
-    except RegistryError as exc:
-        raise HTTPException(502, str(exc)) from exc
-    except httpx.HTTPError as exc:
-        raise HTTPException(
-            status_code=502, detail=f"Failed to fetch registry package: {exc}"
-        ) from exc
-
-    meta["frameworks"] = frameworks
-    return RegistryPackage.model_validate(meta)
-
-
-# ---------------------------------------------------------------------------
-# Sessions
-# ---------------------------------------------------------------------------
-
-
-@app.post(
-    "/sessions/{agent_id}",
-    response_model=CreateSessionResponse,
-    responses=CREATE_SESSION_ERRORS,
-    tags=["sessions"],
-)
-async def create_session(
-    agent_id: str,
-    req: RegistryPreviewRequest,
-) -> CreateSessionResponse:
-    """Load an agent framework package from GitHub and start a preview session."""
-    try:
-        session = await manager.create_session(
-            agent_id, framework=req.framework, env=req.env
-        )
-    except FileNotFoundError as exc:
-        raise HTTPException(status_code=404, detail=str(exc))
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc))
-    except RegistryError as exc:
-        raise HTTPException(status_code=502, detail=str(exc))
-    except RuntimeError as exc:
-        raise HTTPException(status_code=504, detail=str(exc))
-    except MicrosandboxError as exc:
-        raise HTTPException(status_code=502, detail=f"Sandbox error: {exc}")
-    except httpx.HTTPError as exc:
-        raise HTTPException(status_code=502, detail=f"Failed to fetch registry: {exc}")
-
-    return CreateSessionResponse(session_id=session.session_id, status="ready")
-
-
-@app.post(
-    "/sessions/{session_id}/chat",
-    response_class=StreamingResponse,
-    responses=CHAT_STREAM_RESPONSES,
-    tags=["sessions"],
-)
-async def chat(session_id: str, req: ChatRequest) -> StreamingResponse:
-    """Stream a chat message to the agent running in the sandbox. Returns SSE."""
-    session = manager.sessions.get(session_id)
-    if session is None:
-        raise HTTPException(404, "Session not found")
-
-    session.last_activity = datetime.now(timezone.utc)
-    history = [turn.model_dump() for turn in req.history]
-
-    async def proxy_stream():
-        async with httpx.AsyncClient() as client:
-            try:
-                async with client.stream(
-                    "POST",
-                    f"http://127.0.0.1:{session.host_port}/chat",
-                    json={"message": req.message, "history": history},
-                    timeout=120.0,
-                ) as response:
-                    async for chunk in response.aiter_bytes():
-                        yield chunk
-            except httpx.ConnectError:
-                yield f"data: {json.dumps({'type': 'error', 'content': 'Agent is not reachable'})}\n\n".encode()
-            except httpx.ReadTimeout:
-                yield f"data: {json.dumps({'type': 'error', 'content': 'Agent response timed out'})}\n\n".encode()
-
-    return StreamingResponse(proxy_stream(), media_type="text/event-stream")
-
-
-@app.get(
-    "/sessions/{session_id}/status",
-    response_model=SessionStatusResponse,
-    responses=SESSION_NOT_FOUND,
-    tags=["sessions"],
-)
-async def session_status(session_id: str) -> SessionStatusResponse:
-    """Check the status of a preview session."""
-    session = manager.sessions.get(session_id)
-    if session is None:
-        raise HTTPException(404, "Session not found")
-
-    healthy = False
-    async with httpx.AsyncClient() as client:
-        try:
-            r = await client.get(
-                f"http://127.0.0.1:{session.host_port}/health",
-                timeout=3.0,
-            )
-            healthy = r.status_code == 200
-        except (httpx.ConnectError, httpx.ReadError):
-            pass
-
-    return SessionStatusResponse(
-        session_id=session_id,
-        agent_id=session.agent_id,
-        framework=session.framework,
-        status="healthy" if healthy else "unhealthy",
-        created_at=session.created_at,
-        last_activity=session.last_activity,
-    )
-
-
-@app.get("/sessions", response_model=list[SessionSummary], tags=["sessions"])
-async def list_sessions() -> list[SessionSummary]:
-    """List all active preview sessions."""
-    return [
-        SessionSummary(
-            session_id=s.session_id,
-            agent_id=s.agent_id,
-            framework=s.framework,
-            host_port=s.host_port,
-            created_at=s.created_at,
-            last_activity=s.last_activity,
-        )
-        for s in manager.sessions.values()
-    ]
-
-
-@app.delete(
-    "/sessions/{session_id}",
-    response_model=DeleteSessionResponse,
-    responses=SESSION_NOT_FOUND,
-    tags=["sessions"],
-)
-async def delete_session(session_id: str) -> DeleteSessionResponse:
-    """Stop the agent sandbox and free resources."""
-    if session_id not in manager.sessions:
-        raise HTTPException(404, "Session not found")
-    await manager.destroy_session(session_id)
-    return DeleteSessionResponse(session_id=session_id, status="destroyed")
-
-
-# ---------------------------------------------------------------------------
-# Entrypoint
-# ---------------------------------------------------------------------------
+app.include_router(sessions_router, tags=["sessions"])
+app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 
 
 def main() -> None:
