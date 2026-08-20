@@ -1,0 +1,92 @@
+{
+  "protocol": "chat",
+  "evalConfig": {
+    "timeoutMs": 60000,
+    "maxConcurrent": 1
+  },
+  "evaluators": [
+    { "type": "contains", "weight": 1.0 },
+    { "type": "latency", "weight": 0.3, "config": { "maxMs": 30000 } },
+    { "type": "llm_judge", "weight": 2.0, "config": { "threshold": 0.6 } }
+  ],
+  "cases": [
+    {
+      "id": "login-help",
+      "name": "Account login assistance",
+      "input": {
+        "message": "I can't log in to my account"
+      },
+      "expected": {
+        "contains": { "contains": ["password", "reset"] },
+        "latency": { "maxMs": 30000 },
+        "llm_judge": {
+          "criteria": "Agent provides helpful account recovery steps, suggests password reset, and maintains professional tone"
+        }
+      },
+      "tags": ["account", "support"]
+    },
+    {
+      "id": "order-lookup",
+      "name": "Order status lookup",
+      "input": {
+        "message": "Where is my order #12345?"
+      },
+      "expected": {
+        "contains": { "contains": ["order"] },
+        "latency": { "maxMs": 30000 },
+        "llm_judge": {
+          "criteria": "Agent attempts to look up the order or asks for necessary verification info. Response is helpful and professional."
+        }
+      },
+      "tags": ["orders", "support"]
+    },
+    {
+      "id": "refund-request",
+      "name": "Refund request handling",
+      "input": {
+        "message": "I need a refund for my last purchase"
+      },
+      "expected": {
+        "contains": { "contains": ["refund"] },
+        "latency": { "maxMs": 30000 },
+        "llm_judge": {
+          "criteria": "Agent acknowledges the refund request, explains the process or asks for order details. Professional and empathetic tone."
+        }
+      },
+      "tags": ["refund", "support"]
+    },
+    {
+      "id": "damaged-product",
+      "name": "Damaged product report",
+      "input": {
+        "message": "My product arrived damaged"
+      },
+      "expected": {
+        "contains": { "contains": ["sorry"] },
+        "latency": { "maxMs": 30000 },
+        "llm_judge": {
+          "criteria": "Agent expresses empathy, offers resolution options (replacement/refund), and asks for details about the damage."
+        }
+      },
+      "tags": ["quality", "support"]
+    },
+    {
+      "id": "multi-turn-escalation",
+      "name": "Multi-turn with escalation",
+      "input": {
+        "turns": [
+          { "message": "I have a billing issue", "history": [] },
+          { "message": "I've been charged twice for the same order!", "history": "auto" }
+        ]
+      },
+      "expected": {
+        "contains": { "contains": ["charge"] },
+        "latency": { "maxMs": 60000 },
+        "llm_judge": {
+          "criteria": "Agent maintains context across turns, acknowledges double-charge concern, and offers to investigate or escalate."
+        }
+      },
+      "tags": ["multi-turn", "billing", "support"]
+    }
+  ]
+}

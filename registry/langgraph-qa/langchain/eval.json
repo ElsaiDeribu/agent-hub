@@ -1,0 +1,59 @@
+{
+  "protocol": "chat",
+  "evalConfig": {
+    "timeoutMs": 45000,
+    "maxConcurrent": 1
+  },
+  "evaluators": [
+    { "type": "contains", "weight": 1.0 },
+    { "type": "latency", "weight": 0.3, "config": { "maxMs": 30000 } },
+    { "type": "llm_judge", "weight": 2.0, "config": { "threshold": 0.6 } }
+  ],
+  "cases": [
+    {
+      "id": "greeting",
+      "name": "Responds to greeting",
+      "input": {
+        "message": "Hello! What can you do?"
+      },
+      "expected": {
+        "contains": { "contains": ["help"] },
+        "latency": { "maxMs": 30000 },
+        "llm_judge": {
+          "criteria": "Agent introduces itself and explains its capabilities clearly"
+        }
+      },
+      "tags": ["basic"]
+    },
+    {
+      "id": "langgraph-question",
+      "name": "Explains LangGraph",
+      "input": {
+        "message": "What is LangGraph in one sentence?"
+      },
+      "expected": {
+        "contains": { "contains": ["graph", "agent"] },
+        "latency": { "maxMs": 30000 },
+        "llm_judge": {
+          "criteria": "Provides an accurate, concise description of LangGraph as a framework for building agent workflows"
+        }
+      },
+      "tags": ["knowledge", "factual"]
+    },
+    {
+      "id": "tool-use",
+      "name": "Uses tools when appropriate",
+      "input": {
+        "message": "What time is it right now?"
+      },
+      "expected": {
+        "contains": { "contains": ["time"] },
+        "latency": { "maxMs": 30000 },
+        "llm_judge": {
+          "criteria": "Agent attempts to use its time tool and returns a current time value"
+        }
+      },
+      "tags": ["tools", "time"]
+    }
+  ]
+}

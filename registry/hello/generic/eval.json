@@ -1,0 +1,37 @@
+{
+  "protocol": "chat",
+  "evalConfig": {
+    "timeoutMs": 10000,
+    "maxConcurrent": 1
+  },
+  "evaluators": [
+    { "type": "contains", "weight": 1.0 },
+    { "type": "latency", "weight": 0.5, "config": { "maxMs": 5000 } }
+  ],
+  "cases": [
+    {
+      "id": "hello-response",
+      "name": "Responds to hello",
+      "input": {
+        "message": "Hello!"
+      },
+      "expected": {
+        "contains": { "contains": ["hello"] },
+        "latency": { "maxMs": 5000 }
+      },
+      "tags": ["basic"]
+    },
+    {
+      "id": "what-can-you-do",
+      "name": "Responds to capability question",
+      "input": {
+        "message": "What can you do?"
+      },
+      "expected": {
+        "contains": { "contains": ["hello"] },
+        "latency": { "maxMs": 5000 }
+      },
+      "tags": ["basic"]
+    }
+  ]
+}

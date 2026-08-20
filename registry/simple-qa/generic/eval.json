@@ -1,0 +1,61 @@
+{
+  "protocol": "chat",
+  "evalConfig": {
+    "timeoutMs": 15000,
+    "maxConcurrent": 1
+  },
+  "evaluators": [
+    { "type": "contains", "weight": 1.0 },
+    { "type": "latency", "weight": 0.5, "config": { "maxMs": 10000 } }
+  ],
+  "cases": [
+    {
+      "id": "hello-greeting",
+      "name": "Basic greeting",
+      "input": {
+        "message": "Hello!"
+      },
+      "expected": {
+        "contains": { "contains": ["sandbox", "agent"] },
+        "latency": { "maxMs": 10000 }
+      },
+      "tags": ["basic"]
+    },
+    {
+      "id": "capital-france",
+      "name": "Knows capital of France",
+      "input": {
+        "message": "What is the capital of France?"
+      },
+      "expected": {
+        "contains": { "contains": ["Paris"] },
+        "latency": { "maxMs": 10000 }
+      },
+      "tags": ["geography", "factual"]
+    },
+    {
+      "id": "sandbox-check",
+      "name": "Sandbox awareness",
+      "input": {
+        "message": "Is the sandbox preview working?"
+      },
+      "expected": {
+        "contains": { "contains": ["sandbox", "preview", "working"] },
+        "latency": { "maxMs": 10000 }
+      },
+      "tags": ["meta"]
+    },
+    {
+      "id": "streaming-test",
+      "name": "Streams tokens correctly",
+      "input": {
+        "message": "Tell me something"
+      },
+      "expected": {
+        "contains": { "contains": ["agent", "response"] },
+        "latency": { "maxMs": 10000 }
+      },
+      "tags": ["streaming"]
+    }
+  ]
+}
