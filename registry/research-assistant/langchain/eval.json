@@ -1,12 +1,11 @@
 {
   "protocol": "chat",
   "evalConfig": {
-    "timeoutMs": 90000,
-    "maxConcurrent": 1
+    "timeoutMs": 90000
   },
   "evaluators": [
     { "type": "contains", "weight": 0.5 },
-    { "type": "latency", "weight": 0.2, "config": { "maxMs": 60000 } },
+    { "type": "latency", "config": { "maxMs": 60000 } },
     { "type": "llm_judge", "weight": 2.0, "config": { "threshold": 0.6 } }
   ],
   "cases": [
@@ -17,11 +16,8 @@
         "message": "Research the latest trends in AI agents"
       },
       "expected": {
-        "contains": { "contains": ["agent"] },
-        "latency": { "maxMs": 60000 },
-        "llm_judge": {
-          "criteria": "Provides a structured research summary with relevant trends, sources, and key findings about AI agents"
-        }
+        "contains": ["agent"],
+        "criteria": "Provides a structured research summary with relevant trends, sources, and key findings about AI agents"
       },
       "tags": ["research", "ai"]
     },
@@ -32,11 +28,8 @@
         "message": "What are the differences between LangChain and LlamaIndex?"
       },
       "expected": {
-        "contains": { "contains": ["LangChain", "LlamaIndex"] },
-        "latency": { "maxMs": 60000 },
-        "llm_judge": {
-          "criteria": "Provides an accurate, balanced comparison of LangChain and LlamaIndex with key differences highlighted"
-        }
+        "contains": ["LangChain", "LlamaIndex"],
+        "criteria": "Provides an accurate, balanced comparison of LangChain and LlamaIndex with key differences highlighted"
       },
       "tags": ["research", "comparison"]
     }

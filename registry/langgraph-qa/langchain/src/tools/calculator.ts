@@ -21,7 +21,8 @@ export const calculator = tool(
   {
     name: "calculator",
     description:
-      "Evaluate a basic arithmetic expression. Supports +, -, *, /, and parentheses.",
+      "Evaluate a basic arithmetic expression. Supports +, -, *, /, parentheses, and decimals. " +
+      "Use this instead of doing math yourself. For percentages, convert first (15% of 240 → 240 * 0.15).",
     schema: z.object({
       expression: z
         .string()

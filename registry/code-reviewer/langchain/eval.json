@@ -1,12 +1,11 @@
 {
   "protocol": "chat",
   "evalConfig": {
-    "timeoutMs": 45000,
-    "maxConcurrent": 1
+    "timeoutMs": 45000
   },
   "evaluators": [
     { "type": "contains", "weight": 1.0 },
-    { "type": "latency", "weight": 0.3, "config": { "maxMs": 30000 } },
+    { "type": "latency", "config": { "maxMs": 30000 } },
     { "type": "llm_judge", "weight": 2.0, "config": { "threshold": 0.6 } }
   ],
   "cases": [
@@ -17,11 +16,8 @@
         "message": "Review this code: `const query = `SELECT * FROM users WHERE id = ${userId}`; db.query(query);`"
       },
       "expected": {
-        "contains": { "contains": ["injection", "parameterize"] },
-        "latency": { "maxMs": 30000 },
-        "llm_judge": {
-          "criteria": "Correctly identifies SQL injection vulnerability and suggests parameterized queries as fix"
-        }
+        "contains": ["injection", "parameterize"],
+        "criteria": "Correctly identifies SQL injection vulnerability and suggests parameterized queries as fix"
       },
       "tags": ["security", "sql"]
     },
@@ -32,11 +28,8 @@
         "message": "Is there a bug? `for (let i = 0; i <= arr.length; i++) { console.log(arr[i]); }`"
       },
       "expected": {
-        "contains": { "contains": ["off-by-one"] },
-        "latency": { "maxMs": 30000 },
-        "llm_judge": {
-          "criteria": "Identifies the off-by-one error (should be < not <=) and explains it could cause undefined access"
-        }
+        "contains": ["off-by-one"],
+        "criteria": "Identifies the off-by-one error (should be < not <=) and explains it could cause undefined access"
       },
       "tags": ["bug", "logic"]
     },
@@ -47,11 +40,8 @@
         "message": "Review this function: function add(a, b) { return a + b; }"
       },
       "expected": {
-        "contains": { "contains": ["type"] },
-        "latency": { "maxMs": 30000 },
-        "llm_judge": {
-          "criteria": "Provides useful feedback such as suggesting type annotations or input validation for a simple function"
-        }
+        "contains": ["type"],
+        "criteria": "Provides useful feedback such as suggesting type annotations or input validation for a simple function"
       },
       "tags": ["style", "improvement"]
     }

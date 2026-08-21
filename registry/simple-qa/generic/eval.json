@@ -1,12 +1,11 @@
 {
   "protocol": "chat",
   "evalConfig": {
-    "timeoutMs": 15000,
-    "maxConcurrent": 1
+    "timeoutMs": 15000
   },
   "evaluators": [
     { "type": "contains", "weight": 1.0 },
-    { "type": "latency", "weight": 0.5, "config": { "maxMs": 10000 } }
+    { "type": "latency", "config": { "maxMs": 10000 } }
   ],
   "cases": [
     {
@@ -16,8 +15,7 @@
         "message": "Hello!"
       },
       "expected": {
-        "contains": { "contains": ["sandbox", "agent"] },
-        "latency": { "maxMs": 10000 }
+        "contains": ["sandbox", "agent"]
       },
       "tags": ["basic"]
     },
@@ -28,8 +26,7 @@
         "message": "What is the capital of France?"
       },
       "expected": {
-        "contains": { "contains": ["Paris"] },
-        "latency": { "maxMs": 10000 }
+        "contains": ["Paris"]
       },
       "tags": ["geography", "factual"]
     },
@@ -40,8 +37,7 @@
         "message": "Is the sandbox preview working?"
       },
       "expected": {
-        "contains": { "contains": ["sandbox", "preview", "working"] },
-        "latency": { "maxMs": 10000 }
+        "contains": ["sandbox", "preview", "working"]
       },
       "tags": ["meta"]
     },
@@ -52,8 +48,7 @@
         "message": "Tell me something"
       },
       "expected": {
-        "contains": { "contains": ["agent", "response"] },
-        "latency": { "maxMs": 10000 }
+        "contains": ["agent", "response"]
       },
       "tags": ["streaming"]
     }
