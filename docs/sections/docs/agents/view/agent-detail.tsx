@@ -12,7 +12,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CATEGORY_COLORS, FRAMEWORK_COLORS } from "@/data/registry-shared";
 import { cn } from "@/lib/utils";
 import { useAgentDetailUiState } from "@/sections/docs/agents/agent-detail-ui-state";
-import { ChatPreview } from "@/sections/docs/agents/chat-preview";
+import {
+  ChatPreview,
+  type ChatPreviewProps,
+} from "@/sections/docs/agents/chat-preview";
+import { EvalPreview, type EvalPreviewProps } from "@/sections/docs/agents/eval-preview";
 import { CodeViewer } from "@/sections/docs/agents/code-viewer";
 import type { RegistryItem } from "@/types/registry";
 import { ChevronDownIcon } from "lucide-react";
@@ -88,7 +92,10 @@ export default function AgentDetail({ agent }: AgentDetailProps) {
             <div className="flex items-center justify-between gap-2">
               <TabsList>
                 <TabsTrigger value="preview" className="gap-1.5 cursor-pointer">
-                  Preview
+                  Try
+                </TabsTrigger>
+                <TabsTrigger value="eval" className="gap-1.5 cursor-pointer">
+                  Eval
                 </TabsTrigger>
                 <TabsTrigger value="code" className="gap-1.5 cursor-pointer">
                   Code
@@ -135,27 +142,40 @@ export default function AgentDetail({ agent }: AgentDetailProps) {
             />
           </div>
 
-          {/* forceMount + hide inactive: keep Preview/Code state (file selection, chat) */}
+          {/* forceMount + hide inactive: keep Try/Eval/Code state across tab switches */}
           <TabsContent
             value="preview"
             forceMount
             className="flex-1 mt-0 data-[state=inactive]:hidden"
           >
             <ChatPreview
-              key={[
-                agent.name,
-                activeFramework,
-                agent.preview.welcomeMessage ?? "",
-                String(agent.sandboxPreview !== false),
-                (agent.preview.requiredEnv ?? []).join("|")
-              ].join("::")}
-              agentName={agent.name}
-              framework={activeFramework}
-              welcomeMessage={agent.preview.welcomeMessage}
-              starterMessages={agent.preview.starterMessages}
-              requiredEnv={agent.preview.requiredEnv ?? []}
-              sandboxPreview={agent.sandboxPreview !== false}
-              className="h-full"
+              key={["try", agent.name, activeFramework].join("::")}
+              {...({
+                agentName: agent.name,
+                framework: activeFramework,
+                welcomeMessage: agent.preview.welcomeMessage,
+                starterMessages: agent.preview.starterMessages ?? [],
+                requiredEnv: agent.preview.requiredEnv ?? [],
+                sandboxPreview: agent.sandboxPreview !== false,
+                className: "h-full",
+              } satisfies ChatPreviewProps)}
+            />
+          </TabsContent>
+
+          <TabsContent
+            value="eval"
+            forceMount
+            className="flex-1 mt-0 data-[state=inactive]:hidden"
+          >
+            <EvalPreview
+              key={["eval", agent.name, activeFramework].join("::")}
+              {...({
+                agentName: agent.name,
+                framework: activeFramework,
+                requiredEnv: agent.preview.requiredEnv ?? [],
+                sandboxPreview: agent.sandboxPreview !== false,
+                className: "h-full",
+              } satisfies EvalPreviewProps)}
             />
           </TabsContent>
 

@@ -11,7 +11,6 @@
       "languages": ["ts"],
       "frameworks": ["generic"],
       "sandboxPreview": true,
-      "eval": { "protocol": "chat", "caseCount": 2 },
       "preview": {
         "welcomeMessage": "Hello! I'm the hello-world sandbox agent. Send a message to verify streaming.",
         "starterMessages": ["Hello!", "What can you do?"]
@@ -35,7 +34,6 @@
       "languages": ["ts"],
       "frameworks": ["generic"],
       "sandboxPreview": true,
-      "eval": { "protocol": "chat", "caseCount": 4 },
       "preview": {
         "welcomeMessage": "Hi! I'm a sandbox demo agent. Ask me something — replies are generated locally (no API keys).",
         "starterMessages": [
@@ -69,7 +67,6 @@
       "languages": ["ts"],
       "frameworks": ["langchain"],
       "sandboxPreview": true,
-      "eval": { "protocol": "chat", "caseCount": 3 },
       "preview": {
         "welcomeMessage": "Hi! I'm a live LangGraph agent. Ask me anything — replies come from OpenAI inside the sandbox.",
         "starterMessages": [
@@ -138,7 +135,6 @@
       "languages": ["ts"],
       "frameworks": ["langchain", "mastra", "vercel-ai"],
       "sandboxPreview": true,
-      "eval": { "protocol": "chat", "caseCount": 5 },
       "preview": {
         "welcomeMessage": "Hi! I'm your customer support agent.\nI can help with orders, account access, refunds, and more. What can I assist you with today?",
         "starterMessages": [
@@ -225,7 +221,6 @@
       "languages": ["ts"],
       "frameworks": ["langchain", "mastra"],
       "sandboxPreview": true,
-      "eval": { "protocol": "chat", "caseCount": 3 },
       "preview": {
         "welcomeMessage": "Hello! I'm your code reviewer.\nPaste a code snippet or describe what you'd like me to review.",
         "starterMessages": [
@@ -271,7 +266,6 @@
       "languages": ["ts"],
       "frameworks": ["langchain", "vercel-ai"],
       "sandboxPreview": true,
-      "eval": { "protocol": "chat", "caseCount": 2 },
       "preview": {
         "welcomeMessage": "Hi! I'm your research assistant.\nGive me a topic and I'll synthesize findings for you.",
         "starterMessages": [
