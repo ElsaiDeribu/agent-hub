@@ -27,6 +27,7 @@ export async function createSession(
   const res = await fetch(`${apiBase()}/sessions/${encodeURIComponent(agentId)}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ framework, env }),
   });
   if (!res.ok) throw new Error(await readError(res));
@@ -36,6 +37,7 @@ export async function createSession(
 export async function deleteSession(sessionId: string): Promise<void> {
   const res = await fetch(`${apiBase()}/sessions/${encodeURIComponent(sessionId)}`, {
     method: "DELETE",
+    credentials: "include",
   });
   if (!res.ok && res.status !== 404) {
     throw new Error(await readError(res));
@@ -60,6 +62,7 @@ export async function streamChat(
   const res = await fetch(`${apiBase()}/sessions/${encodeURIComponent(sessionId)}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ message, history }),
     signal,
   });

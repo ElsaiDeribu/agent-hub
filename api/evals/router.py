@@ -7,6 +7,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 
+from auth import CurrentUser
 from sessions.manager import SessionManager, get_session_manager
 
 from evals.orchestrator import run_eval_suite
@@ -23,6 +24,7 @@ async def run_eval(
     framework: str,
     req: RunEvalRequest,
     manager: SessionMgr,
+    current_user: CurrentUser,
 ) -> StreamingResponse:
     """Start an eval run. Returns SSE stream of eval progress and results."""
     suite = req.suite
@@ -37,6 +39,7 @@ async def run_eval(
             eval_config=suite.eval_config,
             evaluator_configs=suite.evaluators,
             cases=suite.cases,
+            owner_id=current_user.id,
         ),
         media_type="text/event-stream",
     )

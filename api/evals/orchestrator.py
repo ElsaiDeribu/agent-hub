@@ -30,6 +30,7 @@ async def run_eval_suite(
     eval_config: EvalRunConfig,
     evaluator_configs: list[EvaluatorConfig],
     cases: list[EvalCase],
+    owner_id: str,
 ) -> AsyncGenerator[str, None]:
     """Run a full eval suite, yielding SSE data lines as results come in."""
     run_id = uuid4().hex[:12]
@@ -42,7 +43,9 @@ async def run_eval_suite(
     results = []
 
     try:
-        async with eval_session(manager, agent_id, framework, env, prefix) as session:
+        async with eval_session(
+            manager, agent_id, framework, env, prefix, owner_id
+        ) as session:
             adapter = get_protocol_adapter(protocol)
 
             print(f"{prefix} Running {len(cases)} eval case(s)")

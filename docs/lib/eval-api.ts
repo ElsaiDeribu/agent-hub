@@ -80,6 +80,7 @@ export async function streamEvalRun(
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ suite, env }),
       signal,
     },

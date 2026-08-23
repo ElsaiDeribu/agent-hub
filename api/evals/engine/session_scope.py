@@ -15,10 +15,13 @@ async def eval_session(
     framework: str,
     env: dict[str, str],
     prefix: str,
+    owner_id: str,
 ) -> AsyncIterator[Session]:
     """Create a sandbox session for an eval run and destroy it on exit."""
     print(f"{prefix} Creating session for '{agent_id}/{framework}'")
-    session = await manager.create_session(agent_id, framework, env)
+    session = await manager.create_session(
+        agent_id, framework, env, owner_id=owner_id, purpose="eval"
+    )
     print(f"{prefix} Session '{session.session_id}' created")
     print(f"{prefix} Sandbox created on port {session.host_port}")
     try:

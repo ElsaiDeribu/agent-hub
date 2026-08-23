@@ -11,7 +11,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from microsandbox.errors import MicrosandboxError
 
-from .manager import SessionManager, get_session_manager
+from auth import CurrentUser
+
+from .manager import Session, SessionManager, get_session_manager
 from .utils.registry import RegistryError
 from .schemas import (
     CHAT_STREAM_RESPONSES,
@@ -43,6 +45,19 @@ def _reraise_registry_http(exc: BaseException) -> NoReturn:
     raise exc
 
 
+def _require_preview_session(
+    manager: SessionManager, session_id: str, user_id: str
+) -> Session:
+    session = manager.sessions.get(session_id)
+    if (
+        session is None
+        or session.purpose != "preview"
+        or session.owner_id != user_id
+    ):
+        raise HTTPException(status_code=404, detail="Session not found")
+    return session
+
+
 @router.post(
     "/sessions/{agent_id}",
     response_model=CreateSessionResponse,
@@ -52,11 +67,16 @@ async def create_session(
     agent_id: str,
     req: RegistryPreviewRequest,
     manager: SessionMgr,
+    current_user: CurrentUser,
 ) -> CreateSessionResponse:
     """Load an agent framework package from GitHub and start a preview session."""
     try:
         session = await manager.create_session(
-            agent_id, framework=req.framework, env=req.env
+            agent_id,
+            framework=req.framework,
+            env=req.env,
+            owner_id=current_user.id,
+            purpose="preview",
         )
     except MicrosandboxError as exc:
         raise HTTPException(status_code=502, detail=f"Sandbox error: {exc}") from exc
@@ -77,12 +97,13 @@ async def create_session(
     responses=CHAT_STREAM_RESPONSES,
 )
 async def chat(
-    session_id: str, req: ChatRequest, manager: SessionMgr
+    session_id: str,
+    req: ChatRequest,
+    manager: SessionMgr,
+    current_user: CurrentUser,
 ) -> StreamingResponse:
     """Stream a chat message to the agent running in the sandbox. Returns SSE."""
-    session = manager.sessions.get(session_id)
-    if session is None:
-        raise HTTPException(404, "Session not found")
+    session = _require_preview_session(manager, session_id, current_user.id)
 
     session.last_activity = datetime.now(timezone.utc)
     history = [turn.model_dump() for turn in req.history]
@@ -112,12 +133,10 @@ async def chat(
     responses=SESSION_NOT_FOUND,
 )
 async def session_status(
-    session_id: str, manager: SessionMgr
+    session_id: str, manager: SessionMgr, current_user: CurrentUser
 ) -> SessionStatusResponse:
     """Check the status of a preview session."""
-    session = manager.sessions.get(session_id)
-    if session is None:
-        raise HTTPException(404, "Session not found")
+    session = _require_preview_session(manager, session_id, current_user.id)
 
     healthy = False
     async with httpx.AsyncClient() as client:
@@ -146,10 +165,9 @@ async def session_status(
     responses=SESSION_NOT_FOUND,
 )
 async def delete_session(
-    session_id: str, manager: SessionMgr
+    session_id: str, manager: SessionMgr, current_user: CurrentUser
 ) -> DeleteSessionResponse:
     """Stop the agent sandbox and free resources."""
-    if session_id not in manager.sessions:
-        raise HTTPException(404, "Session not found")
+    _require_preview_session(manager, session_id, current_user.id)
     await manager.destroy_session(session_id)
     return DeleteSessionResponse(session_id=session_id, status="destroyed")

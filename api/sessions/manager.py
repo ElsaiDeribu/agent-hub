@@ -6,6 +6,7 @@ import asyncio
 from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from typing import Literal
 from uuid import uuid4
 
 from fastapi import Request
@@ -14,6 +15,8 @@ from microsandbox import Sandbox
 from config import settings
 
 from .sandbox import provision_sandbox
+
+SessionPurpose = Literal["preview", "eval"]
 
 SESSION_IDLE_TIMEOUT_S = settings.session_idle_timeout
 SESSION_MAX_DURATION_S = settings.session_max_duration
@@ -27,6 +30,8 @@ class Session:
     framework: str
     sandbox: Sandbox
     host_port: int
+    owner_id: str
+    purpose: SessionPurpose = "preview"
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     last_activity: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -47,8 +52,11 @@ class SessionManager:
         agent_id: str,
         framework: str,
         env: dict[str, str] | None = None,
+        *,
+        owner_id: str,
+        purpose: SessionPurpose = "preview",
     ) -> Session:
-        session_id = uuid4().hex[:12]
+        session_id = uuid4().hex
 
         async with self._lock:
             host_port = self._allocate_port()
@@ -63,6 +71,8 @@ class SessionManager:
             framework=framework,
             sandbox=sb,
             host_port=host_port,
+            owner_id=owner_id,
+            purpose=purpose,
         )
         self.sessions[session_id] = session
         print(

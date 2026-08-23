@@ -82,6 +82,10 @@ CHAT_STREAM_RESPONSES: dict[int | str, dict] = {
             }
         },
     },
+    401: {
+        "model": HTTPExceptionResponse,
+        "description": "Missing or invalid auth session",
+    },
     404: {
         "model": HTTPExceptionResponse,
         "description": "Session not found",
@@ -89,10 +93,18 @@ CHAT_STREAM_RESPONSES: dict[int | str, dict] = {
 }
 
 SESSION_NOT_FOUND = {
+    401: {
+        "model": HTTPExceptionResponse,
+        "description": "Missing or invalid auth session",
+    },
     404: {"model": HTTPExceptionResponse, "description": "Session not found"},
 }
 
 CREATE_SESSION_ERRORS = {
+    401: {
+        "model": HTTPExceptionResponse,
+        "description": "Missing or invalid auth session",
+    },
     400: {
         "model": HTTPExceptionResponse,
         "description": "Missing required env vars or invalid registry path",
