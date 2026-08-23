@@ -28,6 +28,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from auth.router import router as auth_router
 from config import settings
 from db import engine, get_db
+from evals.router import router as evals_router
 from sessions.manager import SessionManager, get_session_manager
 from sessions.reaper import reaper_loop
 from sessions.router import router as sessions_router
@@ -59,6 +60,7 @@ app = FastAPI(
     openapi_tags=[
         {"name": "health", "description": "Liveness and runtime status."},
         {"name": "sessions", "description": "Preview sessions inside microVMs."},
+        {"name": "evals", "description": "Agent evaluation system."},
         {"name": "auth", "description": "Email/password and Google OAuth sessions."},
     ],
 )
@@ -123,6 +125,7 @@ async def health(
 
 
 app.include_router(sessions_router, tags=["sessions"])
+app.include_router(evals_router)
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 
 
