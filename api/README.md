@@ -137,9 +137,9 @@ By default the service fetches agents from GitHub
 (`raw.githubusercontent.com/ElsaiDeribu/agent-hub/main`). Override with
 `REGISTRY_GITHUB_OWNER`, `REGISTRY_GITHUB_REPO`, and `REGISTRY_GITHUB_BRANCH`.
 
-The first session creation pulls the sandbox OCI image (`node` by default), so
-it is slower than subsequent calls. Override the default image with the
-`MSB_IMAGE` environment variable.
+The first session creation pulls the sandbox OCI image
+(`node:22-bookworm-slim` by default), so it is slower than subsequent calls.
+Override the default image with the `MSB_IMAGE` environment variable.
 
 ## Registry layout
 
@@ -234,16 +234,16 @@ run `uv sync --no-default-groups --group production`.
 | `AUTH_COOKIE_SAMESITE` | `lax` | Cookie SameSite (`lax`, `strict`, or `none`) |
 | `GOOGLE_CLIENT_ID` | *(empty)* | Google OAuth client id (leave empty to disable) |
 | `GOOGLE_CLIENT_SECRET` | *(empty)* | Google OAuth client secret |
-| `MSB_IMAGE` | `node` | OCI image for sandboxes |
-| `SANDBOX_MEMORY_MB` | `1024` | Memory limit per sandbox (MB) |
+| `MSB_IMAGE` | `node:22-bookworm-slim` | OCI image for sandboxes |
+| `SANDBOX_MEMORY_MB` | `512` | Memory limit per sandbox (MB) |
 | `REGISTRY_GITHUB_OWNER` | `ElsaiDeribu` | GitHub org/user that hosts the registry |
 | `REGISTRY_GITHUB_REPO` | `agent-hub` | GitHub repository name |
 | `REGISTRY_GITHUB_BRANCH` | `main` | Branch used for raw file URLs |
 | `CORS_ORIGINS` | web/vite origins | Comma-separated allowed origins (required in production) |
 | `HOST` | `0.0.0.0` | Bind address |
 | `PORT` | `8000` | Bind port |
-| `WEB_CONCURRENCY` | `4` | Gunicorn workers (production compose) |
-| `SESSION_IDLE_TIMEOUT` | `1800` | Seconds before idle session is reaped |
+| `WEB_CONCURRENCY` | `1` | Gunicorn workers (production compose; keep at 1 so sandbox sessions stay in-process) |
+| `SESSION_IDLE_TIMEOUT` | `600` | Seconds before idle session is reaped |
 | `SESSION_MAX_DURATION` | `3600` | Max session lifetime in seconds |
 | `SESSION_BASE_PORT` | `10000` | Starting port for session port allocation |
 | `SESSION_REAPER_INTERVAL` | `60` | How often the session reaper runs (seconds) |

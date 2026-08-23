@@ -30,16 +30,16 @@ PORT=8000
 
 # Gunicorn
 # ------------------------------------------------------------------------------
-WEB_CONCURRENCY=4
+WEB_CONCURRENCY=1
 
 # Sandbox / registry
 # ------------------------------------------------------------------------------
 REGISTRY_GITHUB_OWNER=ElsaiDeribu
 REGISTRY_GITHUB_REPO=agent-hub
 REGISTRY_GITHUB_BRANCH=main
-MSB_IMAGE=node
-SANDBOX_MEMORY_MB=1024
-SESSION_IDLE_TIMEOUT=1800
+MSB_IMAGE=node:22-bookworm-slim
+SANDBOX_MEMORY_MB=512
+SESSION_IDLE_TIMEOUT=600
 SESSION_MAX_DURATION=3600
 SESSION_BASE_PORT=10000
 SESSION_REAPER_INTERVAL=60

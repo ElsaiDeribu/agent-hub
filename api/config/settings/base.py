@@ -60,9 +60,9 @@ class Settings(BaseSettings):
     registry_github_owner: str = "ElsaiDeribu"
     registry_github_repo: str = "agent-hub"
     registry_github_branch: str = "main"
-    msb_image: str = "node"
-    sandbox_memory_mb: int = 1024
-    session_idle_timeout: int = 1800
+    msb_image: str = "node:22-bookworm-slim"
+    sandbox_memory_mb: int = 512
+    session_idle_timeout: int = 600
     session_max_duration: int = 3600
     session_base_port: int = 10000
     session_reaper_interval: int = 60
