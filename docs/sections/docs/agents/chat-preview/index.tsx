@@ -48,7 +48,7 @@ export function ChatPreview({
         })}
       </PreviewBanner>
 
-      <div className="flex-1 overflow-y-auto p-4 min-h-[280px] max-h-[420px]">
+      <div className="min-h-0 flex-1 overflow-y-auto p-4">
         {chat.phase === "idle" || chat.phase === "starting" ? (
           <TryPanel
             phase={chat.phase}

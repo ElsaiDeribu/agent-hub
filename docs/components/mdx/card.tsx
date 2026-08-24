@@ -69,11 +69,16 @@ export function Card({
 }: CardProps) {
   const Icon: LucideIcon | undefined = icon ? ICONS[icon] : undefined;
 
+  // Base classes per instruction
+  const baseCardClasses =
+    "bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer group overflow-hidden relative flex flex-col justify-end";
+
   if (action && href) {
     return (
       <UiCard
         className={cn(
-          "my-6 gap-0 border bg-primary/5 py-0 shadow-none",
+          baseCardClasses,
+          "my-6 gap-0 py-0 shadow-none",
           className
         )}
       >
@@ -121,7 +126,8 @@ export function Card({
   return (
     <UiCard
       className={cn(
-        "gap-0 py-0 transition-shadow hover:shadow-md",
+        baseCardClasses,
+        "gap-0 py-0",
         className
       )}
     >

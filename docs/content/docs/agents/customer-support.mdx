@@ -1,0 +1,29 @@
+---
+title: Customer Support Agent
+description: Multi-turn customer support agent with order lookup and human escalation tools.
+---
+
+## Live demo
+
+<AgentPlayground name="customer-support" />
+
+## Overview
+
+A multi-turn support agent for order status, account access, refunds, and escalation. Implementations ship for LangChain, Mastra, and Vercel AI SDK.
+
+## Tools
+
+- `lookup_order` — status and tracking by order ID
+- `lookup_account` — account lookup by email
+- `create_refund` — start a refund for a given reason
+- `escalate_to_human` — open a ticket when the agent cannot resolve the issue
+
+Tool bodies return placeholder data. Replace them with your order, identity, and ticketing APIs.
+
+## How it works
+
+The agent keeps chat history and is instructed to look up real data before answering, ask for an order ID or email when needed, and escalate after two failed attempts. The LangChain package splits prompts and tools under `src/`; Mastra and Vercel AI keep a flatter single-file layout.
+
+## Environment
+
+`OPENAI_API_KEY` — entered in the preview UI, held in memory, and sent only to your sandbox session.

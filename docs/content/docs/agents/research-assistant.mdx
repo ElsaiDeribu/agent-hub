@@ -1,0 +1,29 @@
+---
+title: Research Assistant Agent
+description: Searches the web, reads pages, and synthesizes findings into structured research summaries.
+---
+
+## Live demo
+
+<AgentPlayground name="research-assistant" />
+
+## Overview
+
+A research agent that searches, reads pages, and synthesizes a structured summary. Implementations ship for LangChain and Vercel AI SDK.
+
+## Tools
+
+- `web_search` — query the web; returns titles, URLs, and snippets
+- `read_page` — fetch and extract text from a URL
+
+Both tools ship with placeholder implementations. Swap in Tavily, Serper, Brave, or your own fetch layer before using this in production.
+
+## How it works
+
+Give it a topic. The agent searches, optionally reads sources, and writes a synthesis. The LangChain package keeps prompts and tools under `src/`.
+
+## Environment
+
+`OPENAI_API_KEY` — entered in the preview UI, held in memory, and sent only to your sandbox session.
+
+A real search provider will need its own key (for example `TAVILY_API_KEY`) once you replace the placeholders.

@@ -19,7 +19,7 @@ export default async function Page(props: {
         {page.data.title}
       </h1>
       {page.data.description ? (
-        <p className="mb-8 text-lg text-muted-foreground">
+        <p className="mb-4 text-lg text-muted-foreground">
           {page.data.description}
         </p>
       ) : null}

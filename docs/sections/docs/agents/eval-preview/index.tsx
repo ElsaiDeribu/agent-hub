@@ -62,7 +62,7 @@ export function EvalPreview({
         })}
       </EvalBanner>
 
-      <div className="flex-1 overflow-y-auto p-4 min-h-[280px] max-h-[520px]">
+      <div className="min-h-0 flex-1 overflow-y-auto p-4">
         {(eval_.phase === "idle" || eval_.phase === "loading" || eval_.phase === "error") && !eval_.results.length ? (
           <EvalIdlePanel
             phase={eval_.phase}

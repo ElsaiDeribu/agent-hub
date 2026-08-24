@@ -28,7 +28,7 @@ export function AgentCard({ agent, className }: AgentCardProps) {
     <Card
       className={cn(
         "group flex h-full flex-col gap-0 overflow-hidden py-0 transition-all duration-200",
-        "hover:border-foreground/30 hover:shadow-md hover:bg-foreground/9",
+        "bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 hover:bg-zinc-900/90",
         className,
       )}
     >

@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { source } from "@/lib/source";
 import { paths } from "@/routes/paths";
-import { REGISTRY_ITEMS } from "@/data/registry";
 
 export type DocsNavSubItem = {
   title: string;
@@ -49,10 +48,13 @@ export function getDocsNav(): DocsNavItem[] {
       const pages = collectPages(child.children);
       if (pages.length === 0) continue;
 
+      const title = toTitle(child.name);
+      const isAgents = title === "Agents";
+
       items.push({
-        title: toTitle(child.name),
-        url: child.index?.url ?? pages[0].url,
-        icon: "book",
+        title,
+        url: isAgents ? paths.agents : (child.index?.url ?? pages[0].url),
+        icon: isAgents ? "bot" : "book",
         isActive: true,
         items: pages,
       });
@@ -77,17 +79,6 @@ export function getDocsNav(): DocsNavItem[] {
       }
     }
   }
-
-  items.push({
-    title: "Agents",
-    url: paths.agents,
-    icon: "bot",
-    isActive: true,
-    items: REGISTRY_ITEMS.map((agent) => ({
-      title: agent.title,
-      url: paths.docs.agents.detail(agent.name),
-    })),
-  });
 
   return items;
 }

@@ -1,0 +1,22 @@
+---
+title: Code Reviewer Agent
+description: Reviews code snippets for bugs, security issues, and style improvements with structured output.
+---
+
+## Live demo
+
+<AgentPlayground name="code-reviewer" />
+
+## Overview
+
+Paste a snippet and get a review covering bugs, security, performance, and style. The LangChain package can also emit a structured Zod schema (`summary`, `severity`, `issues`, `positives`).
+
+## How it works
+
+The conversational path asks for code if none is provided, then formats the review as Summary, Issues (by severity), and Positives. The structured helper (`reviewCode`) is for API or pipeline use when you want typed output instead of free-form markdown.
+
+Available for LangChain and Mastra.
+
+## Environment
+
+`OPENAI_API_KEY` — entered in the preview UI, held in memory, and sent only to your sandbox session.

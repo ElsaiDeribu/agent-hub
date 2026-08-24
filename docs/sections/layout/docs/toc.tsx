@@ -320,7 +320,7 @@ export function DocsPageShell({
   return (
     <Primitive.AnchorProvider toc={toc}>
       <TOCContext value={toc}>
-        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-10 xl:grid-cols-[minmax(0,1fr)_220px]">
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 xl:grid-cols-[minmax(0,1fr)_220px]">
           <div className="min-w-0">{children}</div>
           <TableOfContents toc={toc} />
         </div>

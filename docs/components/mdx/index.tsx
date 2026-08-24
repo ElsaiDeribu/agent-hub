@@ -5,13 +5,14 @@ import { cn } from "@/lib/utils";
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
 import type { ComponentProps } from "react";
+import { AgentPlayground } from "@/sections/docs/agents/agent-playground";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
     h2: ({ className, ...props }: ComponentProps<"h2">) => (
       <h2
         className={cn(
-          "mt-10 scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0",
+          "mt-3 scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0 first:border-b-0 first:pb-3",
           className
         )}
         {...props}
@@ -119,6 +120,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     Steps,
     Step,
     CliCommand,
+    AgentPlayground,
     Cards,
     Card,
     ...components
