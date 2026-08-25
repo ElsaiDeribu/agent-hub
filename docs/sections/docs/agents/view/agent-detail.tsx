@@ -2,14 +2,10 @@
 
 import { CliCommand, buildHarnessCommands } from "@/components/cli-command";
 import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CATEGORY_COLORS, FRAMEWORK_COLORS } from "@/data/registry-shared";
+import { CATEGORY_COLORS } from "@/data/registry-shared";
 import { cn } from "@/lib/utils";
 import { useAgentDetailUiState } from "@/sections/docs/agents/agent-detail-ui-state";
 import {
@@ -19,7 +15,6 @@ import {
 import { EvalPreview, type EvalPreviewProps } from "@/sections/docs/agents/eval-preview";
 import { CodeViewer } from "@/sections/docs/agents/code-viewer";
 import type { RegistryItem } from "@/types/registry";
-import { ChevronDownIcon } from "lucide-react";
 
 interface AgentDetailProps {
   agent: RegistryItem;
@@ -95,21 +90,16 @@ export default function AgentDetail({ agent }: AgentDetailProps) {
               </TabsTrigger>
             </TabsList>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs font-medium transition-all cursor-pointer",
-                  FRAMEWORK_COLORS[activeFramework] ??
-                    FRAMEWORK_COLORS.generic
-                )}
-              >
-                {activeFramework}
-                <ChevronDownIcon className="size-3" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {agent.frameworks.map((fw) => (
-                  <DropdownMenuItem
+            <ButtonGroup aria-label="Framework">
+              {agent.frameworks.map((fw) => {
+                const selected = fw === activeFramework;
+                return (
+                  <Button
                     key={fw}
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    aria-pressed={selected}
                     onClick={() =>
                       setFrameworkByAgent((prev) => ({
                         ...prev,
@@ -117,15 +107,17 @@ export default function AgentDetail({ agent }: AgentDetailProps) {
                       }))
                     }
                     className={cn(
-                      "text-xs cursor-pointer",
-                      fw === activeFramework && "font-medium"
+                      "cursor-pointer text-xs shadow-none",
+                      selected
+                        ? "bg-muted text-foreground hover:bg-muted hover:text-foreground dark:bg-muted dark:text-foreground"
+                        : "bg-transparent text-muted-foreground hover:bg-transparent hover:text-foreground dark:bg-transparent"
                     )}
                   >
                     {fw}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  </Button>
+                );
+              })}
+            </ButtonGroup>
           </div>
 
           <CliCommand
