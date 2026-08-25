@@ -12,7 +12,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     h2: ({ className, ...props }: ComponentProps<"h2">) => (
       <h2
         className={cn(
-          "mt-3 scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0 first:border-b-0 first:pb-3",
+          "mt-2 scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0 first:border-b-0 first:pb-3",
           className
         )}
         {...props}

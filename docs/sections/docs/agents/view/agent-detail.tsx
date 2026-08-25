@@ -53,7 +53,7 @@ export default function AgentDetail({ agent }: AgentDetailProps) {
 
   return (
     <div className="pb-4">
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      <div className="mb-6 flex flex-wrap items-center gap-2">
         <Badge className={cn("border text-xs", categoryColor)}>
           {agent.category}
         </Badge>
@@ -66,6 +66,13 @@ export default function AgentDetail({ agent }: AgentDetailProps) {
           </span>
         ))}
       </div>
+
+      <h2
+        id="live-demo"
+        className="mt-0 scroll-m-20 pb-4 text-2xl font-semibold tracking-tight"
+      >
+        Live demo
+      </h2>
 
       <Tabs
         value={activeTab}
