@@ -1,4 +1,4 @@
-import { CATEGORIES, REGISTRY_ITEMS } from "@/data/registry";
+import { CATEGORIES } from "@/data/registry-shared";
 import { AgentsCatalog } from "@/sections/agents/view";
 import type { Metadata } from "next";
 
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function AgentsPage() {
-  return <AgentsCatalog items={REGISTRY_ITEMS} categories={CATEGORIES} />;
+  return <AgentsCatalog categories={CATEGORIES} />;
 }

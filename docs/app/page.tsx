@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { REGISTRY_ITEMS } from "@/data/registry";
 import { HomePage } from "@/sections/home/view";
 
 export const metadata: Metadata = {
@@ -9,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <HomePage agentCount={REGISTRY_ITEMS.length} />;
+  return <HomePage />;
 }

@@ -6,21 +6,21 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, LayoutGrid } from "lucide-react";
 import { AgentCard } from "@/sections/agents/agent-card";
-import type { RegistryItem } from "@/types/registry";
+import { useRegistryItems } from "@/data/use-registry-items";
 import type { CATEGORIES } from "@/data/registry-shared";
 
 type Category = (typeof CATEGORIES)[number];
 
 interface AgentsCatalogProps {
-  items: RegistryItem[];
   categories: readonly Category[];
 }
 
-export default function AgentsCatalog({ items, categories }: AgentsCatalogProps) {
+export default function AgentsCatalog({ categories }: AgentsCatalogProps) {
+  const { items, error } = useRegistryItems();
   const [activeCategory, setActiveCategory] = useState("all");
   const [search, setSearch] = useState("");
 
-  const filtered = items.filter((item) => {
+  const filtered = (items ?? []).filter((item) => {
     const matchCategory = activeCategory === "all" || item.category === activeCategory;
     const matchSearch =
       search.trim() === "" ||
@@ -43,7 +43,7 @@ export default function AgentsCatalog({ items, categories }: AgentsCatalogProps)
             </div>
             <div className="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
               <LayoutGrid className="size-4" />
-              <span className="font-medium">{items.length}</span>
+              <span className="font-medium">{items?.length ?? "—"}</span>
               <span>agents available</span>
             </div>
           </div>
@@ -80,7 +80,11 @@ export default function AgentsCatalog({ items, categories }: AgentsCatalogProps)
           </div>
         </div>
 
-        {filtered.length > 0 ? (
+        {error ? (
+          <p className="text-sm text-destructive">{error}</p>
+        ) : !items ? (
+          <p className="text-sm text-muted-foreground">Loading agents…</p>
+        ) : filtered.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map((agent) => (
               <AgentCard key={agent.name} agent={agent} />

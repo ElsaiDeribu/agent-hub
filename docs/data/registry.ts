@@ -1,23 +1,33 @@
-import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
 import type { RegistryCatalog, RegistryItem } from "@/types/registry";
-import { normalizeRegistryItems } from "@/data/registry-shared";
+import { getFileUrl, normalizeRegistryItems } from "@/data/registry-shared";
 
-const catalogPath = join(
-  dirname(fileURLToPath(import.meta.url)),
-  "..",
-  "..",
-  "registry.json",
-);
+const REGISTRY_URL = getFileUrl("registry.json");
 
-const catalog = JSON.parse(readFileSync(catalogPath, "utf8")) as RegistryCatalog;
+let cachedItems: RegistryItem[] | null = null;
+let inflight: Promise<RegistryItem[]> | null = null;
 
-export const REGISTRY_ITEMS: RegistryItem[] = normalizeRegistryItems(catalog);
+export async function getRegistryItems(): Promise<RegistryItem[]> {
+  if (cachedItems) return cachedItems;
+  if (!inflight) {
+    inflight = fetch(REGISTRY_URL)
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to load registry: ${res.status} ${res.statusText}`);
+        }
+        const catalog = (await res.json()) as RegistryCatalog;
+        cachedItems = normalizeRegistryItems(catalog);
+        return cachedItems;
+      })
+      .finally(() => {
+        inflight = null;
+      });
+  }
+  return inflight;
+}
 
-export function getRegistryItem(name: string): RegistryItem | undefined {
-  return REGISTRY_ITEMS.find((item) => item.name === name);
+export async function getRegistryItem(name: string): Promise<RegistryItem | undefined> {
+  const items = await getRegistryItems();
+  return items.find((item) => item.name === name);
 }
 
 export {

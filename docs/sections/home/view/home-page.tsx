@@ -2,15 +2,15 @@
 
 import { CliCommand, buildHarnessCommands } from "@/components/cli-command";
 import { Button } from "@/components/ui/button";
+import { useRegistryItems } from "@/data/use-registry-items";
 import { paths } from "@/routes/paths";
 import { ArrowRight, LayoutGrid, Zap } from "lucide-react";
 import Link from "next/link";
 
-interface HomePageProps {
-  agentCount: number;
-}
+export default function HomePage() {
+  const { items } = useRegistryItems();
+  const agentCount = items?.length;
 
-export default function HomePage({ agentCount }: HomePageProps) {
   return (
     <main className="flex-1">
       <section className="bg-gradient-to-b from-muted/30 to-background">
@@ -47,7 +47,7 @@ export default function HomePage({ agentCount }: HomePageProps) {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <LayoutGrid className="size-4" />
-              {agentCount} agents
+              {agentCount ?? "—"} agents
             </div>
             <div className="flex items-center gap-1.5">
               <Zap className="size-4" />3 frameworks
