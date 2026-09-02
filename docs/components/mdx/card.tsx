@@ -71,7 +71,7 @@ export function Card({
 
   // Base classes per instruction
   const baseCardClasses =
-    "bg-zinc-900/50 border border-zinc-800 hover:border-zinc-700 transition-colors cursor-pointer group overflow-hidden relative flex flex-col justify-end";
+    "hover:border-zinc-300 hover:shadow-md hover:bg-zinc-50 transition-colors cursor-pointer group overflow-hidden relative flex flex-col justify-end dark:bg-zinc-900/50 dark:border-zinc-800 dark:hover:border-zinc-700 dark:hover:bg-zinc-900/50 dark:hover:shadow-none";
 
   if (action && href) {
     return (
