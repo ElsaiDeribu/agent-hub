@@ -1,17 +1,7 @@
-import { lookupAccountTool } from "./account.js";
-import { escalateToHumanTool } from "./escalation.js";
-import { createRefundTool, lookupOrderTool } from "./orders.js";
+import { echo } from "./echo.js";
+import { calculator } from "./calculator.js";
+import { getCurrentTime } from "./time.js";
 
-export {
-  lookupOrderTool,
-  createRefundTool,
-  lookupAccountTool,
-  escalateToHumanTool,
-};
+export { echo, calculator, getCurrentTime };
 
-export const tools = [
-  lookupOrderTool,
-  lookupAccountTool,
-  createRefundTool,
-  escalateToHumanTool,
-];
+export const tools = [getCurrentTime, calculator, echo];

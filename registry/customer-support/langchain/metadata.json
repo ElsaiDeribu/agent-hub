@@ -1,15 +1,16 @@
 {
   "id": "customer-support",
   "name": "Customer Support Agent",
-  "description": "Multi-turn customer support agent with order lookup and human escalation tools.",
+  "description": "Live LangGraph ReAct agent that calls OpenAI. Provide OPENAI_API_KEY when starting the preview.",
   "category": "support",
-  "tags": ["multi-turn", "tools", "memory", "escalation"],
+  "tags": ["starter", "langgraph", "langchain", "live"],
   "languages": ["ts"],
   "frameworks": ["langchain"],
   "entrypoint": "_preview.ts",
   "dependencies": [
     "@langchain/core",
     "@langchain/openai",
+    "@langchain/langgraph",
     "langchain",
     "zod"
   ],
@@ -17,18 +18,19 @@
   "files": [
     "agent.ts",
     "_preview.ts",
-    "src/agent.ts",
+    "src/agents/index.ts",
+    "src/agents/qa.ts",
     "src/prompts/system.ts",
     "src/tools/index.ts",
-    "src/tools/orders.ts",
-    "src/tools/account.ts",
-    "src/tools/escalation.ts"
+    "src/tools/time.ts",
+    "src/tools/calculator.ts",
+    "src/tools/echo.ts"
   ],
-  "welcomeMessage": "Hi! I'm your customer support agent.\nI can help with orders, account access, refunds, and more. What can I assist you with today?",
+  "welcomeMessage": "Hi! I'm your customer support agent. Ask me anything — replies come from OpenAI inside the sandbox.",
   "starterMessages": [
-    "I can't log in to my account",
-    "Where is my order #12345?",
-    "I need a refund for my last purchase",
-    "My product arrived damaged"
+    "Hello! What can you do?",
+    "What is LangGraph in one sentence?",
+    "What time is it right now?",
+    "What is 47 times 19?"
   ]
 }

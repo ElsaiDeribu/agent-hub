@@ -1,26 +1,23 @@
 ---
 title: Customer Support Agent
-description: Multi-turn customer support agent with order lookup and human escalation tools.
+description: Live LangGraph ReAct agent that calls OpenAI from the sandbox. Enter your API key in the preview to try it.
 ---
 
 <AgentPlayground name="customer-support" />
 
 ## Overview
 
-A multi-turn support agent for order status, account access, refunds, and escalation. Implementations ship for LangChain, Mastra, and Vercel AI SDK.
+A live ReAct agent on LangGraph. It calls OpenAI from the sandbox and can use a small set of tools for time, arithmetic, and echo.
 
 ## Tools
 
-- `lookup_order` — status and tracking by order ID
-- `lookup_account` — account lookup by email
-- `create_refund` — start a refund for a given reason
-- `escalate_to_human` — open a ticket when the agent cannot resolve the issue
-
-Tool bodies return placeholder data. Replace them with your order, identity, and ticketing APIs.
+- `getCurrentTime` — current time in the sandbox
+- `calculator` — basic arithmetic
+- `echo` — returns the input string (useful for wiring checks)
 
 ## How it works
 
-The agent keeps chat history and is instructed to look up real data before answering, ask for an order ID or email when needed, and escalate after two failed attempts. The LangChain package splits prompts and tools under `src/`; Mastra and Vercel AI keep a flatter single-file layout.
+The LangGraph graph runs a tool-calling loop: the model decides whether to call a tool or answer. System prompt and tool definitions live under `src/` so you can swap behavior without touching the preview harness.
 
 ## Environment
 
